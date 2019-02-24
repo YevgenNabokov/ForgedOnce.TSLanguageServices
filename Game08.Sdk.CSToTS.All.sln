@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Translator", "Game08.Sdk.CSToTS.Translator\Game08.Sdk.CSToTS.Translator.csproj", "{8F4E50B8-0278-465D-A241-C0304250293F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.CSToTS.Translator.UnitTests", "Game08.Sdk.CSToTS.Translator.UnitTests\Game08.Sdk.CSToTS.Translator.UnitTests.csproj", "{5B83C25D-FC84-41A0-90C0-44E8E4BB88EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Translator.UnitTests", "Game08.Sdk.CSToTS.Translator.UnitTests\Game08.Sdk.CSToTS.Translator.UnitTests.csproj", "{5B83C25D-FC84-41A0-90C0-44E8E4BB88EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.CSToTS.TsSyntaxTreeGenerator", "Game08.Sdk.CSToTS.TsSyntaxTreeGenerator\Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.csproj", "{5BCB1C48-77FA-4E7C-8D4E-3F29184FCAFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{5B83C25D-FC84-41A0-90C0-44E8E4BB88EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B83C25D-FC84-41A0-90C0-44E8E4BB88EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B83C25D-FC84-41A0-90C0-44E8E4BB88EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BCB1C48-77FA-4E7C-8D4E-3F29184FCAFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BCB1C48-77FA-4E7C-8D4E-3F29184FCAFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BCB1C48-77FA-4E7C-8D4E-3F29184FCAFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BCB1C48-77FA-4E7C-8D4E-3F29184FCAFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

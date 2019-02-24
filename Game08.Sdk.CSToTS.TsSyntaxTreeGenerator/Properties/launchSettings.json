@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Game08.Sdk.CSToTS.TsSyntaxTreeGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "\"types.ts\" \"tokens.txt\""
+    }
+  }
+}
