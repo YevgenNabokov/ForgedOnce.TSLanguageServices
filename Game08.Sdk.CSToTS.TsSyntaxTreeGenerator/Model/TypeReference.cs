@@ -6,7 +6,9 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
     public class TypeReference
     {
-        public string Name { get; set; }
+        public Identifier Name { get; set; }
+
+        public bool IsArray { get; set; }
 
         public List<TypeReference> TypeParameters { get; set; }
     }

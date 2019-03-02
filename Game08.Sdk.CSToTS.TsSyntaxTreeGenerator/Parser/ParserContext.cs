@@ -7,6 +7,8 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
     public enum ParserContext
     {
         FileRoot,
-
+        Enum,
+        Type,
+        Interface
     }
 }

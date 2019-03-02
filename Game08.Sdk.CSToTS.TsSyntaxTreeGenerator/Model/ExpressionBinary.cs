@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
-    public class TsEnumMemberBitShiftExpression : TsEnumMember
+    public class ExpressionBinary : Expression
     {
-        public string Left { get; set; }
+        public Expression Left { get; set; }
 
         public string Operator { get; set; }
 
-        public string Right { get; set; }
+        public Expression Right { get; set; }
     }
 }

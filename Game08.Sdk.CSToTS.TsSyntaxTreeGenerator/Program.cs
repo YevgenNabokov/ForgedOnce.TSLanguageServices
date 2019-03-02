@@ -9,12 +9,17 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator
     {
         static void Main(string[] args)
         {
-            using (var outStream = File.OpenWrite(args[1]))
+            ////TestTokenAggregator(args[0], args[1]);
+        }
+
+        static void TestTokenAggregator(string inputFile, string outputFile)
+        {
+            using (var outStream = File.OpenWrite(outputFile))
             {
                 using (var writer = new StreamWriter(outStream))
                 {
                     writer.AutoFlush = true;
-                    using (var reader = File.OpenText(args[0]))
+                    using (var reader = File.OpenText(inputFile))
                     {
                         var bufferSize = 256;
                         char[] buffer = new char[bufferSize];

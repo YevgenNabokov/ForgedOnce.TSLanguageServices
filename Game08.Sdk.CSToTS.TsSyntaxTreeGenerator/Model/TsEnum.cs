@@ -6,6 +6,8 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
     public class TsEnum
     {
+        public Modifier[] Modifiers { get; set; }
+
         public string Name { get; set; }
 
         public Dictionary<string, TsEnumMember> Members { get; private set; }

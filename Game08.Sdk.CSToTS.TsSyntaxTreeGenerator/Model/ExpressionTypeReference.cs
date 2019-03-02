@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
-    public class TsEnumMemberComposite : TsEnumMember
+    public class ExpressionTypeReference : Expression
     {
-        public List<string> Parts;
+        public TypeReference Reference { get; set; }
     }
 }

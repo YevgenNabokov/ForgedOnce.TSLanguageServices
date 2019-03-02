@@ -7,6 +7,6 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Interfaces
 {
     public interface IPartParser<T>
     {
-        PartParserResult Parse(string token);
+        T Parse(ParserState state);
     }
 }

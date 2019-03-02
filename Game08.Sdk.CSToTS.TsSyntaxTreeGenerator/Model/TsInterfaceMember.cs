@@ -6,10 +6,12 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
     public class TsInterfaceMember
     {
+        public Modifier[] Modifiers { get; set; }
+
         public string Name { get; set; }
 
         public bool IsOptional { get; set; }
 
-        public TypeConstraint TypeConstraint { get; set; }
+        public TypeReference TypeConstraint { get; set; }
     }
 }

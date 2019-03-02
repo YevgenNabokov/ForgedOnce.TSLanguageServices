@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
-    public class TypeConstraintExactType : TypeConstraint
+    public class Identifier
     {
-        public TypeReference TypeName { get; set; }
+        public List<string> Parts { get; set; }
     }
 }

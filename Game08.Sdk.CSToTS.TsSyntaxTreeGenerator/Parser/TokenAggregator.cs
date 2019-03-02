@@ -72,13 +72,13 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
                         this.lineNumber++;
                         this.charPos = 1;
                     }
-
-                    this.cRet = false;
                 }
                 else
                 {
                     this.charPos++;
                 }
+
+                this.cRet = false;
             }
         }
 

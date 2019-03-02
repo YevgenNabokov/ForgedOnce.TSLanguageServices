@@ -4,7 +4,8 @@ using System.Text;
 
 namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
-    public abstract class TypeConstraint
+    public class ExpressionValue : Expression
     {
+        public string Value { get; set; }
     }
 }

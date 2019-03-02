@@ -6,8 +6,10 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
     public class TypeDeclaration
     {
+        public Modifier[] Modifiers { get; set; }
+
         public TypeNameDeclaration Name { get; set; }
 
-        public TypeConstraint Constraint { get; set; }
+        public Expression Constraint { get; set; }
     }
 }

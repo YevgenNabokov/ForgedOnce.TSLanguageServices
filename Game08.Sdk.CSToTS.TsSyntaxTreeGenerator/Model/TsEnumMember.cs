@@ -4,8 +4,12 @@ using System.Text;
 
 namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
-    public abstract class TsEnumMember
+    public class TsEnumMember
     {
+        public Modifier[] Modifiers { get; set; }
+
         public string Name { get; set; }
+
+        public Expression Value { get; set; }
     }
 }
