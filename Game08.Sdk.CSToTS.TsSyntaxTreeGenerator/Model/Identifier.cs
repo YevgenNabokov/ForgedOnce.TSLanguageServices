@@ -7,5 +7,10 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
     public class Identifier
     {
         public List<string> Parts { get; set; }
+
+        public Identifier()
+        {
+            this.Parts = new List<string>();
+        }
     }
 }

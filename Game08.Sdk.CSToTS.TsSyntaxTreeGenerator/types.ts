@@ -5856,41 +5856,41 @@ namespace ts {
 
     type ConcretePragmaSpecs = typeof commentPragmas;
 
-    /* @internal */
-    export type PragmaPseudoMap = {[K in keyof ConcretePragmaSpecs]?: {arguments: PragmaArgumentType<ConcretePragmaSpecs[K]>, range: CommentRange}};
+    ///* @internal */
+    //export type PragmaPseudoMap = {[K in keyof ConcretePragmaSpecs]?: {arguments: PragmaArgumentType<ConcretePragmaSpecs[K]>, range: CommentRange}};
 
-    /* @internal */
-    export type PragmaPseudoMapEntry = {[K in keyof PragmaPseudoMap]: {name: K, args: PragmaPseudoMap[K]}}[keyof PragmaPseudoMap];
+    ///* @internal */
+    //export type PragmaPseudoMapEntry = {[K in keyof PragmaPseudoMap]: {name: K, args: PragmaPseudoMap[K]}}[keyof PragmaPseudoMap];
 
-    /* @internal */
-    export interface ReadonlyPragmaMap extends ReadonlyMap<PragmaPseudoMap[keyof PragmaPseudoMap] | PragmaPseudoMap[keyof PragmaPseudoMap][]> {
-        get<TKey extends keyof PragmaPseudoMap>(key: TKey): PragmaPseudoMap[TKey] | PragmaPseudoMap[TKey][];
-        forEach(action: <TKey extends keyof PragmaPseudoMap>(value: PragmaPseudoMap[TKey] | PragmaPseudoMap[TKey][], key: TKey) => void): void;
-    }
+    ///* @internal */
+    //export interface ReadonlyPragmaMap extends ReadonlyMap<PragmaPseudoMap[keyof PragmaPseudoMap] | PragmaPseudoMap[keyof PragmaPseudoMap][]> {
+    //    get<TKey extends keyof PragmaPseudoMap>(key: TKey): PragmaPseudoMap[TKey] | PragmaPseudoMap[TKey][];
+    //    forEach(action: <TKey extends keyof PragmaPseudoMap>(value: PragmaPseudoMap[TKey] | PragmaPseudoMap[TKey][], key: TKey) => void): void;
+    //}
 
-    /**
-     * A strongly-typed es6 map of pragma entries, the values of which are either a single argument
-     * value (if only one was found), or an array of multiple argument values if the pragma is present
-     * in multiple places
-     */
-    /* @internal */
-    export interface PragmaMap extends Map<PragmaPseudoMap[keyof PragmaPseudoMap] | PragmaPseudoMap[keyof PragmaPseudoMap][]>, ReadonlyPragmaMap {
-        set<TKey extends keyof PragmaPseudoMap>(key: TKey, value: PragmaPseudoMap[TKey] | PragmaPseudoMap[TKey][]): this;
-        get<TKey extends keyof PragmaPseudoMap>(key: TKey): PragmaPseudoMap[TKey] | PragmaPseudoMap[TKey][];
-        forEach(action: <TKey extends keyof PragmaPseudoMap>(value: PragmaPseudoMap[TKey] | PragmaPseudoMap[TKey][], key: TKey) => void): void;
-    }
+    ///**
+    // * A strongly-typed es6 map of pragma entries, the values of which are either a single argument
+    // * value (if only one was found), or an array of multiple argument values if the pragma is present
+    // * in multiple places
+    // */
+    ///* @internal */
+    //export interface PragmaMap extends Map<PragmaPseudoMap[keyof PragmaPseudoMap] | PragmaPseudoMap[keyof PragmaPseudoMap][]>, ReadonlyPragmaMap {
+    //    set<TKey extends keyof PragmaPseudoMap>(key: TKey, value: PragmaPseudoMap[TKey] | PragmaPseudoMap[TKey][]): this;
+    //    get<TKey extends keyof PragmaPseudoMap>(key: TKey): PragmaPseudoMap[TKey] | PragmaPseudoMap[TKey][];
+    //    forEach(action: <TKey extends keyof PragmaPseudoMap>(value: PragmaPseudoMap[TKey] | PragmaPseudoMap[TKey][], key: TKey) => void): void;
+    //}
 
-    export interface UserPreferences {
-        readonly disableSuggestions?: boolean;
-        readonly quotePreference?: "auto" | "double" | "single";
-        readonly includeCompletionsForModuleExports?: boolean;
-        readonly includeCompletionsWithInsertText?: boolean;
-        readonly importModuleSpecifierPreference?: "relative" | "non-relative";
-        /** Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js" */
-        readonly importModuleSpecifierEnding?: "minimal" | "index" | "js";
-        readonly allowTextChangesInNewFiles?: boolean;
-        readonly providePrefixAndSuffixTextForRename?: boolean;
-    }
+    //export interface UserPreferences {
+    //    readonly disableSuggestions?: boolean;
+    //    readonly quotePreference?: "auto" | "double" | "single";
+    //    readonly includeCompletionsForModuleExports?: boolean;
+    //    readonly includeCompletionsWithInsertText?: boolean;
+    //    readonly importModuleSpecifierPreference?: "relative" | "non-relative";
+    //    /** Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js" */
+    //    readonly importModuleSpecifierEnding?: "minimal" | "index" | "js";
+    //    readonly allowTextChangesInNewFiles?: boolean;
+    //    readonly providePrefixAndSuffixTextForRename?: boolean;
+    //}
 
     /** Represents a bigint literal value without requiring bigint support */
     export interface PseudoBigInt {

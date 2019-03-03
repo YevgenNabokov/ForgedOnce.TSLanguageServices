@@ -13,30 +13,28 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
             "{", "}", ";", ".", ",", "|", ":", "(", ")", "[", "]", "<<", ">>", "=", "/*", "*/", "//", "@", "?", "<", ">", "\"", "\r\n", " ", "*", "/"
         };
 
-        private int lineNumber = 1;
+        private TextPositionTracker parsingPosition = new TextPositionTracker();
 
-        private int charPos = 1;
+        private TextPositionTracker bufferPosition = new TextPositionTracker();
 
         private StringBuilder currentBuffer = new StringBuilder();        
 
-        private List<string> candidates = new List<string>();
+        private List<Token> candidates = new List<Token>();
 
-        private List<string> newCandidates = new List<string>();
+        private List<Token> newCandidates = new List<Token>();
 
-        private List<string> results = new List<string>();
+        private List<Token> results = new List<Token>();
 
-        private bool cRet = false;
-
-        public string[] Add(char? c)
+        public Token[] Add(char? c)
         {
-            string[] result = null;
+            Token[] result = null;
 
             if (c.HasValue)
             {
                 this.currentBuffer.Append(c);
             }
 
-            string m = string.Empty;
+            Token m = null;
 
             while (this.Match(out m))
             {
@@ -51,63 +49,39 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
 
             if (c.HasValue)
             {
-                this.AdvancePosition(c.Value);
+                this.parsingPosition.AdvancePosition(c.Value);
             }
 
             return result;
         }
 
-        private void AdvancePosition(char c)
-        {
-            if (c == '\r')
-            {
-                this.cRet = true;
-            }
-            else
-            {
-                if (c == '\n')
-                {
-                    if (cRet)
-                    {
-                        this.lineNumber++;
-                        this.charPos = 1;
-                    }
-                }
-                else
-                {
-                    this.charPos++;
-                }
-
-                this.cRet = false;
-            }
-        }
-
-        private bool Match(out string result)
+        private bool Match(out Token result)
         {
             if (candidates.Count > 0)
             {
-                string bestMatch = null;
+                Token bestMatch = null;
                 foreach (var c in candidates)
                 {
                     if (this.currentBuffer.StartsWith(c))
                     {
-                        bestMatch = bestMatch == null ? c : c.Length > bestMatch.Length ? c : bestMatch;
+                        bestMatch = bestMatch == null ? c : c.Value.Length > bestMatch.Value.Length ? c : bestMatch;
                     }
 
-                    if (c.StartsWith(this.currentBuffer) && c.Length > this.currentBuffer.Length)
+                    if (c.Value.StartsWith(this.currentBuffer) && c.Value.Length > this.currentBuffer.Length)
                     {
                         newCandidates.Add(c);
                     }
                 }
 
-                this.newCandidates = Interlocked.Exchange<List<string>>(ref this.candidates, this.newCandidates);
+                this.newCandidates = Interlocked.Exchange<List<Token>>(ref this.candidates, this.newCandidates);
                 this.newCandidates.Clear();
 
                 if (candidates.Count == 0)
                 {
                     if (bestMatch != null)
                     {
-                        this.currentBuffer.Remove(0, bestMatch.Length);
+                        this.currentBuffer.Remove(0, bestMatch.Value.Length);
+                        this.bufferPosition.AdvancePosition(bestMatch);
                         result = bestMatch;
                         return true;
                     }
@@ -115,7 +89,7 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
                     {
                         if (this.candidates.Count == 0)
                         {
-                            throw new InvalidOperationException($"Token not recognized in Line: {this.lineNumber}, Position: {this.charPos}, Char: {this.currentBuffer[0]}");
+                            throw new InvalidOperationException($"Token not recognized in Line: {this.parsingPosition.LineNumber}, Position: {this.parsingPosition.CharPos}, Char: {this.currentBuffer[0]}");
                         }
                     }
                 }
@@ -125,7 +99,7 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
                 bool bufferContainsWord = true;
                 for (var i = 0; i < this.currentBuffer.Length; i++)
                 {
-                    if (Char.IsLetter(this.currentBuffer[i]))
+                    if (this.CharIsPartOfIdentifier(this.currentBuffer[i]))
                     {
                         continue;
                     }
@@ -133,7 +107,8 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
                     {
                         if (i > 0)
                         {
-                            result = this.currentBuffer.ToString().Substring(0, i);
+                            result = new Token(this.currentBuffer.ToString().Substring(0, i), this.bufferPosition.LineNumber, this.bufferPosition.CharPos);
+                            this.bufferPosition.AdvancePosition(result);
                             this.currentBuffer.Remove(0, i);
                             return true;
                         }
@@ -148,13 +123,14 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
                     {
                         if (t.StartsWith(this.currentBuffer))
                         {
-                            this.candidates.Add(t);
+                            this.candidates.Add(new Token(t, this.bufferPosition.LineNumber, this.bufferPosition.CharPos));
                         }
                     }
 
-                    if (this.candidates.Count == 1 && this.candidates[0].Length == this.currentBuffer.Length)
+                    if (this.candidates.Count == 1 && this.candidates[0].Value.Length == this.currentBuffer.Length)
                     {
-                        result = this.currentBuffer.ToString();
+                        result = new Token(this.currentBuffer.ToString(), this.bufferPosition.LineNumber, this.bufferPosition.CharPos);
+                        this.bufferPosition.AdvancePosition(result);
                         this.currentBuffer.Clear();
                         this.candidates.Clear();
                         return true;
@@ -164,6 +140,11 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
 
             result = null;
             return false;
+        }
+
+        public bool CharIsPartOfIdentifier(char c)
+        {
+            return char.IsLetterOrDigit(c) || c == '_';
         }
     }
 }

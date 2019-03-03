@@ -8,9 +8,10 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
     {
 
 
-        public TsModel Parse(string tsFileContent)
+        public TsModel Parse(string tsFileContent, HashSet<string> skipDefinitions)
         {
             ParserState state = new ParserState();
+            state.SkipDefinitions = skipDefinitions;
             TokenAggregator tokenAggregator = new TokenAggregator();
             for (var i = 0; i < tsFileContent.Length; i++)
             {

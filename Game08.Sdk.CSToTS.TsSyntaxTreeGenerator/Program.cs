@@ -1,6 +1,7 @@
 ﻿using Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser;
 using Microsoft.CodeAnalysis;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator
@@ -10,6 +11,21 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator
         static void Main(string[] args)
         {
             ////TestTokenAggregator(args[0], args[1]);
+            TestModelParser(args[0]);
+        }
+
+        static void TestModelParser(string inputFile)
+        {
+            var content = File.ReadAllText(inputFile);
+
+            TsParser parser = new TsParser();
+
+            HashSet<string> skipDefinitions = new HashSet<string>()
+            {
+                "EmitHelper", "SymbolTracker", "PragmaPseudoMapEntry"
+            };
+
+            var result = parser.Parse(content, skipDefinitions);
         }
 
         static void TestTokenAggregator(string inputFile, string outputFile)
@@ -27,7 +43,7 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator
                         var readCount = reader.Read(buffer, 0, bufferSize);
 
                         TokenAggregator aggregator = new TokenAggregator();
-                        string[] parsingResult = null;
+                        Token[] parsingResult = null;
 
                         while (readCount > 0)
                         {

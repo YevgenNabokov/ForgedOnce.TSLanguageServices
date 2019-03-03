@@ -12,6 +12,6 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 
         public bool IsOptional { get; set; }
 
-        public TypeReference TypeConstraint { get; set; }
+        public bool IsReadonly { get; set; }
     }
 }

@@ -10,6 +10,6 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 
         public bool IsArray { get; set; }
 
-        public List<TypeReference> TypeParameters { get; set; }
+        public List<Expression> TypeParameters { get; set; }
     }
 }

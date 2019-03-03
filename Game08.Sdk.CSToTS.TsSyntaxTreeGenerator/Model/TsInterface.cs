@@ -13,5 +13,7 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
         public List<TypeReference> Extends { get; set; }
 
         public List<TsInterfaceMember> Members { get; set; }
+
+        public bool IsInline { get; set; }
     }
 }

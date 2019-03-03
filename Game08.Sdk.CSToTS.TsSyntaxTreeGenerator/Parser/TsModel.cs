@@ -20,7 +20,7 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
             this.Enums = new Dictionary<string, TsEnum>();
             this.Interfaces = new Dictionary<string, TsInterface>();
             this.Types = new Dictionary<string, Model.TypeDeclaration>();
-            this.TypeDeclarations = new TypeDeclarationCache();
+            this.TypeDeclarations = new TypeDeclarationCache();            
         }
     }
 }
