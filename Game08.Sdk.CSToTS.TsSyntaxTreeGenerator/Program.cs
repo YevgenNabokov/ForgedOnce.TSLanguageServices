@@ -1,4 +1,5 @@
-﻿using Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser;
+﻿using Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.ModelRefiner;
+using Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser;
 using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,26 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator
         static void Main(string[] args)
         {
             ////TestTokenAggregator(args[0], args[1]);
-            TestModelParser(args[0]);
+            ////TestModelParser(args[0]);
+            TestModelFilter(args[0]);
+        }
+
+        static void TestModelFilter(string inputFile)
+        {
+            var content = File.ReadAllText(inputFile);
+
+            TsParser parser = new TsParser();
+
+            HashSet<string> skipDefinitions = new HashSet<string>()
+            {
+                "EmitHelper", "SymbolTracker", "PragmaPseudoMapEntry"
+            };
+
+            var model = parser.Parse(content, skipDefinitions);
+
+            ModelFilter filter = new ModelFilter();
+
+            var depth = filter.DeepestPath(model);
         }
 
         static void TestModelParser(string inputFile)
