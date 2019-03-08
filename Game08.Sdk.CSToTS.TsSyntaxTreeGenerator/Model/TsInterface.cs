@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
-    public class TsInterface
+    public class TsInterface : INamed, IHaveModifiers
     {
         public Modifier[] Modifiers { get; set; }
 
@@ -15,5 +16,10 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
         public List<TsInterfaceMember> Members { get; set; }
 
         public bool IsInline { get; set; }
+
+        public string GetName()
+        {
+            return this.Name?.Name;
+        }
     }
 }

@@ -58,5 +58,32 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.ModelRefiner
             level.Reset();
             _levelCache.Add(level);
         }
+
+        public bool IsInPropertyOf(string propertyName, Type type, bool lookImmediateParentOnly = false)
+        {
+            if (this.CurrentPath.Count > 0)
+            {
+                var node = this.CurrentPath[this.CurrentPath.Count - 1];
+                while (node != null)
+                {
+                    if (node.ParentProperty != null)
+                    {
+                        if (node.ParentProperty.Name == propertyName && type.IsAssignableFrom(node.Parent.Node.GetType()))
+                        {
+                            return true;
+                        }
+                    }
+
+                    if (lookImmediateParentOnly)
+                    {
+                        return false;
+                    }
+
+                    node = node.Parent;
+                }
+            }
+
+            return false;
+        }
     }
 }

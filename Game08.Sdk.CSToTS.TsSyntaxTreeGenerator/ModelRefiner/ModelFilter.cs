@@ -1,4 +1,5 @@
-﻿using Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model;
+﻿using Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Interfaces;
+using Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model;
 using Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser;
 using System;
 using System.Collections;
@@ -18,7 +19,10 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.ModelRefiner
         {
             TraversingContext<int> context = new TraversingContext<int>(0);
 
-            this.TraverseNode(model, context, (n, c) => { c.Payload++; return true; });
+            this.TraverseNode(model, context, (n, c) => 
+            {
+                c.Payload++; return true;
+            });
 
             return context.Payload;
         }
@@ -27,9 +31,59 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.ModelRefiner
         {
             TraversingContext<int> context = new TraversingContext<int>(0);
 
-            this.TraverseNode(model, context, (n, c) => { c.Payload = Math.Max(c.Payload, c.CurrentPath.Count); return true; });
+            this.TraverseNode(model, context, (n, c) => 
+            {
+                c.Payload = Math.Max(c.Payload, c.CurrentPath.Count); return true;
+            });
 
             return context.Payload;
+        }
+
+        public TypeDeclarationCache ReadTypeDeclarations(TsModel model)
+        {
+            TraversingContext<TypeDeclarationCache> context = new TraversingContext<TypeDeclarationCache>(new TypeDeclarationCache());
+
+            INamed currentContainer = null;
+
+            this.TraverseNode(model, context, (n, c) =>
+            {
+                if (n is TsEnum || n is TsInterface || n is TypeDeclaration)
+                {
+                    currentContainer = n as INamed;
+
+                    c.Payload.Declarations.Add(currentContainer.GetName(), new DeclaredType()
+                    {
+                        Name = currentContainer.GetName(),
+                        IsInternal = this.HasInternalModifier(currentContainer as IHaveModifiers),
+                    });
+                }
+                else
+                {
+
+                }
+
+                return true;
+            });
+
+            return context.Payload;
+        }
+
+        private bool HasInternalModifier(IHaveModifiers node)
+        {
+            if (node.Modifiers == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < node.Modifiers.Length; i++)
+            {
+                if (node.Modifiers[i] == Modifier.Internal)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void TraverseNode<T>(object node, TraversingContext<T> context, Func<object, TraversingContext<T>, bool> traversingFunc, PropertyInfo parentProperty = null, int? index = null)

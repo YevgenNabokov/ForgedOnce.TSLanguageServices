@@ -6,8 +6,14 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Parser
 {
     public class TypeDeclarationCache
     {
-        public Dictionary<string, TypeDeclaration> Declarations { get; set; }
+        public Dictionary<string, DeclaredType> Declarations { get; set; }
 
-        public Dictionary<string, Dictionary<string, TypeDeclaration>> TypeExtenders { get; set; }
+        public Dictionary<string, Dictionary<string, DeclaredType>> TypeExtenders { get; set; }
+
+        public TypeDeclarationCache()
+        {
+            this.Declarations = new Dictionary<string, DeclaredType>();
+            this.TypeExtenders = new Dictionary<string, Dictionary<string, DeclaredType>>();
+        }
     }    
 }

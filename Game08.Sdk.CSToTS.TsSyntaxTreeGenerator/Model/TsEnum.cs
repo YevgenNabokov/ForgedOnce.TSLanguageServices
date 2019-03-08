@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
 {
-    public class TsEnum
+    public class TsEnum : INamed, IHaveModifiers
     {
         public Modifier[] Modifiers { get; set; }
 
@@ -15,6 +16,11 @@ namespace Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.Model
         public TsEnum()
         {
             this.Members = new Dictionary<string, TsEnumMember>();
+        }
+
+        public string GetName()
+        {
+            return this.Name;
         }
     }
 }
