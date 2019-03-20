@@ -1,0 +1,15 @@
+{
+  "name": "game08.sdk.csto-ts.type-script-builder",
+  "version": "0.0.0",
+  "description": "Game08.Sdk.CSToTS.TypeScriptBuilder",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.14"
+  },
+  "dependencies": {
+    "typescript": "^3.3.4000"
+  }
+}

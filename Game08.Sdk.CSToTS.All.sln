@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Translato
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Translator.UnitTests", "Game08.Sdk.CSToTS.Translator.UnitTests\Game08.Sdk.CSToTS.Translator.UnitTests.csproj", "{5B83C25D-FC84-41A0-90C0-44E8E4BB88EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.CSToTS.TsSyntaxTreeGenerator", "Game08.Sdk.CSToTS.TsSyntaxTreeGenerator\Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.csproj", "{5BCB1C48-77FA-4E7C-8D4E-3F29184FCAFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.TsSyntaxTreeGenerator", "Game08.Sdk.CSToTS.TsSyntaxTreeGenerator\Game08.Sdk.CSToTS.TsSyntaxTreeGenerator.csproj", "{5BCB1C48-77FA-4E7C-8D4E-3F29184FCAFB}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Game08.Sdk.CSToTS.TypeScriptBuilder", "Game08.Sdk.CSToTS.TypeScriptBuilder\Game08.Sdk.CSToTS.TypeScriptBuilder.njsproj", "{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{5BCB1C48-77FA-4E7C-8D4E-3F29184FCAFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BCB1C48-77FA-4E7C-8D4E-3F29184FCAFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BCB1C48-77FA-4E7C-8D4E-3F29184FCAFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
