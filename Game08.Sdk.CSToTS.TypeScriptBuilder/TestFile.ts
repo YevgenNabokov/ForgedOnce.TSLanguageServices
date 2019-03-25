@@ -1,7 +1,5 @@
-﻿export namespace NS {
-    export class TestC {
-        public Sum(a: number, b: number): number {
-            return a + b;
-        }
+﻿export class TestC {
+    public Sum(a: number, b: number): number {
+        return a + b;
     }
 }

@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
 {
-    public enum NodeType
+    public class FileRoot : Node
     {
-        Root,
-        ClassDefinition,
-        InterfaceDefinition,
-
+        public FileRoot()
+        {
+            this.NodeType = NodeType.Root;
+        }
     }
 }
