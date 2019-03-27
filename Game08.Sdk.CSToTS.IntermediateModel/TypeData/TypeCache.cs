@@ -4,7 +4,8 @@ using System.Text;
 
 namespace Game08.Sdk.CSToTS.IntermediateModel.TypeData
 {
-    public class TypeRepository
+    public class TypeCache
     {
+        public Dictionary<string, TypeDefinition> Definitions;
     }
 }

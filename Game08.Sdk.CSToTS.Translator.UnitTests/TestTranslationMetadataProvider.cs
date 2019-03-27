@@ -73,29 +73,15 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
                     documentMetadata.SyntaxTree = doc.GetSyntaxTreeAsync().Result;
                     documentMetadata.SemanticModel = projectMetadata.Compilation.GetSemanticModel(documentMetadata.SyntaxTree);
 
-                    foreach (var classDeclaration in documentMetadata.SyntaxTree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())
+                    foreach (var declaration in documentMetadata.SyntaxTree.GetRoot().DescendantNodes().OfType<TypeDeclarationSyntax>())
                     {
-                        var classDeclaredSymbol = documentMetadata.SemanticModel.GetDeclaredSymbol(classDeclaration);                        
+                        var declaredSymbol = documentMetadata.SemanticModel.GetDeclaredSymbol(declaration);                        
 
                         var itemMetadata = new ItemMetadata();
 
                         itemMetadata.GenerationType = this.generationType;
-                        itemMetadata.FullName = $"{classDeclaredSymbol.ContainingNamespace.Name}.{classDeclaredSymbol.Name}";
-                        itemMetadata.Name = $"{classDeclaredSymbol.Name}";
-                        itemMetadata.OutputFileName = this.OutputFileName;
-
-                        documentMetadata.Items.Add(itemMetadata);
-                    }
-
-                    foreach (var interfaceDeclaration in documentMetadata.SyntaxTree.GetRoot().DescendantNodes().OfType<InterfaceDeclarationSyntax>())
-                    {
-                        var interfaceDeclaredSymbol = documentMetadata.SemanticModel.GetDeclaredSymbol(interfaceDeclaration);
-
-                        var itemMetadata = new ItemMetadata();
-
-                        itemMetadata.GenerationType = this.generationType;
-                        itemMetadata.FullName = $"{interfaceDeclaredSymbol.ContainingNamespace.Name}.{interfaceDeclaredSymbol.Name}";
-                        itemMetadata.Name = $"{interfaceDeclaredSymbol.Name}";
+                        itemMetadata.FullName = $"{declaredSymbol.ContainingNamespace.Name}.{declaredSymbol.Name}";
+                        itemMetadata.Name = $"{declaredSymbol.Name}";
                         itemMetadata.OutputFileName = this.OutputFileName;
 
                         documentMetadata.Items.Add(itemMetadata);

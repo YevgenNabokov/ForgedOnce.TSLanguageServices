@@ -9,6 +9,9 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
         public FileRoot()
         {
             this.NodeType = NodeType.Root;
+            this.Items = new List<Node>();
         }
+
+        public List<Node> Items;
     }
 }
