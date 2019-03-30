@@ -12,6 +12,8 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
             this.Fields = new List<FieldDeclaration>();
         }
 
+        public List<Modifier> Modifiers;
+
         public string TypeKey;
 
         public string Name;

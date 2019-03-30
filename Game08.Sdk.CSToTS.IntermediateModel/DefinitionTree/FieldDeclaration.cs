@@ -11,6 +11,8 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
             this.NodeType = NodeType.FieldDeclaration;            
         }
 
+        public List<Modifier> Modifiers;
+
         public string TypeReferenceKey;
 
         public string Name;
