@@ -13,5 +13,11 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.TypeData
         public string Namespace;
 
         public string FileLocation;
+
+        public string RefreshId()
+        {
+            this.Id = $"F:{this.FileLocation}|NS:{this.Namespace}|N:{this.Name}";
+            return this.Id;
+        }
     }
 }

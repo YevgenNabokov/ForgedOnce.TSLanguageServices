@@ -9,6 +9,6 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
         Root,
         ClassDefinition,
         InterfaceDefinition,
-
+        FieldDeclaration
     }
 }

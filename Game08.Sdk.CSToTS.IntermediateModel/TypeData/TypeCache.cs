@@ -7,5 +7,7 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.TypeData
     public class TypeCache
     {
         public Dictionary<string, TypeDefinition> Definitions;
+
+        public Dictionary<string, TypeReference> References;
     }
 }

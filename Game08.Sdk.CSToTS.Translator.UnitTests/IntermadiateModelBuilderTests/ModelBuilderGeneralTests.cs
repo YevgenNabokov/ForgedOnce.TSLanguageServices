@@ -7,7 +7,7 @@ using System.Text;
 namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
 {
     [TestFixture]
-    public class ModelBuilderTests
+    public class ModelBuilderGeneralTests
     {
         private string emptyClass = @"
             namespace MyNamespace
