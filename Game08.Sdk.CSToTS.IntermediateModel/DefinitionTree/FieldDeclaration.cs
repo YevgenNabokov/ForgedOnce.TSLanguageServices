@@ -13,8 +13,10 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
 
         public List<Modifier> Modifiers;
 
-        public string TypeReferenceKey;
+        public TypeReferenceId TypeReference;
 
         public string Name;
+
+        public ExpressionNode Initializer;
     }
 }

@@ -8,18 +8,24 @@ using System.Text;
 namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
 {
     [TestFixture]
-    public class ModelBuilderCSharpV1FeaturesTests
+    public class ModelBuilderCSharpV2FeaturesTests
     {
-        private string cSharpV1Class = @"
+        private string cSharpV2Class = @"
             namespace MyNamespace
             {
+                public class MyHelperClass<T> {}
+
                 public class MyAwesomeClass
                 {
                     private int a;
 
                     public int B = 5;
 
-                    public string C { get; set; }
+                    public MyHelperClass<int> C;
+
+                    public string D = ""Some value."";
+
+                    public string PA { get; set; }
 
                     public MyAwesomeClass()
                     {
@@ -45,7 +51,7 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             TestTranslationMetadataProvider provider = new TestTranslationMetadataProvider(Core.GenerationType.FullTranslation);
             provider.OutputFileName = outputFileName;
             provider.AddProject("TestProj");
-            provider.AddDocument("TestFile.cs", this.cSharpV1Class);
+            provider.AddDocument("TestFile.cs", this.cSharpV2Class);
 
             ModelBuilder subject = new ModelBuilder();
 
@@ -62,7 +68,7 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             TestTranslationMetadataProvider provider = new TestTranslationMetadataProvider(Core.GenerationType.FullTranslation);
             provider.OutputFileName = outputFileName;
             provider.AddProject("TestProj");
-            provider.AddDocument("TestFile.cs", this.cSharpV1Class);
+            provider.AddDocument("TestFile.cs", this.cSharpV2Class);
 
             ModelBuilder subject = new ModelBuilder();
 

@@ -7,7 +7,5 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
     public class Node
     {
         public NodeType NodeType;
-
-        public Node Parent;
     }
 }

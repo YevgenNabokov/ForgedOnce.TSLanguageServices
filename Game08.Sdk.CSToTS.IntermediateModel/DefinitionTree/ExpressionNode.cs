@@ -4,12 +4,7 @@ using System.Text;
 
 namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
 {
-    public enum NodeType
+    public abstract class ExpressionNode : Node
     {
-        Root,
-        ClassDefinition,
-        InterfaceDefinition,
-        FieldDeclaration,
-        ExpressionLiteral
     }
 }

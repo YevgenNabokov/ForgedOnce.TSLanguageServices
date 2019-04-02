@@ -4,12 +4,8 @@ using System.Text;
 
 namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
 {
-    public enum NodeType
+    public class TypeReferenceId
     {
-        Root,
-        ClassDefinition,
-        InterfaceDefinition,
-        FieldDeclaration,
-        ExpressionLiteral
+        public string ReferenceKey;
     }
 }
