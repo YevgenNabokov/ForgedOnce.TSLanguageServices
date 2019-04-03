@@ -12,7 +12,5 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
         }
 
         public string Text;
-
-        public bool IsQuoted;
     }
 }

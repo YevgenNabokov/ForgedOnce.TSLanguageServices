@@ -13,6 +13,8 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.TypeData
 
         public string ArgumentName;
 
+        public string ReferenceTypeId;
+
         public override string RefreshId()
         {
             this.Id = $"{{{this.Kind}|A:{this.ArgumentName}}}";

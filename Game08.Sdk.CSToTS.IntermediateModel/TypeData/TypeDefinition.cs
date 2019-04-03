@@ -14,6 +14,8 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.TypeData
 
         public string FileLocation;
 
+        public List<TypeParameter> Parameters;
+
         public string RefreshId()
         {
             this.Id = $"F:{this.FileLocation}|NS:{this.Namespace}|N:{this.Name}";

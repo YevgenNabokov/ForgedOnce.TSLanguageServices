@@ -13,7 +13,10 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
         private string cSharpV2Class = @"
             namespace MyNamespace
             {
-                public class MyHelperClass<T> {}
+                public class MyHelperClass<T> 
+                {
+                    public T A;
+                }
 
                 public class MyAwesomeClass
                 {
