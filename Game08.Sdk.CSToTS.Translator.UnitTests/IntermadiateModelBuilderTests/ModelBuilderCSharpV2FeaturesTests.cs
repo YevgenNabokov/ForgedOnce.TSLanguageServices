@@ -37,7 +37,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
 
                     public int Add(int a, int b)
                     {
-                        return a + b;
+                        var n = a + 5;
+                        return n + b;
                     }
 
                     public int AddAndMultiply(int a, int b, int multiplier)

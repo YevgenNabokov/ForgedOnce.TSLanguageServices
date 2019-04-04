@@ -10,6 +10,10 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
         ClassDefinition,
         InterfaceDefinition,
         FieldDeclaration,
-        ExpressionLiteral
+        MethodDeclaration,
+
+        ExpressionLiteral,
+
+        StatementBlock
     }
 }

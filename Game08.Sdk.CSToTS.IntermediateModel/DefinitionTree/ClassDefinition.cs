@@ -19,5 +19,7 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
         public string Name;
 
         public List<FieldDeclaration> Fields;
+
+        public List<MethodDeclaration> Methods;
     }
 }
