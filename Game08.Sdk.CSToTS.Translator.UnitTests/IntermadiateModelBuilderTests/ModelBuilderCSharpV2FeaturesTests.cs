@@ -75,6 +75,17 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
                 }
             }";
 
+        private string cSharpV2Enum = @"
+            namespace MyNamespace
+            {
+                public enum MyAwesomeEnum
+                {
+                    Member1,
+                    Member2 = 1,
+                    Member3 = 1 << 4
+                }
+            }";
+
         [Test]
         public void ModelBuilder_CreatesClass()
         {
@@ -122,6 +133,22 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             var result = subject.BuildModel(provider);
 
             var interfaceModel = result.Files[0].RootNode.Items[0] as InterfaceDefinition;
+        }
+
+        [Test]
+        public void ModelBuilder_CreatesMemberInEnum()
+        {
+            var outputFileName = "TheOutput";
+            TestTranslationMetadataProvider provider = new TestTranslationMetadataProvider(Core.GenerationType.FullTranslation);
+            provider.OutputFileName = outputFileName;
+            provider.AddProject("TestProj");
+            provider.AddDocument("TestFile.cs", this.cSharpV2Enum);
+
+            ModelBuilder subject = new ModelBuilder();
+
+            var result = subject.BuildModel(provider);
+
+            var interfaceModel = result.Files[0].RootNode.Items[0] as EnumDefinition;
         }
     }
 }

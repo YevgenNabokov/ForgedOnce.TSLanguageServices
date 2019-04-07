@@ -9,10 +9,12 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
         Root,
         ClassDefinition,
         InterfaceDefinition,
+        EnumDefinition,
         FieldDeclaration,
         MethodDeclaration,
         PropertyDeclaration,
         ConstructorDeclaration,
+        EnumMember,
 
         ExpressionLiteral,
         ExpressionBinary,

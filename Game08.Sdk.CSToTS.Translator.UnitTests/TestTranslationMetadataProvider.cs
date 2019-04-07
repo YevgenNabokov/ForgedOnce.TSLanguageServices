@@ -99,7 +99,7 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
                     documentMetadata.SyntaxTree = doc.GetSyntaxTreeAsync().Result;
                     documentMetadata.SemanticModel = projectMetadata.Compilation.GetSemanticModel(documentMetadata.SyntaxTree);
 
-                    foreach (var declaration in documentMetadata.SyntaxTree.GetRoot().DescendantNodes().OfType<TypeDeclarationSyntax>())
+                    foreach (var declaration in documentMetadata.SyntaxTree.GetRoot().DescendantNodes().OfType<BaseTypeDeclarationSyntax>())
                     {
                         var declaredSymbol = documentMetadata.SemanticModel.GetDeclaredSymbol(declaration);                        
 
