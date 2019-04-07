@@ -10,6 +10,8 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
         {
             this.NodeType = NodeType.ClassDefinition;
             this.Fields = new List<FieldDeclaration>();
+            this.Methods = new List<MethodDeclaration>();
+            this.Properties = new List<PropertyDeclaration>();            
         }
 
         public List<Modifier> Modifiers;
@@ -21,5 +23,9 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
         public List<FieldDeclaration> Fields;
 
         public List<MethodDeclaration> Methods;
+
+        public List<PropertyDeclaration> Properties;
+
+        public ConstructorDeclaration Constructor;
     }
 }

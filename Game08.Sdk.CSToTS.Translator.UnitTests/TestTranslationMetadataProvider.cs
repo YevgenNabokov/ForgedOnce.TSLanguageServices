@@ -1,11 +1,14 @@
 ﻿using Game08.Sdk.CSToTS.Core;
 using Game08.Sdk.CSToTS.Core.Interfaces;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 
 namespace Game08.Sdk.CSToTS.Translator.UnitTests
 {
@@ -16,6 +19,14 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
         private int nextProjectIndex = 0;
 
         private GenerationType generationType;
+
+        private static readonly Lazy<PortableExecutableReference> s_mscorlib = new Lazy<PortableExecutableReference>(
+        () => AssemblyMetadata.CreateFromImage(TestResources.NetFX.v4_0_30319.mscorlib).GetReference(filePath: @"R:\v4_0_30319\mscorlib.dll"),
+        LazyThreadSafetyMode.PublicationOnly);
+
+        private static readonly Lazy<PortableExecutableReference> s_system = new Lazy<PortableExecutableReference>(
+        () => AssemblyMetadata.CreateFromImage(TestResources.NetFX.v4_0_30319.System).GetReference(filePath: @"R:\v4_0_30319\System.dll", display: "System.dll"),
+        LazyThreadSafetyMode.PublicationOnly);
 
         public TestTranslationMetadataProvider(GenerationType generationType)
         {
@@ -43,7 +54,19 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
 
             var projectId = ProjectId.CreateNewId();
             var versionStamp = VersionStamp.Create();
-            var projectInfo = ProjectInfo.Create(projectId, versionStamp, name, name, LanguageNames.CSharp);
+            var projectInfo = ProjectInfo.Create(
+                projectId,
+                versionStamp,
+                name,
+                name,
+                LanguageNames.CSharp,
+                metadataReferences: new MetadataReference[] 
+                {
+                    s_mscorlib.Value,
+                    s_system.Value
+                },
+                compilationOptions: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
             var newProject = this.Workspace.AddProject(projectInfo);
 
             this.nextProjectIndex++;
@@ -55,7 +78,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
         {
             var sourceText = SourceText.From(sourceCode);
             var project = projectId != null ? this.Workspace.CurrentSolution.GetProject(projectId) : this.Workspace.CurrentSolution.Projects.Last();
-            this.Workspace.AddDocument(project.Id, fileName, sourceText);
+            var document = this.Workspace.AddDocument(project.Id, fileName, sourceText);
+
         }
 
         public TranslationMetadata GetMetadata()
@@ -66,7 +90,9 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
             {
                 var projectMetadata = new ProjectMetadata();
                 projectMetadata.Compilation = proj.GetCompilationAsync().Result;
-                
+
+                projectMetadata.Diagnostics = projectMetadata.Compilation.GetDiagnostics();
+
                 foreach (var doc in proj.Documents)
                 {
                     var documentMetadata = new DocumentMetadata();
