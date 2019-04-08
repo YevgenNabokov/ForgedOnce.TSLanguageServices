@@ -11,6 +11,7 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
             this.NodeType = NodeType.InterfaceDefinition;
             this.Fields = new List<FieldDeclaration>();
             this.Methods = new List<MethodDeclaration>();
+            this.Implements = new List<TypeReferenceId>();
         }
 
         public List<Modifier> Modifiers;
@@ -18,6 +19,8 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
         public string TypeKey;
 
         public string Name;
+
+        public List<TypeReferenceId> Implements;
 
         public List<FieldDeclaration> Fields;
 

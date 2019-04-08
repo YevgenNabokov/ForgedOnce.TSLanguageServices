@@ -65,7 +65,12 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
         private string cSharpV2Interface = @"
             namespace MyNamespace
             {
-                public interface IMyAwesomeInterface<T> 
+                public interface IMyBaseInterface 
+                {
+                    string DoBaseThing();
+                }
+
+                public interface IMyAwesomeInterface<T> : IMyBaseInterface
                 {
                     T A { get; set; }
 
@@ -99,7 +104,7 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
 
             var result = subject.BuildModel(provider);
 
-            Assert.AreEqual(1, result.Files[0].RootNode.Items.Count);
+            Assert.AreEqual(2, result.Files[0].RootNode.Items.Count);
             Assert.IsTrue(result.Files[0].RootNode.Items[0].NodeType == IntermediateModel.DefinitionTree.NodeType.ClassDefinition);
         }
 
