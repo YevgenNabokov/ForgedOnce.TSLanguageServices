@@ -1,4 +1,5 @@
 ﻿using Game08.Sdk.CSToTS.Core;
+using Game08.Sdk.CSToTS.Core.Extensions.SymbolExtensions;
 using Game08.Sdk.CSToTS.Core.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -20,6 +21,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
 
         private GenerationType generationType;
 
+        private ExplicitTypeMappings externalTypesMetadata;
+
         private static readonly Lazy<PortableExecutableReference> s_mscorlib = new Lazy<PortableExecutableReference>(
         () => AssemblyMetadata.CreateFromImage(TestResources.NetFX.v4_0_30319.mscorlib).GetReference(filePath: @"R:\v4_0_30319\mscorlib.dll"),
         LazyThreadSafetyMode.PublicationOnly);
@@ -28,9 +31,10 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
         () => AssemblyMetadata.CreateFromImage(TestResources.NetFX.v4_0_30319.System).GetReference(filePath: @"R:\v4_0_30319\System.dll", display: "System.dll"),
         LazyThreadSafetyMode.PublicationOnly);
 
-        public TestTranslationMetadataProvider(GenerationType generationType)
+        public TestTranslationMetadataProvider(GenerationType generationType, ExplicitTypeMappings externalTypesMetadata = null)
         {
             this.generationType = generationType;
+            this.externalTypesMetadata = externalTypesMetadata;
         }
 
         public AdhocWorkspace Workspace
@@ -106,7 +110,7 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
                         var itemMetadata = new ItemMetadata();
 
                         itemMetadata.GenerationType = this.generationType;
-                        itemMetadata.FullName = $"{declaredSymbol.ContainingNamespace.Name}.{declaredSymbol.Name}";
+                        itemMetadata.FullName = $"{declaredSymbol.ContainingNamespace.GetFullName()}.{declaredSymbol.Name}";
                         itemMetadata.Name = $"{declaredSymbol.Name}";
                         itemMetadata.OutputFileName = this.OutputFileName;
 
@@ -118,6 +122,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
 
                 result.Projects.Add(projectMetadata);
             }
+
+            result.ExplicitTypeMappings = this.externalTypesMetadata;
 
             return result;
         }

@@ -1,4 +1,5 @@
-﻿using Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree;
+﻿using Game08.Sdk.CSToTS.Core;
+using Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree;
 using Game08.Sdk.CSToTS.Translator.IntermediateModelBuilder;
 using NUnit.Framework;
 using System;
@@ -91,6 +92,22 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
                 }
             }";
 
+        private string cSharpV2ClassWithList = @"
+            using System.Collections.Generic;
+        
+            namespace MyNamespace
+            {
+                public interface IMyBaseInterface 
+                {
+                    List<string> PA { get; }
+                }
+
+                public class MyAwesomeClass : IMyBaseInterface
+                {
+                    public List<string> PA { get; set; }
+                }
+            }";
+
         [Test]
         public void ModelBuilder_CreatesClass()
         {
@@ -154,6 +171,38 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             var result = subject.BuildModel(provider);
 
             var interfaceModel = result.Files[0].RootNode.Items[0] as EnumDefinition;
+        }
+
+        [Test]
+        public void ModelBuilder_CanMapExternalTypes()
+        {
+            var outputFileName = "TheOutput";
+            TestTranslationMetadataProvider provider = new TestTranslationMetadataProvider(Core.GenerationType.FullTranslation, GetListMapping());
+            provider.OutputFileName = outputFileName;
+            provider.AddProject("TestProj");
+            provider.AddDocument("TestFile.cs", this.cSharpV2ClassWithList);
+
+            ModelBuilder subject = new ModelBuilder();
+
+            var result = subject.BuildModel(provider);
+
+            var classModel = result.Files[0].RootNode.Items[0] as ClassDefinition;
+        }
+
+        private static ExplicitTypeMappings GetListMapping()
+        {
+            ExplicitTypeMappings result = new ExplicitTypeMappings();
+
+            var typeMap = new Dictionary<string, ExplicitTypeMapping>();
+
+            typeMap.Add("List", new ExplicitTypeMapping()
+            {
+                TypeName = "Array"
+            });
+
+            result.ExternalNamespaceTypeMappings.Add("System.Collections.Generic", typeMap);
+
+            return result;
         }
     }
 }
