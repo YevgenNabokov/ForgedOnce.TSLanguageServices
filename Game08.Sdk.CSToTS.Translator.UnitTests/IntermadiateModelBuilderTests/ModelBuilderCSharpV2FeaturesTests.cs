@@ -195,9 +195,16 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
 
             var typeMap = new Dictionary<string, ExplicitTypeMapping>();
 
-            typeMap.Add("List", new ExplicitTypeMapping()
+            typeMap.Add("List", new ExplicitBuiltinTypeMapping()
             {
-                TypeName = "Array"
+                TypeName = "Array",
+                GenericParameterMappings = new List<ExplicitTypeMapping>()
+                {
+                    new ExplicitGenericParameterMapping()
+                    {
+                        GenericArgumentIndex = 0
+                    }
+                }
             });
 
             result.ExternalNamespaceTypeMappings.Add("System.Collections.Generic", typeMap);
