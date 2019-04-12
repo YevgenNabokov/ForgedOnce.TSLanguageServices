@@ -9,6 +9,7 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.TypeData
         Builtin,
         Defined,
         External,
-        LocalGeneric
+        LocalGeneric,
+        Inline
     }
 }

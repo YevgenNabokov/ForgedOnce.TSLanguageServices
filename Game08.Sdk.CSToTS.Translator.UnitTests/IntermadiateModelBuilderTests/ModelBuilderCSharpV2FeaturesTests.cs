@@ -100,11 +100,15 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
                 public interface IMyBaseInterface 
                 {
                     List<string> PA { get; }
+
+                    Dictionary<string, IMyBaseInterface> PD { get; set; }
                 }
 
                 public class MyAwesomeClass : IMyBaseInterface
                 {
                     public List<string> PA { get; set; }
+
+                    public Dictionary<string, IMyBaseInterface> PD { get; set; }
                 }
             }";
 
@@ -203,6 +207,18 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
                     new ExplicitGenericParameterMapping()
                     {
                         GenericArgumentIndex = 0
+                    }
+                }
+            });
+
+            typeMap.Add("Dictionary", new ExplicitInlineTypeMapping()
+            {
+                Indexer = new ExplicitInlineTypeIndexerMapping()
+                {
+                    KeyName = "key",
+                    ValueType = new ExplicitGenericParameterMapping()
+                    {
+                        GenericArgumentIndex = 1
                     }
                 }
             });
