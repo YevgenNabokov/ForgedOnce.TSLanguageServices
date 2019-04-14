@@ -38,6 +38,9 @@
     <Content Include="README.md" />
     <Content Include="tsconfig.json" />
     <TypeScriptCompile Include="DefinitionTestFile.d.ts" />
+    <TypeScriptCompile Include="generationLauncher.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="IntermadiateModel.d.ts" />
     <TypeScriptCompile Include="OtherTestFile.ts">
       <SubType>Code</SubType>
