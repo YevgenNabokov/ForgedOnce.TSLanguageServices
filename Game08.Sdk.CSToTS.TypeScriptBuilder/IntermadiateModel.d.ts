@@ -319,3 +319,11 @@ export class CodeGenerationTask {
 
     public Types: TypeCache;
 }
+
+export class CodeGenerationError {
+    public Message: string;
+}
+
+export class CodeGenerationResult {
+    public Errors: CodeGenerationError[];
+}
