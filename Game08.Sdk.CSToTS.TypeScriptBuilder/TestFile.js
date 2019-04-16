@@ -1,6 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class TestC {
+const otf = require("./OtherTestFile");
+class BaseP {
+}
+exports.BaseP = BaseP;
+class BaseC {
+}
+exports.BaseC = BaseC;
+class TestC extends otf.OC {
     Sum(a, b) {
         return a + b;
     }

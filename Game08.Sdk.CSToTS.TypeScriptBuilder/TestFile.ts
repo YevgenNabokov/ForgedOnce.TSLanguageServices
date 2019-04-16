@@ -1,4 +1,15 @@
-﻿export class TestC {
+﻿import * as otf from "./OtherTestFile"
+
+
+export class BaseP {
+
+}
+
+export class BaseC<T> {
+
+}
+
+export class TestC<A> extends otf.OC<A> {
     private _s: number;
 
     public Sum(a: number, b: number): number {
