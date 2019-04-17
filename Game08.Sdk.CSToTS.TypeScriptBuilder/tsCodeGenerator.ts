@@ -1,7 +1,12 @@
 ﻿import * as ts from "typescript"
 
 import * as im from "./IntermadiateModel"
-import { connect } from "tls";
+
+import * as path from "path"
+
+class GeneratorSettings {
+    public namespaceDelimiter = '.';
+}
 
 class FileGenerationContext {
     public name: string;
@@ -14,7 +19,9 @@ class FileGenerationContext {
 
     public currentType: im.TypeDefinition;
 
-    public generatedFilesImports: Map<string, string> = new Map<string, string>();
+    public fileImportAliases: Map<string, string> = new Map<string, string>();
+
+    public generatedFileImports: Map<string, ts.ImportDeclaration> = new Map<string, ts.ImportDeclaration>();
 
     constructor(fileModel: im.CodeFile) {
         this.name = fileModel.FileName;
@@ -30,6 +37,8 @@ class GeneratorContext {
     public tsFiles: { [name: string]: FileGenerationContext };
 
     public tsDefinitionFiles: { [name: string]: FileGenerationContext };
+
+    public settings: GeneratorSettings = new GeneratorSettings();
 
     constructor(codeGenerationTask: im.CodeGenerationTask) {
         this.codeGenerationTask = codeGenerationTask;
@@ -166,7 +175,20 @@ export class TsTreeGenerator {
         return ts.createExpressionWithTypeArguments(parts.arguments, this.entityNameToExpression(parts.identifier));
     }
 
-    private generateTypeReference(context: GeneratorContext, fileContext: FileGenerationContext, typeReference: im.TypeReference): ts.TypeReferenceNode {
+    private generateTypeNode(context: GeneratorContext, fileContext: FileGenerationContext, typeReference: im.TypeReference): ts.TypeNode {
+        if (typeReference.Kind == im.TypeReferenceKind.Inline) {
+            var inlineTypeReference = typeReference as im.TypeReferenceInline;
+            var elements: ts.TypeElement[] = [];
+
+            if (inlineTypeReference.Indexer != null) {
+                var parameter = ts.createParameter([], [], null, inlineTypeReference.Indexer.KeyName);
+                var valueTypeReference = context.getTypeReference(inlineTypeReference.Indexer.ValueType.Id);
+                elements.push(ts.createIndexSignature([], [], [parameter], this.generateTypeNode(context, fileContext, valueTypeReference)));
+            }
+
+            return ts.createTypeLiteralNode(elements);
+        }
+
         var parts = this.generateTypeReferenceParts(context, fileContext, typeReference);
         return ts.createTypeReferenceNode(parts.identifier, parts.arguments);
     }
@@ -206,12 +228,20 @@ export class TsTreeGenerator {
             var definedTypeReference = typeReference as im.TypeReferenceDefined;
             var referredDeclaration = context.getTypeDeclaration(definedTypeReference.ReferenceTypeId);
             return {
-                identifier: this.generateDeclaredTypeName(context, fileContext, referredDeclaration),
+                identifier: this.generateTypeNameForDeclaredType(context, fileContext, referredDeclaration),
                 arguments: this.generateTypeNodes(context, fileContext, definedTypeReference.TypeParameters)
             }
         }
 
-        return null;
+        if (typeReference.Kind == im.TypeReferenceKind.External) {
+            var externalTypeReference = typeReference as im.TypeReferenceExternal;
+            return {
+                identifier: this.generateTypeNameForExternalType(context, fileContext, externalTypeReference),
+                arguments: this.generateTypeNodes(context, fileContext, externalTypeReference.TypeParameters)
+            }
+        }
+
+        throw new Error('Cannot generate type reference parts for ' + typeReference.Kind);
     }
 
     private generateTypeNodes(context: GeneratorContext, fileContext: FileGenerationContext, typeReferences: im.TypeReference[]): ts.TypeNode[] {
@@ -219,26 +249,107 @@ export class TsTreeGenerator {
 
         if (typeReferences != null) {
             for (var r = 0; r < typeReferences.length; r++) {
-                result.push(this.generateTypeReference(context, fileContext, typeReferences[r]));
+                result.push(this.generateTypeNode(context, fileContext, typeReferences[r]));
             }
         }
 
         return result;
     }
 
-    private generateDeclaredTypeName(context: GeneratorContext, fileContext: FileGenerationContext, type: im.TypeDefinition): ts.EntityName {
-        if (fileContext.currentType.FileLocation == type.FileLocation) {
-            return ts.createIdentifier(type.Name);
+    private generateTypeNameForDeclaredType(context: GeneratorContext, fileContext: FileGenerationContext, type: im.TypeDefinition): ts.EntityName {
+        var importedAlias: string = null;
+
+        if (fileContext.currentType.FileLocation != type.FileLocation) {
+            importedAlias = this.getOrCreateGeneratedFileReference(fileContext, type.FileLocation);
         }
 
-        //// Stopped here! Should generate qualified tpye name based on module and namespace.
+        return this.generateTypeName(context, fileContext, importedAlias, type.Namespace, type.Name);
+    }
+
+    private generateTypeNameForExternalType(context: GeneratorContext, fileContext: FileGenerationContext, type: im.TypeReferenceExternal): ts.EntityName {
+        var importedAlias: string = null;
+
+        if (type.Module != null && type.Module != '') {
+            importedAlias = this.getOrCreateModuleReference(fileContext, type.Module);
+        }
+
+        return this.generateTypeName(context, fileContext, importedAlias, type.Namespace, type.Name);
+    }
+
+    private generateTypeName(context: GeneratorContext, fileContext: FileGenerationContext, importedAlias: string, typeNamespace: string, typeName: string): ts.EntityName {
+        var typePathParts: string[] = [];
+
+        if (importedAlias != null) {
+            typePathParts.push(importedAlias);
+        }
+
+        if (typePathParts.length == 0) {
+            if (fileContext.currentType.Namespace != typeNamespace && typeNamespace != null) {
+                var currentNsParts = fileContext.currentType.Namespace != null ? fileContext.currentType.Namespace.split(context.settings.namespaceDelimiter) : [];
+                var typeNsParts = typeNamespace.split(context.settings.namespaceDelimiter);
+
+                var match = true;
+                for (var p = 0; p < typeNsParts.length; p++) {
+                    if (currentNsParts.length <= p || currentNsParts[p] != typeNsParts[p]) {
+                        match = false;
+                    }
+
+                    if (!match) {
+                        typePathParts.push(typeNsParts[p]);
+                    }
+                }
+            }
+        }
+        else {
+            if (typeNamespace != null) {
+                typePathParts = typePathParts.concat(typeNamespace.split(context.settings.namespaceDelimiter));
+            }
+        }
+
+        typePathParts.push(typeName);
+
+        var result: ts.EntityName = ts.createIdentifier(typePathParts[0]);
+
+        if (typePathParts.length > 1) {
+            for (var p = 1; p < typePathParts.length; p++) {
+                result = ts.createQualifiedName(result, ts.createIdentifier(typePathParts[p]));
+            }
+        }
+
+        return result;
     }
 
     private getOrCreateGeneratedFileReference(fileContext: FileGenerationContext, fileLocation: string): string {
-        if (fileContext.generatedFilesImports.has(fileLocation)) {
-            return fileContext.generatedFilesImports.get(fileLocation);
+        if (fileContext.fileImportAliases.has(fileLocation)) {
+            return fileContext.fileImportAliases.get(fileLocation);
         }
 
-        //// Stopped here! Should add import statement for declared file.
+        var relativeLocation = path.join('.', path.relative(path.dirname(fileContext.fileModel.FileName), path.dirname(fileLocation)), path.basename(fileLocation));
+
+        var alias = path.basename(fileLocation).split('.')[0];
+
+        fileContext.fileImportAliases.set(fileLocation, alias);
+
+        var declaration = ts.createImportDeclaration([], [], ts.createImportClause(null, ts.createNamespaceImport(ts.createIdentifier(alias))), ts.createLiteral(relativeLocation));
+
+        fileContext.generatedFileImports.set(alias, declaration);
+
+        return alias;
+    }
+
+    private getOrCreateModuleReference(fileContext: FileGenerationContext, moduleName: string): string {
+        if (fileContext.fileImportAliases.has(moduleName)) {
+            return fileContext.fileImportAliases.get(moduleName);
+        }
+
+        var alias = moduleName;
+
+        fileContext.fileImportAliases.set(moduleName, alias);
+
+        var declaration = ts.createImportDeclaration([], [], ts.createImportClause(null, ts.createNamespaceImport(ts.createIdentifier(alias))), ts.createLiteral(moduleName));
+
+        fileContext.generatedFileImports.set(alias, declaration);
+
+        return alias;
     }
 }

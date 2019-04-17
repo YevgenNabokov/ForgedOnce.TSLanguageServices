@@ -2,7 +2,7 @@
 
 
 export class BaseP {
-
+    public A: { [key: string]: BaseP }
 }
 
 export class BaseC<T> {
@@ -26,5 +26,20 @@ export class TestC<A> extends otf.OC<A> {
     public SetAndGet(v: number) {
         this.s = v;
         return this.s;
+    }
+}
+
+namespace TestRootNs {
+    namespace TestSubOneNs {
+        export namespace TestSubTwoNs {
+            export class SomeClassOne {
+                public A: SomeClassTwo;
+            }
+        }
+
+    }
+
+    class SomeClassTwo {
+        public A: TestSubOneNs.TestSubTwoNs.SomeClassOne;
     }
 }

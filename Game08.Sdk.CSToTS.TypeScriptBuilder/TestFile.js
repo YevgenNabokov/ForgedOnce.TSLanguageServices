@@ -23,4 +23,18 @@ class TestC extends otf.OC {
     }
 }
 exports.TestC = TestC;
+var TestRootNs;
+(function (TestRootNs) {
+    let TestSubOneNs;
+    (function (TestSubOneNs) {
+        let TestSubTwoNs;
+        (function (TestSubTwoNs) {
+            class SomeClassOne {
+            }
+            TestSubTwoNs.SomeClassOne = SomeClassOne;
+        })(TestSubTwoNs = TestSubOneNs.TestSubTwoNs || (TestSubOneNs.TestSubTwoNs = {}));
+    })(TestSubOneNs || (TestSubOneNs = {}));
+    class SomeClassTwo {
+    }
+})(TestRootNs || (TestRootNs = {}));
 //# sourceMappingURL=TestFile.js.map

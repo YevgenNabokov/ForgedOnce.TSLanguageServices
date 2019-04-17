@@ -2,8 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const ts = require("typescript");
 const im = require("./IntermadiateModel");
+const path = require("path");
+class GeneratorSettings {
+    constructor() {
+        this.namespaceDelimiter = '.';
+    }
+}
 class FileGenerationContext {
     constructor(fileModel) {
+        this.fileImportAliases = new Map();
+        this.generatedFileImports = new Map();
         this.name = fileModel.FileName;
         this.isDefinition = fileModel.IsDefinitionFile;
         this.fileModel = fileModel;
@@ -12,6 +20,7 @@ class FileGenerationContext {
 }
 class GeneratorContext {
     constructor(codeGenerationTask) {
+        this.settings = new GeneratorSettings();
         this.codeGenerationTask = codeGenerationTask;
         this.tsFiles = {};
         this.tsDefinitionFiles = {};
@@ -148,11 +157,18 @@ class TsTreeGenerator {
             var definedTypeReference = typeReference;
             var referredDeclaration = context.getTypeDeclaration(definedTypeReference.ReferenceTypeId);
             return {
-                identifier: this.generateDeclaredTypeName(context, fileContext, referredDeclaration),
+                identifier: this.generateTypeNameForDeclaredType(context, fileContext, referredDeclaration),
                 arguments: this.generateTypeNodes(context, fileContext, definedTypeReference.TypeParameters)
             };
         }
-        return null;
+        if (typeReference.Kind == im.TypeReferenceKind.External) {
+            var externalTypeReference = typeReference;
+            return {
+                identifier: this.generateTypeNameForExternalType(context, fileContext, externalTypeReference),
+                arguments: this.generateTypeNodes(context, fileContext, externalTypeReference.TypeParameters)
+            };
+        }
+        throw new Error('Cannot generate type reference parts for ' + typeReference.Kind);
     }
     generateTypeNodes(context, fileContext, typeReferences) {
         var result = [];
@@ -163,10 +179,74 @@ class TsTreeGenerator {
         }
         return result;
     }
-    generateDeclaredTypeName(context, fileContext, type) {
-        if (fileContext.currentType.FileLocation == type.FileLocation) {
-            return ts.createIdentifier(type.Name);
+    generateTypeNameForDeclaredType(context, fileContext, type) {
+        var importedAlias = null;
+        if (fileContext.currentType.FileLocation != type.FileLocation) {
+            importedAlias = this.getOrCreateGeneratedFileReference(fileContext, type.FileLocation);
         }
+        return this.generateTypeName(context, fileContext, importedAlias, type.Namespace, type.Name);
+    }
+    generateTypeNameForExternalType(context, fileContext, type) {
+        var importedAlias = null;
+        if (type.Module != null && type.Module != '') {
+            importedAlias = this.getOrCreateModuleReference(fileContext, type.Module);
+        }
+        return this.generateTypeName(context, fileContext, importedAlias, type.Namespace, type.Name);
+    }
+    generateTypeName(context, fileContext, importedAlias, typeNamespace, typeName) {
+        var typePathParts = [];
+        if (importedAlias != null) {
+            typePathParts.push(importedAlias);
+        }
+        if (typePathParts.length == 0) {
+            if (fileContext.currentType.Namespace != typeNamespace && typeNamespace != null) {
+                var currentNsParts = fileContext.currentType.Namespace != null ? fileContext.currentType.Namespace.split(context.settings.namespaceDelimiter) : [];
+                var typeNsParts = typeNamespace.split(context.settings.namespaceDelimiter);
+                var match = true;
+                for (var p = 0; p < typeNsParts.length; p++) {
+                    if (currentNsParts.length <= p || currentNsParts[p] != typeNsParts[p]) {
+                        match = false;
+                    }
+                    if (!match) {
+                        typePathParts.push(typeNsParts[p]);
+                    }
+                }
+            }
+        }
+        else {
+            if (typeNamespace != null) {
+                typePathParts = typePathParts.concat(typeNamespace.split(context.settings.namespaceDelimiter));
+            }
+        }
+        typePathParts.push(typeName);
+        var result = ts.createIdentifier(typePathParts[0]);
+        if (typePathParts.length > 1) {
+            for (var p = 1; p < typePathParts.length; p++) {
+                result = ts.createQualifiedName(result, ts.createIdentifier(typePathParts[p]));
+            }
+        }
+        return result;
+    }
+    getOrCreateGeneratedFileReference(fileContext, fileLocation) {
+        if (fileContext.fileImportAliases.has(fileLocation)) {
+            return fileContext.fileImportAliases.get(fileLocation);
+        }
+        var relativeLocation = path.join('.', path.relative(path.dirname(fileContext.fileModel.FileName), path.dirname(fileLocation)), path.basename(fileLocation));
+        var alias = path.basename(fileLocation).split('.')[0];
+        fileContext.fileImportAliases.set(fileLocation, alias);
+        var declaration = ts.createImportDeclaration([], [], ts.createImportClause(null, ts.createNamespaceImport(ts.createIdentifier(alias))), ts.createLiteral(relativeLocation));
+        fileContext.generatedFileImports.set(alias, declaration);
+        return alias;
+    }
+    getOrCreateModuleReference(fileContext, moduleName) {
+        if (fileContext.fileImportAliases.has(moduleName)) {
+            return fileContext.fileImportAliases.get(moduleName);
+        }
+        var alias = moduleName;
+        fileContext.fileImportAliases.set(moduleName, alias);
+        var declaration = ts.createImportDeclaration([], [], ts.createImportClause(null, ts.createNamespaceImport(ts.createIdentifier(alias))), ts.createLiteral(moduleName));
+        fileContext.generatedFileImports.set(alias, declaration);
+        return alias;
     }
 }
 exports.TsTreeGenerator = TsTreeGenerator;
