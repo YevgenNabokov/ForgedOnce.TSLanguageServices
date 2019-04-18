@@ -5,6 +5,10 @@ class BaseP {
 }
 exports.BaseP = BaseP;
 class BaseC {
+    Do() {
+        var a = new BaseP();
+        return a.A;
+    }
 }
 exports.BaseC = BaseC;
 class TestC extends otf.OC {
@@ -35,6 +39,9 @@ var TestRootNs;
         })(TestSubTwoNs = TestSubOneNs.TestSubTwoNs || (TestSubOneNs.TestSubTwoNs = {}));
     })(TestSubOneNs || (TestSubOneNs = {}));
     class SomeClassTwo {
+        Do() {
+            return TestSubOneNs.TestSubTwoNs.SomeClassOne.A;
+        }
     }
 })(TestRootNs || (TestRootNs = {}));
 //# sourceMappingURL=TestFile.js.map

@@ -6,7 +6,11 @@ export class BaseP {
 }
 
 export class BaseC<T> {
+    public Do() {
+        var a = new BaseP();
 
+        return a.A;
+    }
 }
 
 export class TestC<A> extends otf.OC<A> {
@@ -33,7 +37,7 @@ namespace TestRootNs {
     namespace TestSubOneNs {
         export namespace TestSubTwoNs {
             export class SomeClassOne {
-                public A: SomeClassTwo;
+                public static A: SomeClassTwo;
             }
         }
 
@@ -41,5 +45,9 @@ namespace TestRootNs {
 
     class SomeClassTwo {
         public A: TestSubOneNs.TestSubTwoNs.SomeClassOne;
+
+        public Do() {
+            return TestSubOneNs.TestSubTwoNs.SomeClassOne.A;
+        }
     }
 }
