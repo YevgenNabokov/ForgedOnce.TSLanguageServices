@@ -1,6 +1,7 @@
 ﻿using Game08.Sdk.CSToTS.Core;
 using Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree;
 using Game08.Sdk.CSToTS.Translator.IntermediateModelBuilder;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -141,6 +142,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             ModelBuilder subject = new ModelBuilder();
 
             var result = subject.BuildModel(provider);
+
+            var resultString = JsonConvert.SerializeObject(result);
 
             var classModel = result.Files[0].RootNode.Items[0] as ClassDefinition;
         }

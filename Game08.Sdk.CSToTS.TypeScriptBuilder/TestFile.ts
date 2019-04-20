@@ -2,6 +2,8 @@
 
 
 export class BaseP {
+    public AAA: number;
+
     public A: { [key: string]: BaseP }
 }
 

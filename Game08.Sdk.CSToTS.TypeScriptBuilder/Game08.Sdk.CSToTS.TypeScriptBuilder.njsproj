@@ -12,7 +12,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>11926c92-3a3e-43de-8b4d-1ea9bc09c528</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>app.ts</StartupFile>
+    <StartupFile>generatorTest.ts</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -36,12 +36,19 @@
     <TypeScriptCompile Include="app.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="TestClassModel.json">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="TestClassModel2.json" />
     <Content Include="tsconfig.json" />
     <TypeScriptCompile Include="DefinitionTestFile.d.ts" />
     <TypeScriptCompile Include="generationLauncher.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="IntermadiateModel.d.ts" />
+    <TypeScriptCompile Include="generatorTest.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="IntermadiateModel.ts" />
     <TypeScriptCompile Include="OtherTestFile.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
