@@ -8,14 +8,38 @@ class GeneratorSettings {
         this.namespaceDelimiter = '.';
     }
 }
+class NameSpaceContainedStatements {
+    constructor(segmentName = null) {
+        this.statements = [];
+        this.subNamespaces = {};
+        this.namespaceSegmentName = segmentName;
+    }
+}
 class FileGenerationContext {
     constructor(fileModel) {
         this.fileImportAliases = new Map();
         this.generatedFileImports = new Map();
+        this.statements = new NameSpaceContainedStatements();
         this.name = fileModel.FileName;
         this.isDefinition = fileModel.IsDefinitionFile;
         this.fileModel = fileModel;
         this.tsSourceFile = ts.createSourceFile(fileModel.FileName, '', ts.ScriptTarget.ES2016);
+    }
+    AddStatement(statement, ns = null) {
+        if (ns != null && ns != '') {
+            var nsParts = ns.split('.');
+            var currentContainer = this.statements;
+            for (var i = 0; i < nsParts.length; i++) {
+                if (!currentContainer.subNamespaces.hasOwnProperty(nsParts[i])) {
+                    currentContainer.subNamespaces[nsParts[i]] = new NameSpaceContainedStatements(nsParts[i]);
+                }
+                currentContainer = currentContainer.subNamespaces[nsParts[i]];
+            }
+            currentContainer.statements.push(statement);
+        }
+        else {
+            this.statements.statements.push(statement);
+        }
     }
 }
 class GeneratorContext {
@@ -68,19 +92,51 @@ class TsTreeGenerator {
     generateFile(context, file) {
         context.currentFileContext = new FileGenerationContext(file);
         this.generateRootStatements(context);
+        context.currentFileContext.tsSourceFile.statements = ts.createNodeArray(this.generateNamespaceStatements(context.currentFileContext.statements));
         return context.currentFileContext;
     }
+    generateNamespaceStatements(nsStatements) {
+        var resultStatements = [];
+        if (nsStatements.subNamespaces != null) {
+            for (var key in nsStatements.subNamespaces) {
+                resultStatements = this.generateNamespaceStatements(nsStatements.subNamespaces[key]).concat(resultStatements);
+            }
+            resultStatements = resultStatements.concat(nsStatements.statements);
+        }
+        if (nsStatements.namespaceSegmentName != null) {
+            return [ts.createModuleDeclaration(undefined, this.anyChildContainsModifier(nsStatements, ts.SyntaxKind.ExportKeyword) ?
+                    [ts.createModifier(ts.SyntaxKind.ExportKeyword)] :
+                    [], ts.createIdentifier(nsStatements.namespaceSegmentName), ts.createModuleBlock(resultStatements), ts.NodeFlags.Namespace)];
+        }
+        else {
+            return resultStatements;
+        }
+    }
+    anyChildContainsModifier(nsStatements, modifier) {
+        for (var i = 0; i < nsStatements.statements.length; i++) {
+            for (var m = 0; m < nsStatements.statements[i].modifiers.length; m++) {
+                if (nsStatements.statements[i].modifiers[m].kind == modifier) {
+                    return true;
+                }
+            }
+        }
+        for (var key in nsStatements.subNamespaces) {
+            if (this.anyChildContainsModifier(nsStatements.subNamespaces[key], modifier)) {
+                return true;
+            }
+        }
+    }
     generateRootStatements(context) {
-        var statements = [];
         if (context.currentFileContext.fileModel.RootNode.Items != null) {
             for (var i = 0; i < context.currentFileContext.fileModel.RootNode.Items.length; i++) {
                 var item = context.currentFileContext.fileModel.RootNode.Items[i];
                 if (item.NodeType == im.NodeType.ClassDefinition) {
-                    statements.push(this.generateClass(context, item));
+                    var classDefinition = item;
+                    var declaredType = context.getTypeDeclaration(classDefinition.TypeKey);
+                    context.currentFileContext.AddStatement(this.generateClass(context, classDefinition), declaredType.Namespace);
                 }
             }
         }
-        context.currentFileContext.tsSourceFile.statements = ts.createNodeArray(statements);
     }
     generateClass(context, classModel) {
         var declaredType = context.getTypeDeclaration(classModel.TypeKey);
@@ -110,6 +166,7 @@ class TsTreeGenerator {
             }
         }
         var result = ts.createClassDeclaration([], this.generateModifiers(classModel.Modifiers), classModel.Name, this.generateDeclaredTypeParameters(context, declaredType.Parameters), this.generateClassHeritageClauses(context, classModel), members);
+        context.currentFileContext.currentType = null;
         return result;
     }
     generateParameterDeclarations(context, parameters) {
