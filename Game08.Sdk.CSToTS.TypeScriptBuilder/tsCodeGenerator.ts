@@ -34,16 +34,34 @@ class FileGenerationContext {
 class GeneratorContext {
     public codeGenerationTask: im.CodeGenerationTask;
 
-    public tsFiles: { [name: string]: FileGenerationContext };
+    public tsFileContexts: { [name: string]: FileGenerationContext };
 
     public tsDefinitionFiles: { [name: string]: FileGenerationContext };
 
     public settings: GeneratorSettings = new GeneratorSettings();
 
+    private currentFileName: string;
+
     constructor(codeGenerationTask: im.CodeGenerationTask) {
         this.codeGenerationTask = codeGenerationTask;
-        this.tsFiles = {};
+        this.tsFileContexts = {};
         this.tsDefinitionFiles = {};
+    }
+
+    public get currentFileContext() {
+        if (this.currentFileName != null) {
+            return this.tsFileContexts[this.currentFileName];
+        }
+
+        return null;
+    }
+
+    public set currentFileContext(context: FileGenerationContext) {
+        if (!this.tsFileContexts.hasOwnProperty(context.name)) {
+            this.tsFileContexts[context.name] = context;
+        }
+
+        this.currentFileName = context.name;
     }
 
     public getTypeDeclaration(typeKey: string) {
@@ -81,33 +99,33 @@ export class TsTreeGenerator {
     }
 
     private generateFile(context: GeneratorContext, file: im.CodeFile) {
-        var fileContext = new FileGenerationContext(file);
+        context.currentFileContext = new FileGenerationContext(file);
 
-        this.generateRootStatements(context, fileContext);
+        this.generateRootStatements(context);
 
-        return fileContext;
+        return context.currentFileContext;
     }
 
-    private generateRootStatements(context: GeneratorContext, fileContext: FileGenerationContext) {
+    private generateRootStatements(context: GeneratorContext) {
         var statements: ts.Statement[] = [];
 
-        if (fileContext.fileModel.RootNode.Items != null) {
-            for (var i = 0; i < fileContext.fileModel.RootNode.Items.length; i++) {
-                var item = fileContext.fileModel.RootNode.Items[i];
+        if (context.currentFileContext.fileModel.RootNode.Items != null) {
+            for (var i = 0; i < context.currentFileContext.fileModel.RootNode.Items.length; i++) {
+                var item = context.currentFileContext.fileModel.RootNode.Items[i];
 
                 if (item.NodeType == im.NodeType.ClassDefinition) {
-                    statements.push(this.generateClass(context, fileContext, item as im.ClassDefinition));
+                    statements.push(this.generateClass(context, item as im.ClassDefinition));
                 }
             }
         }
 
-        fileContext.tsSourceFile.statements = ts.createNodeArray(statements);
+        context.currentFileContext.tsSourceFile.statements = ts.createNodeArray(statements);
     }
 
-    private generateClass(context: GeneratorContext, fileContext: FileGenerationContext, classModel: im.ClassDefinition): ts.ClassDeclaration {
+    private generateClass(context: GeneratorContext, classModel: im.ClassDefinition): ts.ClassDeclaration {
         var declaredType = context.getTypeDeclaration(classModel.TypeKey);
 
-        fileContext.currentType = declaredType;
+        context.currentFileContext.currentType = declaredType;
 
         var members: ts.ClassElement[] = [];        
 
@@ -115,8 +133,8 @@ export class TsTreeGenerator {
             members.push(ts.createConstructor(
                 [],
                 this.generateModifiers(classModel.Constructor.Modifiers),
-                this.generateParameterDeclarations(context, fileContext, classModel.Constructor.Parameters),
-                this.generateStatementBlock(context, fileContext, classModel.Constructor.Body, true)
+                this.generateParameterDeclarations(context, classModel.Constructor.Parameters),
+                this.generateStatementBlock(context, classModel.Constructor.Body, true)
             ));
         }
 
@@ -127,8 +145,8 @@ export class TsTreeGenerator {
                     this.generateModifiers(classModel.Fields[f].Modifiers),
                     classModel.Fields[f].Name,
                     undefined,
-                    this.generateTypeNode(context, fileContext, context.getTypeReference(classModel.Fields[f].TypeReference.ReferenceKey)),
-                    this.generateExpression(context, fileContext, classModel.Fields[f].Initializer)
+                    this.generateTypeNode(context, context.getTypeReference(classModel.Fields[f].TypeReference.ReferenceKey)),
+                    this.generateExpression(context, classModel.Fields[f].Initializer)
                 ));
             }
         }
@@ -140,9 +158,9 @@ export class TsTreeGenerator {
                         [],
                         this.generateModifiers(classModel.Properties[p].Getter.Modifiers),
                         classModel.Properties[p].Getter.Name,
-                        this.generateParameterDeclarations(context, fileContext, classModel.Properties[p].Getter.Parameters),
-                        this.generateTypeNode(context, fileContext, context.getTypeReference(classModel.Properties[p].TypeReference.ReferenceKey)),
-                        this.generateStatementBlock(context, fileContext, classModel.Properties[p].Getter.Body, true)
+                        this.generateParameterDeclarations(context, classModel.Properties[p].Getter.Parameters),
+                        this.generateTypeNode(context, context.getTypeReference(classModel.Properties[p].TypeReference.ReferenceKey)),
+                        this.generateStatementBlock(context, classModel.Properties[p].Getter.Body, true)
                     ));
                 }
 
@@ -151,8 +169,8 @@ export class TsTreeGenerator {
                         [],
                         this.generateModifiers(classModel.Properties[p].Setter.Modifiers),
                         classModel.Properties[p].Setter.Name,
-                        this.generateParameterDeclarations(context, fileContext, classModel.Properties[p].Setter.Parameters),
-                        this.generateStatementBlock(context, fileContext, classModel.Properties[p].Setter.Body, true)
+                        this.generateParameterDeclarations(context, classModel.Properties[p].Setter.Parameters),
+                        this.generateStatementBlock(context, classModel.Properties[p].Setter.Body, true)
                     ));
                 }
             }
@@ -167,9 +185,9 @@ export class TsTreeGenerator {
                     classModel.Methods[m].Name,
                     undefined,
                     undefined,
-                    this.generateParameterDeclarations(context, fileContext, classModel.Methods[m].Parameters),
-                    this.generateTypeNode(context, fileContext, context.getTypeReference(classModel.Methods[m].ReturnType.ReferenceKey)),
-                    this.generateStatementBlock(context, fileContext, classModel.Methods[m].Body, true)
+                    this.generateParameterDeclarations(context, classModel.Methods[m].Parameters),
+                    this.generateTypeNode(context, context.getTypeReference(classModel.Methods[m].ReturnType.ReferenceKey)),
+                    this.generateStatementBlock(context, classModel.Methods[m].Body, true)
                 ));
             }
         }
@@ -179,14 +197,14 @@ export class TsTreeGenerator {
             this.generateModifiers(classModel.Modifiers),
             classModel.Name,
             this.generateDeclaredTypeParameters(context, declaredType.Parameters),
-            this.generateClassHeritageClauses(context, fileContext, classModel),
+            this.generateClassHeritageClauses(context, classModel),
             members
         );        
 
         return result;
     }
 
-    private generateParameterDeclarations(context: GeneratorContext, fileContext: FileGenerationContext, parameters: im.MethodParameter[]): ts.ParameterDeclaration[] {
+    private generateParameterDeclarations(context: GeneratorContext, parameters: im.MethodParameter[]): ts.ParameterDeclaration[] {
         var result: ts.ParameterDeclaration[] = [];
         if (parameters != null) {
             for (var p = 0; p < parameters.length; p++) {
@@ -196,7 +214,7 @@ export class TsTreeGenerator {
                     undefined,
                     parameters[p].Name,
                     undefined,
-                    this.generateTypeNode(context, fileContext, context.getTypeReference(parameters[p].TypeReference.ReferenceKey))
+                    this.generateTypeNode(context, context.getTypeReference(parameters[p].TypeReference.ReferenceKey))
                 ));
             }
 
@@ -234,14 +252,14 @@ export class TsTreeGenerator {
         return result;
     }
 
-    private generateClassHeritageClauses(context: GeneratorContext, fileContext: FileGenerationContext, classModel: im.ClassDefinition): ts.HeritageClause[] {
+    private generateClassHeritageClauses(context: GeneratorContext, classModel: im.ClassDefinition): ts.HeritageClause[] {
         var result: ts.HeritageClause[] = [];
 
         if (classModel.Implements != null && classModel.Implements.length > 0) {
             var implemented: ts.ExpressionWithTypeArguments[] = [];
             for (var i = 0; i < classModel.Implements.length; i++) {
                 var implementedType = context.getTypeReference(classModel.Implements[i].ReferenceKey);
-                implemented.push(this.generateTypeExpression(context, fileContext, implementedType));
+                implemented.push(this.generateTypeExpression(context, implementedType));
             }
 
             result.push(ts.createHeritageClause(ts.SyntaxKind.ImplementsKeyword, implemented));
@@ -249,18 +267,18 @@ export class TsTreeGenerator {
 
         if (classModel.BaseType != null) {
             var base = context.getTypeReference(classModel.BaseType.ReferenceKey);
-            result.push(ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [this.generateTypeExpression(context, fileContext, base)]));
+            result.push(ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [this.generateTypeExpression(context, base)]));
         }
 
         return result;
     }
 
-    private generateTypeExpression(context: GeneratorContext, fileContext: FileGenerationContext, typeReference: im.TypeReference): ts.ExpressionWithTypeArguments {
-        var parts = this.generateTypeReferenceParts(context, fileContext, typeReference);
+    private generateTypeExpression(context: GeneratorContext, typeReference: im.TypeReference): ts.ExpressionWithTypeArguments {
+        var parts = this.generateTypeReferenceParts(context, typeReference);
         return ts.createExpressionWithTypeArguments(parts.arguments, this.entityNameToExpression(parts.identifier));
     }
 
-    private generateTypeNode(context: GeneratorContext, fileContext: FileGenerationContext, typeReference: im.TypeReference): ts.TypeNode {
+    private generateTypeNode(context: GeneratorContext, typeReference: im.TypeReference): ts.TypeNode {
         if (typeReference.Kind == im.TypeReferenceKind.Inline) {
             var inlineTypeReference = typeReference as im.TypeReferenceInline;
             var elements: ts.TypeElement[] = [];
@@ -268,13 +286,13 @@ export class TsTreeGenerator {
             if (inlineTypeReference.Indexer != null) {
                 var parameter = ts.createParameter([], [], undefined, inlineTypeReference.Indexer.KeyName);
                 var valueTypeReference = context.getTypeReference(inlineTypeReference.Indexer.ValueType.Id);
-                elements.push(ts.createIndexSignature([], [], [parameter], this.generateTypeNode(context, fileContext, valueTypeReference)));
+                elements.push(ts.createIndexSignature([], [], [parameter], this.generateTypeNode(context, valueTypeReference)));
             }
 
             return ts.createTypeLiteralNode(elements);
         }
 
-        var parts = this.generateTypeReferenceParts(context, fileContext, typeReference);
+        var parts = this.generateTypeReferenceParts(context, typeReference);
         return ts.createTypeReferenceNode(parts.identifier, parts.arguments);
     }
 
@@ -290,13 +308,13 @@ export class TsTreeGenerator {
         throw new Error('Cannot convert entity name to expression ' + name);
     }
 
-    private generateTypeReferenceParts(context: GeneratorContext, fileContext: FileGenerationContext, typeReference: im.TypeReference):
+    private generateTypeReferenceParts(context: GeneratorContext, typeReference: im.TypeReference):
         { identifier: ts.EntityName, arguments: ReadonlyArray<ts.TypeNode> } {
         if (typeReference.Kind == im.TypeReferenceKind.Builtin) {
             var builtinTypeReference = typeReference as im.TypeReferenceBuiltin;
             return {
                 identifier: ts.createIdentifier(builtinTypeReference.Name),
-                arguments: this.generateTypeNodes(context, fileContext, builtinTypeReference.TypeParameters)
+                arguments: this.generateTypeNodes(context, builtinTypeReference.TypeParameters)
             }
         }
 
@@ -313,55 +331,55 @@ export class TsTreeGenerator {
             var definedTypeReference = typeReference as im.TypeReferenceDefined;
             var referredDeclaration = context.getTypeDeclaration(definedTypeReference.ReferenceTypeId);
             return {
-                identifier: this.generateTypeNameForDeclaredType(context, fileContext, referredDeclaration),
-                arguments: this.generateTypeNodes(context, fileContext, definedTypeReference.TypeParameters)
+                identifier: this.generateTypeNameForDeclaredType(context, referredDeclaration),
+                arguments: this.generateTypeNodes(context, definedTypeReference.TypeParameters)
             }
         }
 
         if (typeReference.Kind == im.TypeReferenceKind.External) {
             var externalTypeReference = typeReference as im.TypeReferenceExternal;
             return {
-                identifier: this.generateTypeNameForExternalType(context, fileContext, externalTypeReference),
-                arguments: this.generateTypeNodes(context, fileContext, externalTypeReference.TypeParameters)
+                identifier: this.generateTypeNameForExternalType(context, externalTypeReference),
+                arguments: this.generateTypeNodes(context, externalTypeReference.TypeParameters)
             }
         }
 
         throw new Error('Cannot generate type reference parts for ' + typeReference.Kind);
     }
 
-    private generateTypeNodes(context: GeneratorContext, fileContext: FileGenerationContext, typeReferences: im.TypeReference[]): ts.TypeNode[] {
+    private generateTypeNodes(context: GeneratorContext, typeReferences: im.TypeReference[]): ts.TypeNode[] {
         var result: ts.TypeNode[] = [];
 
         if (typeReferences != null) {
             for (var r = 0; r < typeReferences.length; r++) {
-                result.push(this.generateTypeNode(context, fileContext, typeReferences[r]));
+                result.push(this.generateTypeNode(context, typeReferences[r]));
             }
         }
 
         return result;
     }
 
-    private generateTypeNameForDeclaredType(context: GeneratorContext, fileContext: FileGenerationContext, type: im.TypeDefinition): ts.EntityName {
+    private generateTypeNameForDeclaredType(context: GeneratorContext, type: im.TypeDefinition): ts.EntityName {
         var importedAlias: string = null;
 
-        if (fileContext.currentType.FileLocation != type.FileLocation) {
-            importedAlias = this.getOrCreateGeneratedFileReference(fileContext, type.FileLocation);
+        if (context.currentFileContext.currentType.FileLocation != type.FileLocation) {
+            importedAlias = this.getOrCreateGeneratedFileReference(context, type.FileLocation);
         }
 
-        return this.generateTypeName(context, fileContext, importedAlias, type.Namespace, type.Name);
+        return this.generateTypeName(context, importedAlias, type.Namespace, type.Name);
     }
 
-    private generateTypeNameForExternalType(context: GeneratorContext, fileContext: FileGenerationContext, type: im.TypeReferenceExternal): ts.EntityName {
+    private generateTypeNameForExternalType(context: GeneratorContext, type: im.TypeReferenceExternal): ts.EntityName {
         var importedAlias: string = null;
 
         if (type.Module != null && type.Module != '') {
-            importedAlias = this.getOrCreateModuleReference(fileContext, type.Module);
+            importedAlias = this.getOrCreateModuleReference(context, type.Module);
         }
 
-        return this.generateTypeName(context, fileContext, importedAlias, type.Namespace, type.Name);
+        return this.generateTypeName(context, importedAlias, type.Namespace, type.Name);
     }
 
-    private generateTypeName(context: GeneratorContext, fileContext: FileGenerationContext, importedAlias: string, typeNamespace: string, typeName: string): ts.EntityName {
+    private generateTypeName(context: GeneratorContext, importedAlias: string, typeNamespace: string, typeName: string): ts.EntityName {
         var typePathParts: string[] = [];
 
         if (importedAlias != null) {
@@ -369,8 +387,8 @@ export class TsTreeGenerator {
         }
 
         if (typePathParts.length == 0) {
-            if (fileContext.currentType.Namespace != typeNamespace && typeNamespace != null) {
-                var currentNsParts = fileContext.currentType.Namespace != null ? fileContext.currentType.Namespace.split(context.settings.namespaceDelimiter) : [];
+            if (context.currentFileContext.currentType.Namespace != typeNamespace && typeNamespace != null) {
+                var currentNsParts = context.currentFileContext.currentType.Namespace != null ? context.currentFileContext.currentType.Namespace.split(context.settings.namespaceDelimiter) : [];
                 var typeNsParts = typeNamespace.split(context.settings.namespaceDelimiter);
 
                 var match = true;
@@ -404,103 +422,103 @@ export class TsTreeGenerator {
         return result;
     }
 
-    private getOrCreateGeneratedFileReference(fileContext: FileGenerationContext, fileLocation: string): string {
-        if (fileContext.fileImportAliases.has(fileLocation)) {
-            return fileContext.fileImportAliases.get(fileLocation);
+    private getOrCreateGeneratedFileReference(context: GeneratorContext, fileLocation: string): string {
+        if (context.currentFileContext.fileImportAliases.has(fileLocation)) {
+            return context.currentFileContext.fileImportAliases.get(fileLocation);
         }
 
-        var relativeLocation = path.join('.', path.relative(path.dirname(fileContext.fileModel.FileName), path.dirname(fileLocation)), path.basename(fileLocation));
+        var relativeLocation = path.join('.', path.relative(path.dirname(context.currentFileContext.fileModel.FileName), path.dirname(fileLocation)), path.basename(fileLocation));
 
         var alias = path.basename(fileLocation).split('.')[0];
 
-        fileContext.fileImportAliases.set(fileLocation, alias);
+        context.currentFileContext.fileImportAliases.set(fileLocation, alias);
 
         var declaration = ts.createImportDeclaration([], [], ts.createImportClause(undefined, ts.createNamespaceImport(ts.createIdentifier(alias))), ts.createLiteral(relativeLocation));
 
-        fileContext.generatedFileImports.set(alias, declaration);
+        context.currentFileContext.generatedFileImports.set(alias, declaration);
 
         return alias;
     }
 
-    private getOrCreateModuleReference(fileContext: FileGenerationContext, moduleName: string): string {
-        if (fileContext.fileImportAliases.has(moduleName)) {
-            return fileContext.fileImportAliases.get(moduleName);
+    private getOrCreateModuleReference(context: GeneratorContext, moduleName: string): string {
+        if (context.currentFileContext.fileImportAliases.has(moduleName)) {
+            return context.currentFileContext.fileImportAliases.get(moduleName);
         }
 
         var alias = moduleName;
 
-        fileContext.fileImportAliases.set(moduleName, alias);
+        context.currentFileContext.fileImportAliases.set(moduleName, alias);
 
         var declaration = ts.createImportDeclaration([], [], ts.createImportClause(undefined, ts.createNamespaceImport(ts.createIdentifier(alias))), ts.createLiteral(moduleName));
 
-        fileContext.generatedFileImports.set(alias, declaration);
+        context.currentFileContext.generatedFileImports.set(alias, declaration);
 
         return alias;
     }
 
-    private generateStatement(context: GeneratorContext, fileContext: FileGenerationContext, statement: im.StatementNode): ts.Statement {
+    private generateStatement(context: GeneratorContext, statement: im.StatementNode): ts.Statement {
         if (statement.NodeType == im.NodeType.StatementBlock) {
-            return this.generateStatementBlock(context, fileContext, statement as im.StatementBlock, false);
+            return this.generateStatementBlock(context, statement as im.StatementBlock, false);
         }
 
         if (statement.NodeType == im.NodeType.StatementReturn) {
-            return this.generateStatementReturn(context, fileContext, statement as im.StatementReturn);
+            return this.generateStatementReturn(context, statement as im.StatementReturn);
         }
 
         if (statement.NodeType == im.NodeType.StatementExpression) {
-            return ts.createExpressionStatement(this.generateExpression(context, fileContext, (statement as im.StatementExpression).Expression));
+            return ts.createExpressionStatement(this.generateExpression(context, (statement as im.StatementExpression).Expression));
         }
 
         if (statement.NodeType == im.NodeType.StatementLocalDeclaration) {
-            return this.generateStatementLocalDeclaration(context, fileContext, statement as im.StatementLocalDeclaration);
+            return this.generateStatementLocalDeclaration(context, statement as im.StatementLocalDeclaration);
         }
 
         throw new Error('Cannot generate code for statement ' + statement.NodeType);
     }
 
-    private generateStatementBlock(context: GeneratorContext, fileContext: FileGenerationContext, block: im.StatementBlock, multiline: boolean): ts.Block {
+    private generateStatementBlock(context: GeneratorContext, block: im.StatementBlock, multiline: boolean): ts.Block {
         var statements: ts.Statement[] = [];
 
         if (block.Statements != null) {
             for (var s = 0; s < block.Statements.length; s++) {
-                statements.push(this.generateStatement(context, fileContext, block.Statements[s]));
+                statements.push(this.generateStatement(context, block.Statements[s]));
             }
         }
 
         return ts.createBlock(statements, multiline);
     }
 
-    private generateStatementLocalDeclaration(context: GeneratorContext, fileContext: FileGenerationContext, declaration: im.StatementLocalDeclaration): ts.VariableStatement {
+    private generateStatementLocalDeclaration(context: GeneratorContext, declaration: im.StatementLocalDeclaration): ts.VariableStatement {
         return ts.createVariableStatement(
             [],
             [
                 ts.createVariableDeclaration(
                     declaration.Name,
-                    this.generateTypeNode(context, fileContext, context.getTypeReference(declaration.TypeReference.ReferenceKey)),
-                    this.generateExpression(context, fileContext, declaration.Initializer))
+                    this.generateTypeNode(context, context.getTypeReference(declaration.TypeReference.ReferenceKey)),
+                    this.generateExpression(context, declaration.Initializer))
             ]);
     }
 
-    private generateStatementReturn(context: GeneratorContext, fileContext: FileGenerationContext, ret: im.StatementReturn): ts.ReturnStatement {        
-        return ts.createReturn(this.generateExpression(context, fileContext, ret.Expression));
+    private generateStatementReturn(context: GeneratorContext, ret: im.StatementReturn): ts.ReturnStatement {        
+        return ts.createReturn(this.generateExpression(context, ret.Expression));
     }
 
-    private generateExpression(context: GeneratorContext, fileContext: FileGenerationContext, expression: im.ExpressionNode): ts.Expression {
+    private generateExpression(context: GeneratorContext, expression: im.ExpressionNode): ts.Expression {
         if (expression == null) {
             return undefined;
         }
 
         if (expression.NodeType == im.NodeType.ExpressionAssignment) {
             var expressionAssignment = expression as im.ExpressionAssignment;
-            return ts.createAssignment(this.generateExpression(context, fileContext, expressionAssignment.Left), this.generateExpression(context, fileContext, expressionAssignment.Right));
+            return ts.createAssignment(this.generateExpression(context, expressionAssignment.Left), this.generateExpression(context, expressionAssignment.Right));
         }
 
         if (expression.NodeType == im.NodeType.ExpressionBinary) {
             var expressionBinary = expression as im.ExpressionBinary;
             return ts.createBinary(
-                this.generateExpression(context, fileContext, expressionBinary.Left),
+                this.generateExpression(context, expressionBinary.Left),
                 this.generateOperatorToken(expressionBinary.Operator),
-                this.generateExpression(context, fileContext, expressionBinary.Right));
+                this.generateExpression(context, expressionBinary.Right));
         }
 
         if (expression.NodeType == im.NodeType.ExpressionIdentifierReference) {
@@ -513,11 +531,11 @@ export class TsTreeGenerator {
             var args: ts.Expression[] = [];
             if (expressionInvocation.Arguments != null) {
                 for (var a = 0; a < expressionInvocation.Arguments.length; a++) {
-                    args.push(this.generateExpression(context, fileContext, expressionInvocation.Arguments[a]));
+                    args.push(this.generateExpression(context, expressionInvocation.Arguments[a]));
                 }
             }
 
-            return ts.createCall(this.generateExpression(context, fileContext, expressionInvocation.Expression), [], args);
+            return ts.createCall(this.generateExpression(context, expressionInvocation.Expression), [], args);
         }
 
         if (expression.NodeType == im.NodeType.ExpressionLiteral) {
@@ -527,7 +545,7 @@ export class TsTreeGenerator {
 
         if (expression.NodeType == im.NodeType.ExpressionMemberAccess) {
             var expressionMemberAccess = expression as im.ExpressionMemberAccess;
-            return ts.createPropertyAccess(this.generateExpression(context, fileContext, expressionMemberAccess.Expression), expressionMemberAccess.Name);
+            return ts.createPropertyAccess(this.generateExpression(context, expressionMemberAccess.Expression), expressionMemberAccess.Name);
         }
 
         if (expression.NodeType == im.NodeType.ExpressionThis) {

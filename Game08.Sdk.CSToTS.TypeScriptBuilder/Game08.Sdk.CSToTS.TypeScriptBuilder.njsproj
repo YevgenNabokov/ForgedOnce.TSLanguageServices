@@ -5,6 +5,7 @@
     <Name>Game08.Sdk.CSToTS.TypeScriptBuilder</Name>
     <RootNamespace>Game08.Sdk.CSToTS.TypeScriptBuilder</RootNamespace>
     <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
+    <ScriptArguments>TestClassModel2.json Output/TranslatedFiles Output/ResultMetadata.json</ScriptArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -12,7 +13,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>11926c92-3a3e-43de-8b4d-1ea9bc09c528</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>generatorTest.ts</StartupFile>
+    <StartupFile>generationLauncher.ts</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -36,9 +37,6 @@
     <TypeScriptCompile Include="app.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Content Include="TestClassModel.json">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="TestClassModel2.json" />
     <Content Include="tsconfig.json" />
     <TypeScriptCompile Include="DefinitionTestFile.d.ts" />
@@ -53,6 +51,9 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="TestFile.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="generationManager.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="tsCodeGenerator.ts">
