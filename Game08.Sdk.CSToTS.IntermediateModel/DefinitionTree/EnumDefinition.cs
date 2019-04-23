@@ -12,6 +12,10 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
             this.Members = new List<EnumMember>();
         }
 
+        public string Name;
+
+        public string TypeKey;
+
         public List<Modifier> Modifiers;
 
         public List<EnumMember> Members;

@@ -74,6 +74,10 @@ export interface ConstructorDeclaration extends Node
 
 export interface EnumDefinition extends Node
 {
+    Name: string;
+
+    TypeKey: string;
+
     Modifiers: Modifier[];
 
     Members: EnumMember[];

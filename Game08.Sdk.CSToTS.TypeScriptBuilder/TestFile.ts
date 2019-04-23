@@ -53,3 +53,7 @@ namespace TestRootNs {
         }
     }
 }
+
+interface IA { }
+
+interface IB extends IA { }

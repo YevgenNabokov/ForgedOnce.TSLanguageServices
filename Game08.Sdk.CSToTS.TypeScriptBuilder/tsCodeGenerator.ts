@@ -192,13 +192,94 @@ export class TsTreeGenerator {
                     var declaredType = context.getTypeDeclaration(classDefinition.TypeKey);
                     context.currentFileContext.AddStatement(this.generateClass(context, classDefinition), declaredType.Namespace);
                 }
+
+                if (item.NodeType == im.NodeType.InterfaceDefinition) {
+                    var interfaceDefinition = item as im.InterfaceDefinition;
+                    var declaredType = context.getTypeDeclaration(interfaceDefinition.TypeKey);
+                    context.currentFileContext.AddStatement(this.generateInterface(context, interfaceDefinition), declaredType.Namespace);
+                }
+
+                if (item.NodeType == im.NodeType.EnumDefinition) {
+                    var enumDefinition = item as im.EnumDefinition;
+                    var declaredType = context.getTypeDeclaration(enumDefinition.TypeKey);
+                    context.currentFileContext.AddStatement(this.generateEnum(context, enumDefinition), declaredType.Namespace);
+                }
             }
         }
     }
 
+    private generateEnum(context: GeneratorContext, enumModel: im.EnumDefinition): ts.EnumDeclaration {
+        var declaredType = context.getTypeDeclaration(enumModel.TypeKey);
+        context.currentFileContext.currentType = declaredType;
+
+        var members: ts.EnumMember[] = [];
+
+        if (enumModel.Members != null) {
+            for (var m = 0; m < enumModel.Members.length; m++) {
+                members.push(ts.createEnumMember(
+                    enumModel.Members[m].Name,
+                    enumModel.Members[m].Value != null ? this.generateExpression(context, enumModel.Members[m].Value) : undefined
+                ));
+            }
+        }
+
+        var result = ts.createEnumDeclaration(
+            [],
+            this.generateModifiers(enumModel.Modifiers),
+            enumModel.Name,
+            members);
+
+        context.currentFileContext.currentType = null;
+
+        return result;
+    }
+
+    private generateInterface(context: GeneratorContext, interfaceModel: im.InterfaceDefinition): ts.InterfaceDeclaration {
+        var declaredType = context.getTypeDeclaration(interfaceModel.TypeKey);
+        context.currentFileContext.currentType = declaredType;
+
+        var members: ts.TypeElement[] = []; 
+
+        if (interfaceModel.Fields != null) {
+            for (var f = 0; f < interfaceModel.Fields.length; f++) {
+                members.push(ts.createPropertySignature(
+                    this.generateModifiers(interfaceModel.Fields[f].Modifiers),
+                    interfaceModel.Fields[f].Name,
+                    undefined,
+                    this.generateTypeNode(context, context.getTypeReference(interfaceModel.Fields[f].TypeReference.ReferenceKey)),
+                    this.generateExpression(context, interfaceModel.Fields[f].Initializer)
+                ));
+            }
+        }
+
+        if (interfaceModel.Methods != null) {
+            for (var m = 0; m < interfaceModel.Methods.length; m++) {
+                members.push(ts.createMethodSignature(
+                    undefined,
+                    this.generateParameterDeclarations(context, interfaceModel.Methods[m].Parameters),
+                    this.generateTypeNode(context, context.getTypeReference(interfaceModel.Methods[m].ReturnType.ReferenceKey)),
+                    interfaceModel.Methods[m].Name,
+                    undefined
+                ));
+            }
+        }
+
+        var result = ts.createInterfaceDeclaration(
+            [],
+            this.generateModifiers(interfaceModel.Modifiers),
+            interfaceModel.Name,
+            this.generateDeclaredTypeParameters(context, declaredType.Parameters),
+            this.generateInterfaceHeritageClauses(context, interfaceModel),
+            members
+        );
+
+        context.currentFileContext.currentType = null;
+
+        return result;
+    }
+
     private generateClass(context: GeneratorContext, classModel: im.ClassDefinition): ts.ClassDeclaration {
         var declaredType = context.getTypeDeclaration(classModel.TypeKey);
-        
         context.currentFileContext.currentType = declaredType;
 
         var members: ts.ClassElement[] = [];        
@@ -323,6 +404,22 @@ export class TsTreeGenerator {
             for (var p = 0; p < parameters.length; p++) {
                 result.push(ts.createTypeParameterDeclaration(parameters[p].Name));
             }
+        }
+
+        return result;
+    }
+
+    private generateInterfaceHeritageClauses(context: GeneratorContext, interfaceModel: im.InterfaceDefinition): ts.HeritageClause[] {
+        var result: ts.HeritageClause[] = [];
+
+        if (interfaceModel.Implements != null && interfaceModel.Implements.length > 0) {
+            var implemented: ts.ExpressionWithTypeArguments[] = [];
+            for (var i = 0; i < interfaceModel.Implements.length; i++) {
+                var implementedType = context.getTypeReference(interfaceModel.Implements[i].ReferenceKey);
+                implemented.push(this.generateTypeExpression(context, implementedType));
+            }
+
+            result.push(ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, implemented));
         }
 
         return result;
