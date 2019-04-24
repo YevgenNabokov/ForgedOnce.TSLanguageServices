@@ -11,6 +11,8 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
             this.NodeType = NodeType.ExpressionLiteral;
         }
 
+        public bool IsNumeric;
+
         public string Text;
     }
 }

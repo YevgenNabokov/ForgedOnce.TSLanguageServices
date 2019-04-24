@@ -27,7 +27,8 @@ export enum Modifier {
     Public,
     Private,
     Protected,
-    Abstract
+    Abstract,
+    Export
 }
 
 export enum TypeReferenceKind {
@@ -120,6 +121,8 @@ export interface ExpressionInvocation extends ExpressionNode
 
 export interface ExpressionLiteral extends ExpressionNode
 {
+    IsNumeric: boolean;
+
     Text: string;
 }
 

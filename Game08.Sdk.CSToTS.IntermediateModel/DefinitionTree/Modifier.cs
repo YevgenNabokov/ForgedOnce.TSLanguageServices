@@ -9,6 +9,7 @@ namespace Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree
         Public,
         Private,
         Protected,
-        Abstract
+        Abstract,
+        Export
     }
 }

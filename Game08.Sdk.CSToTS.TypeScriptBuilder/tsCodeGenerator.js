@@ -236,6 +236,9 @@ class TsTreeGenerator {
                     case im.Modifier.Public:
                         result.push(ts.createModifier(ts.SyntaxKind.PublicKeyword));
                         break;
+                    case im.Modifier.Export:
+                        result.push(ts.createModifier(ts.SyntaxKind.ExportKeyword));
+                        break;
                     default: throw new Error('Cannot parse modifier ' + modifiers[m]);
                 }
             }
@@ -476,7 +479,12 @@ class TsTreeGenerator {
         }
         if (expression.NodeType == im.NodeType.ExpressionLiteral) {
             var expressionLiteral = expression;
-            return ts.createLiteral(expressionLiteral.Text);
+            if (expressionLiteral.IsNumeric) {
+                return ts.createNumericLiteral(expressionLiteral.Text);
+            }
+            else {
+                return ts.createLiteral(expressionLiteral.Text);
+            }
         }
         if (expression.NodeType == im.NodeType.ExpressionMemberAccess) {
             var expressionMemberAccess = expression;

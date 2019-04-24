@@ -29,6 +29,7 @@ var Modifier;
     Modifier[Modifier["Private"] = 1] = "Private";
     Modifier[Modifier["Protected"] = 2] = "Protected";
     Modifier[Modifier["Abstract"] = 3] = "Abstract";
+    Modifier[Modifier["Export"] = 4] = "Export";
 })(Modifier = exports.Modifier || (exports.Modifier = {}));
 var TypeReferenceKind;
 (function (TypeReferenceKind) {

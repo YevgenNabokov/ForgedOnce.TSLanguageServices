@@ -19,9 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Intermedi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Core", "Game08.Sdk.CSToTS.Core\Game08.Sdk.CSToTS.Core.csproj", "{FBEFC18C-E337-412C-BC34-0D0F7C204AAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.CSToTS.TranslationLauncher", "Game08.Sdk.CSToTS.TranslationLauncher\Game08.Sdk.CSToTS.TranslationLauncher.csproj", "{3E087804-6668-489A-AD0B-0C8FCF72BAFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.TranslationLauncher", "Game08.Sdk.CSToTS.TranslationLauncher\Game08.Sdk.CSToTS.TranslationLauncher.csproj", "{3E087804-6668-489A-AD0B-0C8FCF72BAFF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.NodeTaskWrapper", "Game08.Sdk.CSToTS.NodeTaskWrapper\Game08.Sdk.CSToTS.NodeTaskWrapper.csproj", "{0C98FC96-B7BD-413E-B83E-03414C7F5355}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.CSToTS.Annotations", "Game08.Sdk.CSToTS.Annotations\Game08.Sdk.CSToTS.Annotations.csproj", "{71CF1254-1D57-4771-9D1A-065EDADED3E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{0C98FC96-B7BD-413E-B83E-03414C7F5355}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C98FC96-B7BD-413E-B83E-03414C7F5355}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C98FC96-B7BD-413E-B83E-03414C7F5355}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71CF1254-1D57-4771-9D1A-065EDADED3E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71CF1254-1D57-4771-9D1A-065EDADED3E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71CF1254-1D57-4771-9D1A-065EDADED3E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71CF1254-1D57-4771-9D1A-065EDADED3E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
