@@ -26,7 +26,7 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
 
         private TypeMappings externalTypesMetadata;
 
-        private ISolutionCodeAnalysisProvider codeAnalysisProvider = new WorkspaceCodeAnalysisProvider();
+        private ISolutionCodeAnalysisProvider codeAnalysisProvider;
 
         private static readonly Lazy<PortableExecutableReference> s_mscorlib = new Lazy<PortableExecutableReference>(
         () => AssemblyMetadata.CreateFromImage(TestResources.NetFX.v4_0_30319.mscorlib).GetReference(filePath: @"R:\v4_0_30319\mscorlib.dll"),
@@ -40,6 +40,7 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
         {
             this.generationType = generationType;
             this.externalTypesMetadata = externalTypesMetadata;
+            this.codeAnalysisProvider = new WorkspaceCodeAnalysisProvider(() => this.Workspace);
         }
 
         public AdhocWorkspace Workspace
@@ -95,7 +96,7 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
         {
             TranslationTaskMetadata result = new TranslationTaskMetadata();
 
-            result.SolutionCodeAnalysis = solutionCodeAnalysis ?? this.codeAnalysisProvider.GetCodeAnalysis(this.Workspace);
+            result.SolutionCodeAnalysis = solutionCodeAnalysis ?? this.codeAnalysisProvider.GetCodeAnalysis();
 
             foreach (var proj in this.Workspace.CurrentSolution.Projects)
             {
