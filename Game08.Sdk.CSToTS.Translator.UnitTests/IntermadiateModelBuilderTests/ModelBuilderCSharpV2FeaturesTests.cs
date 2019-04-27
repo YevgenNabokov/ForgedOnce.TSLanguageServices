@@ -1,4 +1,5 @@
 ﻿using Game08.Sdk.CSToTS.Core;
+using Game08.Sdk.CSToTS.Core.TypeMappingMetadata;
 using Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree;
 using Game08.Sdk.CSToTS.Translator.IntermediateModelBuilder;
 using Newtonsoft.Json;
@@ -196,30 +197,30 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             var classModel = result.Files[0].RootNode.Items[0] as ClassDefinition;
         }
 
-        private static ExplicitTypeMappings GetListMapping()
+        private static TypeMappings GetListMapping()
         {
-            ExplicitTypeMappings result = new ExplicitTypeMappings();
+            TypeMappings result = new TypeMappings();
 
-            var typeMap = new Dictionary<string, ExplicitTypeMapping>();
+            var typeMap = new Dictionary<string, TypeMapping>();
 
-            typeMap.Add("List", new ExplicitBuiltinTypeMapping()
+            typeMap.Add("List", new BuiltinTypeMapping()
             {
                 TypeName = "Array",
-                GenericParameterMappings = new List<ExplicitTypeMapping>()
+                GenericParameterMappings = new List<TypeMapping>()
                 {
-                    new ExplicitGenericParameterMapping()
+                    new GenericParameterMapping()
                     {
                         GenericArgumentIndex = 0
                     }
                 }
             });
 
-            typeMap.Add("Dictionary", new ExplicitInlineTypeMapping()
+            typeMap.Add("Dictionary", new InlineTypeMapping()
             {
-                Indexer = new ExplicitInlineTypeIndexerMapping()
+                Indexer = new InlineTypeIndexerMapping()
                 {
                     KeyName = "key",
-                    ValueType = new ExplicitGenericParameterMapping()
+                    ValueType = new GenericParameterMapping()
                     {
                         GenericArgumentIndex = 1
                     }

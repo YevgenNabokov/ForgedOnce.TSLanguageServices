@@ -1,6 +1,9 @@
 ﻿using Game08.Sdk.CSToTS.Core;
+using Game08.Sdk.CSToTS.Core.CodeAnalysisMetadata;
+using Game08.Sdk.CSToTS.Core.CodeTranslationMetadata;
 using Game08.Sdk.CSToTS.Core.Extensions.SymbolExtensions;
 using Game08.Sdk.CSToTS.Core.Interfaces;
+using Game08.Sdk.CSToTS.Core.TypeMappingMetadata;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -21,7 +24,9 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
 
         private GenerationType generationType;
 
-        private ExplicitTypeMappings externalTypesMetadata;
+        private TypeMappings externalTypesMetadata;
+
+        private ISolutionCodeAnalysisProvider codeAnalysisProvider = new WorkspaceCodeAnalysisProvider();
 
         private static readonly Lazy<PortableExecutableReference> s_mscorlib = new Lazy<PortableExecutableReference>(
         () => AssemblyMetadata.CreateFromImage(TestResources.NetFX.v4_0_30319.mscorlib).GetReference(filePath: @"R:\v4_0_30319\mscorlib.dll"),
@@ -31,7 +36,7 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
         () => AssemblyMetadata.CreateFromImage(TestResources.NetFX.v4_0_30319.System).GetReference(filePath: @"R:\v4_0_30319\System.dll", display: "System.dll"),
         LazyThreadSafetyMode.PublicationOnly);
 
-        public TestTranslationMetadataProvider(GenerationType generationType, ExplicitTypeMappings externalTypesMetadata = null)
+        public TestTranslationMetadataProvider(GenerationType generationType, TypeMappings externalTypesMetadata = null)
         {
             this.generationType = generationType;
             this.externalTypesMetadata = externalTypesMetadata;
@@ -86,26 +91,25 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
 
         }
 
-        public TranslationMetadata GetMetadata()
+        public TranslationTaskMetadata GetMetadata(SolutionCodeAnalysis solutionCodeAnalysis = null)
         {
-            TranslationMetadata result = new TranslationMetadata();
+            TranslationTaskMetadata result = new TranslationTaskMetadata();
+
+            result.SolutionCodeAnalysis = solutionCodeAnalysis ?? this.codeAnalysisProvider.GetCodeAnalysis(this.Workspace);
 
             foreach (var proj in this.Workspace.CurrentSolution.Projects)
             {
-                var projectMetadata = new ProjectMetadata();
-                projectMetadata.Compilation = proj.GetCompilationAsync().Result;
-
-                projectMetadata.Diagnostics = projectMetadata.Compilation.GetDiagnostics();
+                var projectCodeAnalysis = result.SolutionCodeAnalysis.Projects[proj.Id.Id];
+                var projectMetadata = new ProjectMetadata(proj.Id.Id, proj.AssemblyName);
 
                 foreach (var doc in proj.Documents)
                 {
-                    var documentMetadata = new DocumentMetadata();
-                    documentMetadata.SyntaxTree = doc.GetSyntaxTreeAsync().Result;
-                    documentMetadata.SemanticModel = projectMetadata.Compilation.GetSemanticModel(documentMetadata.SyntaxTree);
+                    var documentCodeAnalysis = projectCodeAnalysis.Documents[doc.Id.Id];
+                    var documentMetadata = new DocumentMetadata(doc.Id.Id, doc.Name);
 
-                    foreach (var declaration in documentMetadata.SyntaxTree.GetRoot().DescendantNodes().OfType<BaseTypeDeclarationSyntax>())
+                    foreach (var declaration in documentCodeAnalysis.SyntaxTree.GetRoot().DescendantNodes().OfType<BaseTypeDeclarationSyntax>())
                     {
-                        var declaredSymbol = documentMetadata.SemanticModel.GetDeclaredSymbol(declaration);                        
+                        var declaredSymbol = documentCodeAnalysis.SemanticModel.GetDeclaredSymbol(declaration);                        
 
                         var itemMetadata = new ItemMetadata();
 
@@ -114,13 +118,13 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests
                         itemMetadata.Name = $"{declaredSymbol.Name}";
                         itemMetadata.OutputFileName = this.OutputFileName;
 
-                        documentMetadata.Items.Add(itemMetadata);
+                        documentMetadata.Items.Add(itemMetadata.FullName, itemMetadata);
                     }
 
-                    projectMetadata.Documents.Add(documentMetadata);
+                    projectMetadata.Documents.Add(documentMetadata.Id, documentMetadata);
                 }
 
-                result.Projects.Add(projectMetadata);
+                result.Projects.Add(projectMetadata.Id, projectMetadata);
             }
 
             result.ExplicitTypeMappings = this.externalTypesMetadata;

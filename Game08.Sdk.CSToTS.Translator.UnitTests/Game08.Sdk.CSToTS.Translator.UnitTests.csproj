@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Game08.Sdk.CSToTS.Translator\Game08.Sdk.CSToTS.Translator.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="MetadataProviderTests\" />
+  </ItemGroup>
+
 </Project>
