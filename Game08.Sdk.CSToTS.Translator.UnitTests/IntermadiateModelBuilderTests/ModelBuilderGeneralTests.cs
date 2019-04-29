@@ -21,8 +21,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             var outputFileName = "TheOutput";
             TestTranslationMetadataProvider provider = new TestTranslationMetadataProvider(Core.GenerationType.FullTranslation);
             provider.OutputFileName = outputFileName;
-            provider.AddProject("TestProj");
-            provider.AddDocument("TestFile.cs", this.emptyClass);
+            provider.WorkspaceBuilder.AddProject("TestProj");
+            provider.WorkspaceBuilder.AddDocument("TestFile.cs", this.emptyClass);
 
             ModelBuilder subject = new ModelBuilder();
 

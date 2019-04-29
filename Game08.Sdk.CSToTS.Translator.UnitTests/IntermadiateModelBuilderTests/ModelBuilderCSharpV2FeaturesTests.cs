@@ -120,8 +120,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             var outputFileName = "TheOutput";
             TestTranslationMetadataProvider provider = new TestTranslationMetadataProvider(Core.GenerationType.FullTranslation);
             provider.OutputFileName = outputFileName;
-            provider.AddProject("TestProj");
-            provider.AddDocument("TestFile.cs", this.cSharpV2Class);
+            provider.WorkspaceBuilder.AddProject("TestProj");
+            provider.WorkspaceBuilder.AddDocument("TestFile.cs", this.cSharpV2Class);
 
             ModelBuilder subject = new ModelBuilder();
 
@@ -137,8 +137,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             var outputFileName = "TheOutput";
             TestTranslationMetadataProvider provider = new TestTranslationMetadataProvider(Core.GenerationType.FullTranslation);
             provider.OutputFileName = outputFileName;
-            provider.AddProject("TestProj");
-            provider.AddDocument("TestFile.cs", this.cSharpV2Class);
+            provider.WorkspaceBuilder.AddProject("TestProj");
+            provider.WorkspaceBuilder.AddDocument("TestFile.cs", this.cSharpV2Class);
 
             ModelBuilder subject = new ModelBuilder();
 
@@ -155,8 +155,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             var outputFileName = "TheOutput";
             TestTranslationMetadataProvider provider = new TestTranslationMetadataProvider(Core.GenerationType.FullTranslation);
             provider.OutputFileName = outputFileName;
-            provider.AddProject("TestProj");
-            provider.AddDocument("TestFile.cs", this.cSharpV2Interface);
+            provider.WorkspaceBuilder.AddProject("TestProj");
+            provider.WorkspaceBuilder.AddDocument("TestFile.cs", this.cSharpV2Interface);
 
             ModelBuilder subject = new ModelBuilder();
 
@@ -171,8 +171,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             var outputFileName = "TheOutput";
             TestTranslationMetadataProvider provider = new TestTranslationMetadataProvider(Core.GenerationType.FullTranslation);
             provider.OutputFileName = outputFileName;
-            provider.AddProject("TestProj");
-            provider.AddDocument("TestFile.cs", this.cSharpV2Enum);
+            provider.WorkspaceBuilder.AddProject("TestProj");
+            provider.WorkspaceBuilder.AddDocument("TestFile.cs", this.cSharpV2Enum);
 
             ModelBuilder subject = new ModelBuilder();
 
@@ -187,8 +187,8 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             var outputFileName = "TheOutput";
             TestTranslationMetadataProvider provider = new TestTranslationMetadataProvider(Core.GenerationType.FullTranslation, GetListMapping());
             provider.OutputFileName = outputFileName;
-            provider.AddProject("TestProj");
-            provider.AddDocument("TestFile.cs", this.cSharpV2ClassWithList);
+            provider.WorkspaceBuilder.AddProject("TestProj");
+            provider.WorkspaceBuilder.AddDocument("TestFile.cs", this.cSharpV2ClassWithList);
 
             ModelBuilder subject = new ModelBuilder();
 
