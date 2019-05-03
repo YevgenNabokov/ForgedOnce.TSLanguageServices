@@ -22,6 +22,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.TranslationLauncher", "Game08.Sdk.CSToTS.TranslationLauncher\Game08.Sdk.CSToTS.TranslationLauncher.csproj", "{3E087804-6668-489A-AD0B-0C8FCF72BAFF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.NodeTaskWrapper", "Game08.Sdk.CSToTS.NodeTaskWrapper\Game08.Sdk.CSToTS.NodeTaskWrapper.csproj", "{0C98FC96-B7BD-413E-B83E-03414C7F5355}"
+	ProjectSection(ProjectDependencies) = postProject
+		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528} = {11926C92-3A3E-43DE-8B4D-1EA9BC09C528}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.CSToTS.Annotations", "Game08.Sdk.CSToTS.Annotations\Game08.Sdk.CSToTS.Annotations.csproj", "{71CF1254-1D57-4771-9D1A-065EDADED3E3}"
 EndProject

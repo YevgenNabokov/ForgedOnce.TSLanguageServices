@@ -17,6 +17,9 @@ namespace Game08.Sdk.CSToTS.NodeTaskWrapper
 
         private readonly string TaskJsFileName = "generationLauncher.js";
 
+        //private readonly string CodeGeneratorJsAppFolder = "..\\..\\..\\..\\Game08.Sdk.CSToTS.TypeScriptBuilder\\GeneratorAppOutput";
+        private readonly string CodeGeneratorJsAppFolder = "CodeGeneratorJs";
+
         private string generationDataJsonPath;
 
         private string outputFolder;
@@ -42,7 +45,7 @@ namespace Game08.Sdk.CSToTS.NodeTaskWrapper
         {
             get
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "..\\..\\..\\..\\Game08.Sdk.CSToTS.TypeScriptBuilder", TaskJsFileName);
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), CodeGeneratorJsAppFolder, TaskJsFileName);
             }
         }
 
@@ -60,7 +63,7 @@ namespace Game08.Sdk.CSToTS.NodeTaskWrapper
 
         private string PrepareArgumentString()
         {
-            return $"{TaskJsFilePath} {this.generationDataJsonPath} {this.outputFolder} {this.outputMetadataJsonPath}";
+            return $"{TaskJsFilePath} {this.generationDataJsonPath} {this.outputFolder} {this.outputMetadataJsonPath} > app_log.log 2> app_err.log";
         }
     }
 }

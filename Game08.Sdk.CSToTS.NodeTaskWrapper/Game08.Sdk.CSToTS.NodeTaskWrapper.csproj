@@ -18,4 +18,8 @@
     </None>
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;$(SolutionDir)\GeneratorAppOutput&quot; &quot;$(ProjectDir)$(OutDir)\CodeGeneratorJs&quot; /Q /S /Y /R /I" />
+  </Target>
+
 </Project>
