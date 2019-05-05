@@ -28,7 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.NodeTaskW
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Annotations", "Game08.Sdk.CSToTS.Annotations\Game08.Sdk.CSToTS.Annotations.csproj", "{71CF1254-1D57-4771-9D1A-065EDADED3E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.CSToTS.TranslationLauncherDotNetFramework", "Game08.Sdk.CSToTS.TranslationLauncherDotNetFramework\Game08.Sdk.CSToTS.TranslationLauncherDotNetFramework.csproj", "{73DC213D-4DE4-4EE0-B5D2-21357C4CC598}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.CSToTS.TranslationLauncherNet", "Game08.Sdk.CSToTS.TranslationLauncherDotNetFramework\Game08.Sdk.CSToTS.TranslationLauncherNet.csproj", "{73DC213D-4DE4-4EE0-B5D2-21357C4CC598}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

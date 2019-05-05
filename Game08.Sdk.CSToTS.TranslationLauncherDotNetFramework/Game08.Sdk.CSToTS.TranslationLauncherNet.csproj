@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{73DC213D-4DE4-4EE0-B5D2-21357C4CC598}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Game08.Sdk.CSToTS.TranslationLauncherDotNetFramework</RootNamespace>
-    <AssemblyName>Game08.Sdk.CSToTS.TranslationLauncherDotNetFramework</AssemblyName>
+    <RootNamespace>Game08.Sdk.CSToTS.TranslationLauncher</RootNamespace>
+    <AssemblyName>Game08.Sdk.CSToTS.TranslationLauncher</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
