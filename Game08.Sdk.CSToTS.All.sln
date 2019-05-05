@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Translator", "Game08.Sdk.CSToTS.Translator\Game08.Sdk.CSToTS.Translator.csproj", "{8F4E50B8-0278-465D-A241-C0304250293F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -26,7 +26,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.NodeTaskW
 		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528} = {11926C92-3A3E-43DE-8B4D-1EA9BC09C528}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.CSToTS.Annotations", "Game08.Sdk.CSToTS.Annotations\Game08.Sdk.CSToTS.Annotations.csproj", "{71CF1254-1D57-4771-9D1A-065EDADED3E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Annotations", "Game08.Sdk.CSToTS.Annotations\Game08.Sdk.CSToTS.Annotations.csproj", "{71CF1254-1D57-4771-9D1A-065EDADED3E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.CSToTS.TranslationLauncherDotNetFramework", "Game08.Sdk.CSToTS.TranslationLauncherDotNetFramework\Game08.Sdk.CSToTS.TranslationLauncherDotNetFramework.csproj", "{73DC213D-4DE4-4EE0-B5D2-21357C4CC598}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +68,10 @@ Global
 		{71CF1254-1D57-4771-9D1A-065EDADED3E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71CF1254-1D57-4771-9D1A-065EDADED3E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71CF1254-1D57-4771-9D1A-065EDADED3E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73DC213D-4DE4-4EE0-B5D2-21357C4CC598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73DC213D-4DE4-4EE0-B5D2-21357C4CC598}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73DC213D-4DE4-4EE0-B5D2-21357C4CC598}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73DC213D-4DE4-4EE0-B5D2-21357C4CC598}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
