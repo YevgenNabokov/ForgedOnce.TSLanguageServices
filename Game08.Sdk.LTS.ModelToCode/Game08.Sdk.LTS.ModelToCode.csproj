@@ -39,7 +39,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Game08.Sdk.CSToTS.IntermediateModel\Game08.Sdk.CSToTS.IntermediateModel.csproj" />
+    <ProjectReference Include="..\Game08.Sdk.LTS.Model\Game08.Sdk.LTS.Model.csproj" />
   </ItemGroup>
 
   <Target Name="PublishAll" BeforeTargets="GenerateNuspec">

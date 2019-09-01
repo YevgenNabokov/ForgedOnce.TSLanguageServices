@@ -1,5 +1,5 @@
-﻿using Game08.Sdk.CSToTS.IntermediateModel;
-using Game08.Sdk.CSToTS.IntermediateModel.ResultModel;
+﻿using Game08.Sdk.LTS.Model;
+using Game08.Sdk.LTS.Model.ResultModel;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

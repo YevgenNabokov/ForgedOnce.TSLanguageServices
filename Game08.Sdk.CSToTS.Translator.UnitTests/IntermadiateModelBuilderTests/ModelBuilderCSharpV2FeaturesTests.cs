@@ -1,6 +1,6 @@
 ﻿using Game08.Sdk.CSToTS.Core;
 using Game08.Sdk.CSToTS.Core.TypeMappingMetadata;
-using Game08.Sdk.CSToTS.IntermediateModel.DefinitionTree;
+using Game08.Sdk.LTS.Model.DefinitionTree;
 using Game08.Sdk.CSToTS.Translator.IntermediateModelBuilder;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -128,7 +128,7 @@ namespace Game08.Sdk.CSToTS.Translator.UnitTests.IntermadiateModelBuilderTests
             var result = subject.BuildModel(provider);
 
             Assert.AreEqual(2, result.Files[0].RootNode.Items.Count);
-            Assert.IsTrue(result.Files[0].RootNode.Items[0].NodeType == IntermediateModel.DefinitionTree.NodeType.ClassDefinition);
+            Assert.IsTrue(result.Files[0].RootNode.Items[0].NodeType == NodeType.ClassDefinition);
         }
 
         [Test]

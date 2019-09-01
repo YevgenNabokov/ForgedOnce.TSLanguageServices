@@ -11,11 +11,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Translator.UnitTests", "Game08.Sdk.CSToTS.Translator.UnitTests\Game08.Sdk.CSToTS.Translator.UnitTests.csproj", "{5B83C25D-FC84-41A0-90C0-44E8E4BB88EF}"
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Game08.Sdk.CSToTS.TypeScriptBuilder", "Game08.Sdk.CSToTS.TypeScriptBuilder\Game08.Sdk.CSToTS.TypeScriptBuilder.njsproj", "{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}"
-	ProjectSection(ProjectDependencies) = postProject
-		{98DE64A1-03D2-400B-A927-D639B997333E} = {98DE64A1-03D2-400B-A927-D639B997333E}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.IntermediateModel", "Game08.Sdk.CSToTS.IntermediateModel\Game08.Sdk.CSToTS.IntermediateModel.csproj", "{98DE64A1-03D2-400B-A927-D639B997333E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Core", "Game08.Sdk.CSToTS.Core\Game08.Sdk.CSToTS.Core.csproj", "{FBEFC18C-E337-412C-BC34-0D0F7C204AAF}"
 EndProject
@@ -24,6 +19,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Annotations", "Game08.Sdk.CSToTS.Annotations\Game08.Sdk.CSToTS.Annotations.csproj", "{71CF1254-1D57-4771-9D1A-065EDADED3E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.LTS.ModelToCode", "Game08.Sdk.LTS.ModelToCode\Game08.Sdk.LTS.ModelToCode.csproj", "{E961047A-F76C-4A99-8D0B-7444B5CA565D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.LTS.Model", "Game08.Sdk.LTS.Model\Game08.Sdk.LTS.Model.csproj", "{06ED9789-68C8-49F0-834F-E3EF6F7E8934}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,10 +40,6 @@ Global
 		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Release|Any CPU.Build.0 = Release|Any CPU
-		{98DE64A1-03D2-400B-A927-D639B997333E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{98DE64A1-03D2-400B-A927-D639B997333E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{98DE64A1-03D2-400B-A927-D639B997333E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{98DE64A1-03D2-400B-A927-D639B997333E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FBEFC18C-E337-412C-BC34-0D0F7C204AAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FBEFC18C-E337-412C-BC34-0D0F7C204AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBEFC18C-E337-412C-BC34-0D0F7C204AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,6 +56,10 @@ Global
 		{E961047A-F76C-4A99-8D0B-7444B5CA565D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E961047A-F76C-4A99-8D0B-7444B5CA565D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E961047A-F76C-4A99-8D0B-7444B5CA565D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06ED9789-68C8-49F0-834F-E3EF6F7E8934}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06ED9789-68C8-49F0-834F-E3EF6F7E8934}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06ED9789-68C8-49F0-834F-E3EF6F7E8934}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06ED9789-68C8-49F0-834F-E3EF6F7E8934}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
