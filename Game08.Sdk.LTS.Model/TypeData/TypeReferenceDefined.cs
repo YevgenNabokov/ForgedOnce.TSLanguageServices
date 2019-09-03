@@ -15,9 +15,9 @@ namespace Game08.Sdk.LTS.Model.TypeData
 
         public TypeReference[] TypeParameters;
 
-        public override string RefreshId()
+        public override string RefreshId(bool recursive = false)
         {
-            this.Id = $"{{{this.Kind}|R:{this.ReferenceTypeId}|P:[{this.AggregateTypeParametersForId(this.TypeParameters)}]}}";
+            this.Id = $"{{{this.Kind}|R:{this.ReferenceTypeId}|P:[{this.AggregateTypeParametersForId(this.TypeParameters, recursive)}]}}";
             return this.Id;
         }
     }

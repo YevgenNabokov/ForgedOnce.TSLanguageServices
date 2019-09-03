@@ -10,9 +10,9 @@ namespace Game08.Sdk.LTS.Model.TypeData
 
         public TypeReferenceKind Kind;
 
-        public abstract string RefreshId();
+        public abstract string RefreshId(bool recursive = false);
 
-        public string AggregateTypeParametersForId(TypeReference[] typeParameters)
+        public string AggregateTypeParametersForId(TypeReference[] typeParameters, bool withRecursiveRefresh = false)
         {
             var result = string.Empty;
             if (typeParameters != null)
@@ -20,6 +20,11 @@ namespace Game08.Sdk.LTS.Model.TypeData
                 bool first = true;
                 foreach (var p in typeParameters)
                 {
+                    if (withRecursiveRefresh)
+                    {
+                        p.RefreshId(withRecursiveRefresh);
+                    }
+
                     if (!first)
                     {
                         result += ",";

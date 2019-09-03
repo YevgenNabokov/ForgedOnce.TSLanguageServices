@@ -15,7 +15,7 @@ namespace Game08.Sdk.LTS.Model.TypeData
 
         public string ReferenceTypeId;
 
-        public override string RefreshId()
+        public override string RefreshId(bool recursive = false)
         {
             this.Id = $"{{{this.Kind}|A:{this.ArgumentName}}}";
             return this.Id;

@@ -8,6 +8,7 @@
     PropertyDeclaration,
     ConstructorDeclaration,
     EnumMember,
+    TypeReferenceId,
 
     ExpressionLiteral,
     ExpressionBinary,
@@ -232,7 +233,7 @@ export interface StatementReturn extends StatementNode
     Expression: ExpressionNode;
 }
 
-export interface TypeReferenceId {
+export interface TypeReferenceId extends Node {
     ReferenceKey: string;
 }
 

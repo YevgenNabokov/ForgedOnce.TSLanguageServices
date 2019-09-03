@@ -10,8 +10,13 @@ namespace Game08.Sdk.LTS.Model.TypeData
 
         public TypeReference ValueType;
 
-        public string GetIdPart()
+        public string GetIdPart(bool withRecursiveRefresh)
         {
+            if (this.ValueType != null && withRecursiveRefresh)
+            {
+                this.ValueType.RefreshId(true);
+            }
+
             return $"{{K:{this.KeyName}|V:{this.ValueType?.Id}}}";
         }
     }
