@@ -16,6 +16,7 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
         ConstructorDeclaration,
         EnumMember,
         TypeReferenceId,
+        MethodParameter,
 
         ExpressionLiteral,
         ExpressionBinary,

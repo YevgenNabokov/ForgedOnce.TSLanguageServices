@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Game08.Sdk.LTS.Model.DefinitionTree
 {
-    public class ClassDefinition : Node
+    public class ClassDefinition : NamedTypeDefinition
     {
         public ClassDefinition()
         {
@@ -16,11 +16,7 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
         }
 
         public List<Modifier> Modifiers;
-
-        public string TypeKey;
-
-        public string Name;
-
+        
         public TypeReferenceId BaseType;
 
         public List<TypeReferenceId> Implements;

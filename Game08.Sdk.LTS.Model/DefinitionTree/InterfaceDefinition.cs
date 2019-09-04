@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Game08.Sdk.LTS.Model.DefinitionTree
 {
-    public class InterfaceDefinition : Node
+    public class InterfaceDefinition : NamedTypeDefinition
     {
         public InterfaceDefinition()
         {
@@ -15,10 +15,6 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
         }
 
         public List<Modifier> Modifiers;
-
-        public string TypeKey;
-
-        public string Name;
 
         public List<TypeReferenceId> Implements;
 

@@ -9,6 +9,7 @@
     ConstructorDeclaration,
     EnumMember,
     TypeReferenceId,
+    MethodParameter,
 
     ExpressionLiteral,
     ExpressionBinary,
@@ -186,7 +187,7 @@ export interface MethodDeclaration extends Node
     ReturnType: TypeReferenceId;
 }
 
-export interface MethodParameter {
+export interface MethodParameter extends Node {
     Name: string;
 
     TypeReference: TypeReferenceId;

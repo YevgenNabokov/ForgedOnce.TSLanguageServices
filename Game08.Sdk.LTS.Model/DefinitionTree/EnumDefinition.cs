@@ -4,17 +4,13 @@ using System.Text;
 
 namespace Game08.Sdk.LTS.Model.DefinitionTree
 {
-    public class EnumDefinition : Node
+    public class EnumDefinition : NamedTypeDefinition
     {
         public EnumDefinition()
         {
             this.NodeType = NodeType.EnumDefinition;
             this.Members = new List<EnumMember>();
         }
-
-        public string Name;
-
-        public string TypeKey;
 
         public List<Modifier> Modifiers;
 
