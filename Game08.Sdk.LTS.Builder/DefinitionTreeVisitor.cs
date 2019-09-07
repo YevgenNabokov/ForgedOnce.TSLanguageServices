@@ -143,6 +143,7 @@ namespace Game08.Sdk.LTS.Builder
             if (node is TypeReferenceId)
             {
                 this.VisitTypeReferenceId(node as TypeReferenceId, context);
+                return;
             }
 
             throw new NotImplementedException($"No method for {node.GetType()}");

@@ -18,11 +18,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Translati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CSToTS.Annotations", "Game08.Sdk.CSToTS.Annotations\Game08.Sdk.CSToTS.Annotations.csproj", "{71CF1254-1D57-4771-9D1A-065EDADED3E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.LTS.ModelToCode", "Game08.Sdk.LTS.ModelToCode\Game08.Sdk.LTS.ModelToCode.csproj", "{E961047A-F76C-4A99-8D0B-7444B5CA565D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.LTS.ModelToCode", "Game08.Sdk.LTS.ModelToCode\Game08.Sdk.LTS.ModelToCode.csproj", "{E961047A-F76C-4A99-8D0B-7444B5CA565D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.LTS.Model", "Game08.Sdk.LTS.Model\Game08.Sdk.LTS.Model.csproj", "{06ED9789-68C8-49F0-834F-E3EF6F7E8934}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.LTS.Builder", "Game08.Sdk.LTS.Builder\Game08.Sdk.LTS.Builder.csproj", "{DB41F3B9-CC2D-4F04-ABAD-A2096C4349B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.LTS.Builder", "Game08.Sdk.LTS.Builder\Game08.Sdk.LTS.Builder.csproj", "{DB41F3B9-CC2D-4F04-ABAD-A2096C4349B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.LTS.UnitTests", "Game08.Sdk.LTS.UnitTests\Game08.Sdk.LTS.UnitTests.csproj", "{FFEB794F-68CC-4884-828B-20C7322F27C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +68,10 @@ Global
 		{DB41F3B9-CC2D-4F04-ABAD-A2096C4349B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB41F3B9-CC2D-4F04-ABAD-A2096C4349B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB41F3B9-CC2D-4F04-ABAD-A2096C4349B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFEB794F-68CC-4884-828B-20C7322F27C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFEB794F-68CC-4884-828B-20C7322F27C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFEB794F-68CC-4884-828B-20C7322F27C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFEB794F-68CC-4884-828B-20C7322F27C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

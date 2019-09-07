@@ -51,14 +51,22 @@ namespace Game08.Sdk.LTS.Builder.TypeData
             if (this.typeDefinitionIndex.ContainsKey(typeDefinitionId))
             {
                 var def = this.typeDefinitionIndex[typeDefinitionId];
-                def.FileLocation = file;
-                def.RefreshId();
-                this.nsTypeDefinitionIndex.Add(def.Id, nsTypeDefinitionIndex[typeDefinitionId]);
-                this.nsTypeDefinitionIndex.Remove(typeDefinitionId);
-                this.typeDefinitionIndex.Add(def.Id, def);
+                var nsIndex = this.nsTypeDefinitionIndex[def.FileLocation].Get(def.Namespace);
+                nsIndex.Remove(def.Name);
                 this.typeDefinitionIndex.Remove(typeDefinitionId);
 
-                var firstLevelRefs = this.typeReferenceIndex.Values.OfType<TypeReferenceDefined>().Where(r => r.ReferenceTypeId == typeDefinitionId);
+                def.FileLocation = file;
+                def.RefreshId();
+                if (!this.nsTypeDefinitionIndex.ContainsKey(def.FileLocation))
+                {
+                    this.nsTypeDefinitionIndex.Add(def.FileLocation, new NsIndex<Dictionary<string, TypeDefinition>>(NsSeparator));
+                }
+                
+                nsIndex = this.nsTypeDefinitionIndex[def.FileLocation].Get(def.Namespace);
+                nsIndex.Add(def.Name, def);
+                this.typeDefinitionIndex.Add(def.Id, def);
+
+                var firstLevelRefs = this.typeReferenceIndex.Values.OfType<TypeReferenceDefined>().Where(r => r.ReferenceTypeId == typeDefinitionId).ToArray();
                 var dependencies = new HashSet<TypeReference>();
                 this.GatherReferenceUsers(firstLevelRefs, dependencies);
                 foreach (var r in firstLevelRefs)
@@ -68,7 +76,7 @@ namespace Game08.Sdk.LTS.Builder.TypeData
                 }
 
                 var oldIds = dependencies.ToDictionary(r => r.Id);
-                foreach (var r in firstLevelRefs)
+                foreach (var r in dependencies)
                 {
                     r.RefreshId(true);
                 }
@@ -153,23 +161,29 @@ namespace Game08.Sdk.LTS.Builder.TypeData
             return result.Id;
         }
 
+        public string RegisterTypeReferenceBuiltin(string name, IEnumerable<string> parameterTypeReferenceIds = null)
+        {
+            List<TypeReference> parameters = this.ResolveTypeReferences(parameterTypeReferenceIds);
+
+            var result = new TypeReferenceBuiltin()
+            {
+                Name = name,
+                TypeParameters = parameters.ToArray()
+            };
+
+            result.RefreshId();
+            if (!this.typeReferenceIndex.ContainsKey(result.Id))
+            {
+                this.typeReferenceIndex.Add(result.Id, result);
+                this.RegisterReferenceUsage(result, parameters);
+            }
+
+            return result.Id;
+        }
+
         public string RegisterTypeReferenceDefined(string definedTypeId, IEnumerable<string> parameterTypeReferenceIds = null)
         {
-            List<TypeReference> parameters = new List<TypeReference>();
-            if (parameterTypeReferenceIds != null)
-            {
-                foreach (var p in parameterTypeReferenceIds)
-                {
-                    if (this.typeReferenceIndex.ContainsKey(p))
-                    {
-                        parameters.Add(this.typeReferenceIndex[p]);
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException($"Type reference cannot be resolved {p}.");
-                    }
-                }
-            }
+            List<TypeReference> parameters = this.ResolveTypeReferences(parameterTypeReferenceIds);
 
             if (this.typeDefinitionIndex.ContainsKey(definedTypeId))
             {
@@ -192,6 +206,27 @@ namespace Game08.Sdk.LTS.Builder.TypeData
             {
                 throw new InvalidOperationException($"Cannot resolve referred type definition {definedTypeId}.");
             }
+        }
+
+        private List<TypeReference> ResolveTypeReferences(IEnumerable<string> parameterTypeReferenceIds)
+        {
+            List<TypeReference> result = new List<TypeReference>();
+            if (parameterTypeReferenceIds != null)
+            {
+                foreach (var p in parameterTypeReferenceIds)
+                {
+                    if (this.typeReferenceIndex.ContainsKey(p))
+                    {
+                        result.Add(this.typeReferenceIndex[p]);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Type reference cannot be resolved {p}.");
+                    }
+                }
+            }
+
+            return result;
         }
 
         private void RegisterReferenceUsage(TypeReference user, IEnumerable<TypeReference> refs = null)
@@ -230,6 +265,6 @@ namespace Game08.Sdk.LTS.Builder.TypeData
 
             index.Add(typeDefinition.Name, typeDefinition);
             this.typeDefinitionIndex.Add(typeDefinition.Id, typeDefinition);
-        }
+        }        
     }
 }
