@@ -11,21 +11,37 @@ namespace Game08.Sdk.LTS.ModelToCode
 {
     public class Launcher
     {
-        private string outputFolder;
+        private readonly string modelFileName = "CodeGenerationTask.json";
 
-        public Launcher(string outputFolder)
+        private readonly string outputMetadataFileName = "CodeGenerationOutput.json";
+
+        private string outputFolder;
+        private readonly string tempFolder;
+
+        public Launcher(string outputFolder, string tempFolder = null)
         {            
-            this.outputFolder = outputFolder;            
+            this.outputFolder = outputFolder;
+            this.tempFolder = tempFolder;
         }
 
         private string GetModelFilePath()
         {
-            return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "CodeGenerationTask.json");
+            if (!string.IsNullOrEmpty(this.tempFolder))
+            {
+                return Path.Combine(this.tempFolder, modelFileName);
+            }
+
+            return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), modelFileName);
         }
 
         private string GetOutputMetadataPath()
         {
-            return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "CodeGenerationOutput.json");
+            if (!string.IsNullOrEmpty(this.tempFolder))
+            {
+                return Path.Combine(this.tempFolder, outputMetadataFileName);
+            }
+
+            return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), outputMetadataFileName);
         }
 
         public CodeGenerationResult Execute(CodeGenerationTask task)
