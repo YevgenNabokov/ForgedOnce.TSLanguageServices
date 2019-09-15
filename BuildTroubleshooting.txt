@@ -1,0 +1,2 @@
+If build says: The command "grunt --no-color" exited with code 9009.
+Then probably grunt-cli is not installed, can be fixed with: npm install -g grunt-cli
