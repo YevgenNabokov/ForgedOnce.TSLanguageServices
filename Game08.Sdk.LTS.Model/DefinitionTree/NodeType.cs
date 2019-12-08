@@ -26,10 +26,12 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
         ExpressionThis,
         ExpressionAssignment,
         ExpressionNew,
+        ExpressionUnary,
 
         StatementBlock,
         StatementLocalDeclaration,
         StatementReturn,
-        StatementExpression
+        StatementExpression,
+        StatementFor
     }
 }

@@ -10,6 +10,7 @@ namespace Game08.Sdk.LTS.Model.TypeData
         Defined,
         External,
         LocalGeneric,
-        Inline
+        Inline,
+        Union
     }
 }

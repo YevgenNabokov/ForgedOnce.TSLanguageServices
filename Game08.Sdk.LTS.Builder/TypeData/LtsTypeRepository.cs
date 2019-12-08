@@ -161,6 +161,25 @@ namespace Game08.Sdk.LTS.Builder.TypeData
             return result.Id;
         }
 
+        public string RegisterTypeReferenceUnion(IEnumerable<string> typeReferenceIds)
+        {
+            List<TypeReference> parameters = this.ResolveTypeReferences(typeReferenceIds);
+
+            var result = new TypeReferenceUnion()
+            {
+                Types = parameters.ToArray()
+            };
+
+            result.RefreshId();
+            if (!this.typeReferenceIndex.ContainsKey(result.Id))
+            {
+                this.typeReferenceIndex.Add(result.Id, result);
+                this.RegisterReferenceUsage(result, parameters);
+            }
+
+            return result.Id;
+        }
+
         public string RegisterTypeReferenceBuiltin(string name, IEnumerable<string> parameterTypeReferenceIds = null)
         {
             List<TypeReference> parameters = this.ResolveTypeReferences(parameterTypeReferenceIds);

@@ -16,6 +16,8 @@ namespace Game08.Sdk.LTS.Builder.Interfaces
 
         string RegisterTypeReferenceExternal(string name, string ns, string module, IEnumerable<string> parameterTypeReferenceIds = null);
 
+        string RegisterTypeReferenceUnion(IEnumerable<string> typeReferenceIds);
+
         TypeDefinitionUpdateResult UpdateTypeDefinitionFile(string typeDefinitionId, string file);
     }
 }

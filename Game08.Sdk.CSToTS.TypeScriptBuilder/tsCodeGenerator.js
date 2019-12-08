@@ -297,6 +297,14 @@ class TsTreeGenerator {
             }
             return ts.createTypeLiteralNode(elements);
         }
+        if (typeReference.Kind == im.TypeReferenceKind.Union) {
+            var unionTypeReference = typeReference;
+            var subNodes = [];
+            if (unionTypeReference.Types != null) {
+                unionTypeReference.Types.forEach((t) => subNodes.push(this.generateTypeNode(context, t)));
+            }
+            return ts.createUnionTypeNode(subNodes);
+        }
         var parts = this.generateTypeReferenceParts(context, typeReference);
         return ts.createTypeReferenceNode(parts.identifier, parts.arguments);
     }
@@ -432,6 +440,10 @@ class TsTreeGenerator {
         if (statement.NodeType == im.NodeType.StatementLocalDeclaration) {
             return this.generateStatementLocalDeclaration(context, statement);
         }
+        if (statement.NodeType == im.NodeType.StatementFor) {
+            var forStatement = statement;
+            return ts.createFor(ts.createVariableDeclarationList([this.generateVariableDeclaration(context, forStatement.Initializer)]), this.generateExpression(context, forStatement.Condition), this.generateExpression(context, forStatement.Increment), this.generateStatement(context, forStatement.Statement));
+        }
         throw new Error('Cannot generate code for statement ' + statement.NodeType);
     }
     generateStatementBlock(context, block, multiline) {
@@ -445,8 +457,11 @@ class TsTreeGenerator {
     }
     generateStatementLocalDeclaration(context, declaration) {
         return ts.createVariableStatement([], [
-            ts.createVariableDeclaration(declaration.Name, this.generateTypeNode(context, context.getTypeReference(declaration.TypeReference.ReferenceKey)), this.generateExpression(context, declaration.Initializer))
+            this.generateVariableDeclaration(context, declaration)
         ]);
+    }
+    generateVariableDeclaration(context, declaration) {
+        return ts.createVariableDeclaration(declaration.Name, this.generateTypeNode(context, context.getTypeReference(declaration.TypeReference.ReferenceKey)), this.generateExpression(context, declaration.Initializer));
     }
     generateStatementReturn(context, ret) {
         return ts.createReturn(this.generateExpression(context, ret.Expression));
@@ -462,6 +477,10 @@ class TsTreeGenerator {
         if (expression.NodeType == im.NodeType.ExpressionBinary) {
             var expressionBinary = expression;
             return ts.createBinary(this.generateExpression(context, expressionBinary.Left), this.generateOperatorToken(expressionBinary.Operator), this.generateExpression(context, expressionBinary.Right));
+        }
+        if (expression.NodeType == im.NodeType.ExpressionUnary) {
+            var expressionUnary = expression;
+            return ts.createPostfix(this.generateExpression(context, expressionUnary.Left), this.generatePostfixUnaryOperatorToken(expressionUnary.Operator));
         }
         if (expression.NodeType == im.NodeType.ExpressionIdentifierReference) {
             var expressionIdentifierReference = expression;
@@ -493,7 +512,26 @@ class TsTreeGenerator {
         if (expression.NodeType == im.NodeType.ExpressionThis) {
             return ts.createThis();
         }
+        if (expression.NodeType == im.NodeType.ExpressionNew) {
+            var expressionNew = expression;
+            var args = [];
+            if (expressionNew.Arguments != null) {
+                for (var a = 0; a < expressionNew.Arguments.length; a++) {
+                    args.push(this.generateExpression(context, expressionNew.Arguments[a]));
+                }
+            }
+            var parts = this.generateTypeReferenceParts(context, context.getTypeReference(expressionNew.SubjectType.ReferenceKey));
+            var nameExpr = this.entityNameToExpression(parts.identifier);
+            return ts.createNew(nameExpr, parts.arguments, args);
+        }
         throw new Error('Cannot generate expression ' + expression.NodeType);
+    }
+    generatePostfixUnaryOperatorToken(operator) {
+        switch (operator) {
+            case '++': return ts.SyntaxKind.PlusPlusToken;
+            case '--': return ts.SyntaxKind.MinusMinusToken;
+        }
+        throw new Error('Unary postfix operator token not recognized ' + operator);
     }
     generateOperatorToken(operator) {
         switch (operator) {
@@ -503,6 +541,15 @@ class TsTreeGenerator {
             case '/': return ts.SyntaxKind.SlashToken;
             case '<<': return ts.SyntaxKind.LessThanLessThanToken;
             case '>>': return ts.SyntaxKind.GreaterThanGreaterThanToken;
+            case '>=': return ts.SyntaxKind.GreaterThanEqualsToken;
+            case '<=': return ts.SyntaxKind.LessThanEqualsToken;
+            case '<': return ts.SyntaxKind.LessThanToken;
+            case '>': return ts.SyntaxKind.GreaterThanToken;
+            case '=': return ts.SyntaxKind.EqualsToken;
+            case '==': return ts.SyntaxKind.EqualsEqualsToken;
+            case '===': return ts.SyntaxKind.EqualsEqualsEqualsToken;
+            case '*=': return ts.SyntaxKind.AsteriskEqualsToken;
+            case '/=': return ts.SyntaxKind.SlashEqualsToken;
         }
         throw new Error('Operator token not recognized ' + operator);
     }

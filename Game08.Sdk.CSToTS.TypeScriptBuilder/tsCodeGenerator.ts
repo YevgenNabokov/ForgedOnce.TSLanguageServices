@@ -467,6 +467,16 @@ export class TsTreeGenerator {
             return ts.createTypeLiteralNode(elements);
         }
 
+        if (typeReference.Kind == im.TypeReferenceKind.Union) {
+            var unionTypeReference = typeReference as im.TypeReferenceUnion;
+            var subNodes: ts.TypeNode[] = [];
+            if (unionTypeReference.Types != null) {
+                unionTypeReference.Types.forEach((t) => subNodes.push(this.generateTypeNode(context, t)));
+            }
+
+            return ts.createUnionTypeNode(subNodes);
+        }
+
         var parts = this.generateTypeReferenceParts(context, typeReference);
         return ts.createTypeReferenceNode(parts.identifier, parts.arguments);
     }
@@ -648,6 +658,15 @@ export class TsTreeGenerator {
             return this.generateStatementLocalDeclaration(context, statement as im.StatementLocalDeclaration);
         }
 
+        if (statement.NodeType == im.NodeType.StatementFor) {
+            var forStatement = statement as im.StatementFor;
+            return ts.createFor(
+                ts.createVariableDeclarationList([this.generateVariableDeclaration(context, forStatement.Initializer)]),
+                this.generateExpression(context, forStatement.Condition),
+                this.generateExpression(context, forStatement.Increment),
+                this.generateStatement(context, forStatement.Statement));
+        }
+
         throw new Error('Cannot generate code for statement ' + statement.NodeType);
     }
 
@@ -667,11 +686,15 @@ export class TsTreeGenerator {
         return ts.createVariableStatement(
             [],
             [
-                ts.createVariableDeclaration(
-                    declaration.Name,
-                    this.generateTypeNode(context, context.getTypeReference(declaration.TypeReference.ReferenceKey)),
-                    this.generateExpression(context, declaration.Initializer))
+                this.generateVariableDeclaration(context, declaration)
             ]);
+    }
+
+    private generateVariableDeclaration(context: GeneratorContext, declaration: im.StatementLocalDeclaration): ts.VariableDeclaration {
+        return ts.createVariableDeclaration(
+            declaration.Name,
+            this.generateTypeNode(context, context.getTypeReference(declaration.TypeReference.ReferenceKey)),
+            this.generateExpression(context, declaration.Initializer));
     }
 
     private generateStatementReturn(context: GeneratorContext, ret: im.StatementReturn): ts.ReturnStatement {        
@@ -694,6 +717,13 @@ export class TsTreeGenerator {
                 this.generateExpression(context, expressionBinary.Left),
                 this.generateOperatorToken(expressionBinary.Operator),
                 this.generateExpression(context, expressionBinary.Right));
+        }
+
+        if (expression.NodeType == im.NodeType.ExpressionUnary) {
+            var expressionUnary = expression as im.ExpressionUnary;
+            return ts.createPostfix(
+                this.generateExpression(context, expressionUnary.Left),
+                this.generatePostfixUnaryOperatorToken(expressionUnary.Operator));
         }
 
         if (expression.NodeType == im.NodeType.ExpressionIdentifierReference) {
@@ -748,6 +778,15 @@ export class TsTreeGenerator {
         throw new Error('Cannot generate expression ' + expression.NodeType);
     }
 
+    private generatePostfixUnaryOperatorToken(operator: string): ts.PostfixUnaryOperator {
+        switch (operator) {
+            case '++': return ts.SyntaxKind.PlusPlusToken;
+            case '--': return ts.SyntaxKind.MinusMinusToken;
+        }
+
+        throw new Error('Unary postfix operator token not recognized ' + operator);
+    }
+
     private generateOperatorToken(operator: string):ts.BinaryOperator | ts.BinaryOperatorToken {
         switch (operator) {
             case '+': return ts.SyntaxKind.PlusToken;
@@ -756,6 +795,15 @@ export class TsTreeGenerator {
             case '/': return ts.SyntaxKind.SlashToken;
             case '<<': return ts.SyntaxKind.LessThanLessThanToken;
             case '>>': return ts.SyntaxKind.GreaterThanGreaterThanToken;
+            case '>=': return ts.SyntaxKind.GreaterThanEqualsToken;
+            case '<=': return ts.SyntaxKind.LessThanEqualsToken;
+            case '<': return ts.SyntaxKind.LessThanToken;
+            case '>': return ts.SyntaxKind.GreaterThanToken;
+            case '=': return ts.SyntaxKind.EqualsToken;
+            case '==': return ts.SyntaxKind.EqualsEqualsToken;
+            case '===': return ts.SyntaxKind.EqualsEqualsEqualsToken;
+            case '*=': return ts.SyntaxKind.AsteriskEqualsToken;
+            case '/=': return ts.SyntaxKind.SlashEqualsToken;
         }
 
         throw new Error('Operator token not recognized ' + operator);

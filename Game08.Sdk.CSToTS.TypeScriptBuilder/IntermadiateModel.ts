@@ -19,11 +19,13 @@
     ExpressionThis,
     ExpressionAssignment,
     ExpressionNew,
+    ExpressionUnary,
 
     StatementBlock,
     StatementLocalDeclaration,
     StatementReturn,
-    StatementExpression
+    StatementExpression,
+    StatementFor
 }
 
 export enum Modifier {
@@ -39,7 +41,8 @@ export enum TypeReferenceKind {
     Defined,
     External,
     LocalGeneric,
-    Inline
+    Inline,
+    Union
 }
 
 export interface Node {
@@ -106,6 +109,12 @@ export interface ExpressionBinary extends ExpressionNode
     Left: ExpressionNode;
 
     Right: ExpressionNode;
+
+    Operator: string;
+}
+
+export interface ExpressionUnary extends ExpressionNode {
+    Left: ExpressionNode;    
 
     Operator: string;
 }
@@ -235,6 +244,17 @@ export interface StatementLocalDeclaration extends StatementNode
     Initializer: ExpressionNode;
 }
 
+export interface StatementFor extends StatementNode
+{
+    Initializer: StatementLocalDeclaration;
+
+    Condition: ExpressionNode;
+
+    Increment: ExpressionNode;
+
+    Statement: StatementNode;
+}
+
 export interface StatementNode extends Node
 {
 }
@@ -310,6 +330,10 @@ export interface TypeReferenceExternal extends TypeReference
 export interface TypeReferenceInline extends TypeReference
 {    
     Indexer: TypeReferenceInlineIndexer;
+}
+
+export interface TypeReferenceUnion extends TypeReference {
+    Types: TypeReference[];
 }
 
 export interface TypeReferenceInlineIndexer {

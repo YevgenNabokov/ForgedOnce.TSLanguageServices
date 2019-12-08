@@ -20,10 +20,13 @@ var NodeType;
     NodeType[NodeType["ExpressionMemberAccess"] = 15] = "ExpressionMemberAccess";
     NodeType[NodeType["ExpressionThis"] = 16] = "ExpressionThis";
     NodeType[NodeType["ExpressionAssignment"] = 17] = "ExpressionAssignment";
-    NodeType[NodeType["StatementBlock"] = 18] = "StatementBlock";
-    NodeType[NodeType["StatementLocalDeclaration"] = 19] = "StatementLocalDeclaration";
-    NodeType[NodeType["StatementReturn"] = 20] = "StatementReturn";
-    NodeType[NodeType["StatementExpression"] = 21] = "StatementExpression";
+    NodeType[NodeType["ExpressionNew"] = 18] = "ExpressionNew";
+    NodeType[NodeType["ExpressionUnary"] = 19] = "ExpressionUnary";
+    NodeType[NodeType["StatementBlock"] = 20] = "StatementBlock";
+    NodeType[NodeType["StatementLocalDeclaration"] = 21] = "StatementLocalDeclaration";
+    NodeType[NodeType["StatementReturn"] = 22] = "StatementReturn";
+    NodeType[NodeType["StatementExpression"] = 23] = "StatementExpression";
+    NodeType[NodeType["StatementFor"] = 24] = "StatementFor";
 })(NodeType = exports.NodeType || (exports.NodeType = {}));
 var Modifier;
 (function (Modifier) {
@@ -40,5 +43,6 @@ var TypeReferenceKind;
     TypeReferenceKind[TypeReferenceKind["External"] = 2] = "External";
     TypeReferenceKind[TypeReferenceKind["LocalGeneric"] = 3] = "LocalGeneric";
     TypeReferenceKind[TypeReferenceKind["Inline"] = 4] = "Inline";
+    TypeReferenceKind[TypeReferenceKind["Union"] = 5] = "Union";
 })(TypeReferenceKind = exports.TypeReferenceKind || (exports.TypeReferenceKind = {}));
 //# sourceMappingURL=IntermadiateModel.js.map
