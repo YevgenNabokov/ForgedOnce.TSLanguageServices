@@ -11,6 +11,8 @@ namespace Game08.Sdk.LTS.Builder.DefinitionTree
 
         private TypeReferenceId typeReference;
 
+        private ExpressionLiteral defaultValue;
+
         public Identifier Name
         {
             get => name;
@@ -31,12 +33,23 @@ namespace Game08.Sdk.LTS.Builder.DefinitionTree
             }
         }
 
+        public ExpressionLiteral DefaultValue
+        {
+            get => defaultValue;
+            set
+            {
+                this.SetAsParentFor(this.defaultValue, value);
+                this.defaultValue = value;
+            }
+        }
+
         public override LTSModel.Node ToLtsModelNode()
         {
             return new LTSModel.MethodParameter()
             {
                 Name = this.Name?.Name,
-                TypeReference = this.TypeReference != null ? (LTSModel.TypeReferenceId)this.TypeReference.ToLtsModelNode() : null
+                TypeReference = this.TypeReference != null ? (LTSModel.TypeReferenceId)this.TypeReference.ToLtsModelNode() : null,
+                DefaultValue = this.DefaultValue != null ? (LTSModel.ExpressionLiteral)this.DefaultValue.ToLtsModelNode() : null
             };
         }
     }

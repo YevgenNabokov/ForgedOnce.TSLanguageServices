@@ -181,6 +181,29 @@ namespace Game08.Sdk.LTS.Builder.TypeData
             return result.Id;
         }
 
+        public string RegisterTypeReferenceExternal(string name, string ns, string module, IEnumerable<string> parameterTypeReferenceIds = null)
+        {
+            List<TypeReference> parameters = this.ResolveTypeReferences(parameterTypeReferenceIds);
+
+            var result = new TypeReferenceExternal()
+            {
+                Name = name,
+                Namespace = ns,
+                Module = module,
+                TypeParameters = parameters.ToArray()
+            };
+
+            result.RefreshId();
+
+            if (!this.typeReferenceIndex.ContainsKey(result.Id))
+            {
+                this.typeReferenceIndex.Add(result.Id, result);
+                this.RegisterReferenceUsage(result, parameters);
+            }
+
+            return result.Id;
+        }
+
         public string RegisterTypeReferenceDefined(string definedTypeId, IEnumerable<string> parameterTypeReferenceIds = null)
         {
             List<TypeReference> parameters = this.ResolveTypeReferences(parameterTypeReferenceIds);

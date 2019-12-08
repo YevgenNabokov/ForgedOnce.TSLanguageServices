@@ -14,5 +14,7 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
         public string Name;
 
         public TypeReferenceId TypeReference;
+
+        public ExpressionLiteral DefaultValue;
     }
 }

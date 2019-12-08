@@ -371,7 +371,8 @@ export class TsTreeGenerator {
                     undefined,
                     parameters[p].Name,
                     undefined,
-                    this.generateTypeNode(context, context.getTypeReference(parameters[p].TypeReference.ReferenceKey))
+                    this.generateTypeNode(context, context.getTypeReference(parameters[p].TypeReference.ReferenceKey)),
+                    this.generateExpression(context, parameters[p].DefaultValue)
                 ));
             }
 
@@ -708,7 +709,7 @@ export class TsTreeGenerator {
                     args.push(this.generateExpression(context, expressionInvocation.Arguments[a]));
                 }
             }
-
+            
             return ts.createCall(this.generateExpression(context, expressionInvocation.Expression), [], args);
         }
 
@@ -729,6 +730,19 @@ export class TsTreeGenerator {
 
         if (expression.NodeType == im.NodeType.ExpressionThis) {
             return ts.createThis();
+        }
+
+        if (expression.NodeType == im.NodeType.ExpressionNew) {
+            var expressionNew = expression as im.ExpressionNew;
+            var args: ts.Expression[] = [];
+            if (expressionNew.Arguments != null) {
+                for (var a = 0; a < expressionNew.Arguments.length; a++) {
+                    args.push(this.generateExpression(context, expressionNew.Arguments[a]));
+                }
+            }
+            var parts = this.generateTypeReferenceParts(context, context.getTypeReference(expressionNew.SubjectType.ReferenceKey));
+            var nameExpr = this.entityNameToExpression(parts.identifier);            
+            return ts.createNew(nameExpr, parts.arguments, args);
         }
 
         throw new Error('Cannot generate expression ' + expression.NodeType);

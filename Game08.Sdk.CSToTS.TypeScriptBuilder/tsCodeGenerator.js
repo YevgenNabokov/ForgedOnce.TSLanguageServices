@@ -214,7 +214,7 @@ class TsTreeGenerator {
         var result = [];
         if (parameters != null) {
             for (var p = 0; p < parameters.length; p++) {
-                result.push(ts.createParameter([], [], undefined, parameters[p].Name, undefined, this.generateTypeNode(context, context.getTypeReference(parameters[p].TypeReference.ReferenceKey))));
+                result.push(ts.createParameter([], [], undefined, parameters[p].Name, undefined, this.generateTypeNode(context, context.getTypeReference(parameters[p].TypeReference.ReferenceKey)), this.generateExpression(context, parameters[p].DefaultValue)));
             }
             return result;
         }

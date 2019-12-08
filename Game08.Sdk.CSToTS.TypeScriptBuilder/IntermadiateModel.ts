@@ -18,6 +18,7 @@
     ExpressionMemberAccess,
     ExpressionThis,
     ExpressionAssignment,
+    ExpressionNew,
 
     StatementBlock,
     StatementLocalDeclaration,
@@ -121,6 +122,13 @@ export interface ExpressionInvocation extends ExpressionNode
     Expression: ExpressionNode;
 }
 
+export interface ExpressionNew extends ExpressionNode {
+    Arguments: ExpressionNode[];
+
+    SubjectType: TypeReferenceId;
+}
+
+
 export interface ExpressionLiteral extends ExpressionNode
 {
     IsNumeric: boolean;
@@ -191,6 +199,8 @@ export interface MethodParameter extends Node {
     Name: string;
 
     TypeReference: TypeReferenceId;
+
+    DefaultValue: ExpressionLiteral;
 }
 
 export interface PropertyDeclaration extends Node
