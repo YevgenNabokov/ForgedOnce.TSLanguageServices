@@ -152,7 +152,51 @@ namespace Game08.Sdk.LTS.Builder
                 return;
             }
 
+            if (node is ExpressionNew)
+            {
+                this.VisitExpressionNew(node as ExpressionNew, context);
+                return;
+            }
+
+            if (node is ExpressionUnary)
+            {
+                this.VisitExpressionUnary(node as ExpressionUnary, context);
+                return;
+            }
+
+            if (node is StatementFor)
+            {
+                this.VisitStatementFor(node as StatementFor, context);
+                return;
+            }
+
             throw new NotImplementedException($"No method for {node.GetType()}");
+        }
+
+        public virtual void VisitStatementFor(StatementFor node, TContext context)
+        {
+            this.Visit(node.Initializer, context);
+            this.Visit(node.Condition, context);
+            this.Visit(node.Increment, context);
+            this.Visit(node.Statement, context);
+        }
+
+        public virtual void VisitExpressionUnary(ExpressionUnary node, TContext context)
+        {
+            this.Visit(node.Left, context);
+        }
+
+        public virtual void VisitExpressionNew(ExpressionNew node, TContext context)
+        {
+            if (node.Arguments != null)
+            {
+                foreach (var a in node.Arguments)
+                {
+                    this.Visit(a, context);
+                }
+            }
+
+            this.Visit(node.SubjectType, context);
         }
 
         public virtual void VisitTypeReferenceId(TypeReferenceId node, TContext context)

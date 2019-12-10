@@ -6,7 +6,7 @@ import * as gen from "./tsCodeGenerator"
 
 import * as fs from "fs"
 
-fs.readFile('TestClassInterfaceEnum.json', (err, data) => {
+fs.readFile('BiggerTestTask.json', (err, data) => {
     try {
 
         var payload = data.toString('utf8');

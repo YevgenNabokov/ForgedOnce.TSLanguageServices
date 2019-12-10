@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ts = require("typescript");
 const gen = require("./tsCodeGenerator");
 const fs = require("fs");
-fs.readFile('TestClassInterfaceEnum.json', (err, data) => {
+fs.readFile('BiggerTestTask.json', (err, data) => {
     try {
         var payload = data.toString('utf8');
         var generationTask = JSON.parse(payload);
