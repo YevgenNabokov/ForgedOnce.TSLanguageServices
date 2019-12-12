@@ -92,7 +92,9 @@ class TsTreeGenerator {
     generateFile(context, file) {
         context.currentFileContext = new FileGenerationContext(file);
         this.generateRootStatements(context);
-        context.currentFileContext.tsSourceFile.statements = ts.createNodeArray(this.generateNamespaceStatements(context.currentFileContext.statements));
+        var statements = this.generateNamespaceStatements(context.currentFileContext.statements);
+        context.currentFileContext.generatedFileImports.forEach((i) => statements.unshift(i));
+        context.currentFileContext.tsSourceFile.statements = ts.createNodeArray(statements);
         return context.currentFileContext;
     }
     generateNamespaceStatements(nsStatements) {
@@ -398,6 +400,9 @@ class TsTreeGenerator {
             }
         }
         typePathParts.push(typeName);
+        typePathParts = typePathParts.filter(function (e) {
+            return e != "";
+        });
         var result = ts.createIdentifier(typePathParts[0]);
         if (typePathParts.length > 1) {
             for (var p = 1; p < typePathParts.length; p++) {
@@ -411,7 +416,7 @@ class TsTreeGenerator {
             return context.currentFileContext.fileImportAliases.get(fileLocation);
         }
         var relativeLocation = path.join('.', path.relative(path.dirname(context.currentFileContext.fileModel.FileName), path.dirname(fileLocation)), path.basename(fileLocation));
-        var alias = path.basename(fileLocation).split('.')[0];
+        var alias = this.createAliasFromFileName(path.basename(fileLocation).split('.')[0]);
         context.currentFileContext.fileImportAliases.set(fileLocation, alias);
         var declaration = ts.createImportDeclaration([], [], ts.createImportClause(undefined, ts.createNamespaceImport(ts.createIdentifier(alias))), ts.createLiteral(relativeLocation));
         context.currentFileContext.generatedFileImports.set(alias, declaration);
@@ -421,11 +426,21 @@ class TsTreeGenerator {
         if (context.currentFileContext.fileImportAliases.has(moduleName)) {
             return context.currentFileContext.fileImportAliases.get(moduleName);
         }
-        var alias = moduleName;
+        var alias = this.createAliasFromFileName(moduleName);
         context.currentFileContext.fileImportAliases.set(moduleName, alias);
         var declaration = ts.createImportDeclaration([], [], ts.createImportClause(undefined, ts.createNamespaceImport(ts.createIdentifier(alias))), ts.createLiteral(moduleName));
         context.currentFileContext.generatedFileImports.set(alias, declaration);
         return alias;
+    }
+    createAliasFromFileName(fileName) {
+        var file = path.basename(fileName);
+        var parts = file.split(new RegExp("[._-]"));
+        var result = "";
+        parts.forEach(p => result = result + (p.length > 0 ? p.substr(0, 1).toUpperCase() : ""));
+        if (result.length == 0) {
+            result = "A";
+        }
+        return result;
     }
     generateStatement(context, statement) {
         if (statement.NodeType == im.NodeType.StatementBlock) {

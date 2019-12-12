@@ -8,7 +8,7 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
     {
         public ExpressionUnary()
         {
-            this.NodeType = NodeType.ExpressionBinary;
+            this.NodeType = NodeType.ExpressionUnary;
         }
 
         public ExpressionNode Left;        

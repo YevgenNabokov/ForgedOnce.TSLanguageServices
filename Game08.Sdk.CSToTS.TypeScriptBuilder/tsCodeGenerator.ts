@@ -136,7 +136,11 @@ export class TsTreeGenerator {
 
         this.generateRootStatements(context);
 
-        context.currentFileContext.tsSourceFile.statements = ts.createNodeArray(this.generateNamespaceStatements(context.currentFileContext.statements));
+        var statements: ts.Statement[] = this.generateNamespaceStatements(context.currentFileContext.statements);
+
+        context.currentFileContext.generatedFileImports.forEach((i) => statements.unshift(i));
+
+        context.currentFileContext.tsSourceFile.statements = ts.createNodeArray(statements);
 
         return context.currentFileContext;
     }
@@ -596,6 +600,10 @@ export class TsTreeGenerator {
 
         typePathParts.push(typeName);
 
+        typePathParts = typePathParts.filter(function (e) {
+            return e != "";
+        });
+
         var result: ts.EntityName = ts.createIdentifier(typePathParts[0]);
 
         if (typePathParts.length > 1) {
@@ -614,7 +622,7 @@ export class TsTreeGenerator {
 
         var relativeLocation = path.join('.', path.relative(path.dirname(context.currentFileContext.fileModel.FileName), path.dirname(fileLocation)), path.basename(fileLocation));
 
-        var alias = path.basename(fileLocation).split('.')[0];
+        var alias = this.createAliasFromFileName(path.basename(fileLocation).split('.')[0]);        
 
         context.currentFileContext.fileImportAliases.set(fileLocation, alias);
 
@@ -630,7 +638,7 @@ export class TsTreeGenerator {
             return context.currentFileContext.fileImportAliases.get(moduleName);
         }
 
-        var alias = moduleName;
+        var alias = this.createAliasFromFileName(moduleName);
 
         context.currentFileContext.fileImportAliases.set(moduleName, alias);
 
@@ -639,6 +647,19 @@ export class TsTreeGenerator {
         context.currentFileContext.generatedFileImports.set(alias, declaration);
 
         return alias;
+    }
+
+    private createAliasFromFileName(fileName: string): string {
+        var file = path.basename(fileName);
+        var parts = file.split(new RegExp("[._-]"));
+        var result = "";
+        parts.forEach(p => result = result + (p.length > 0 ? p.substr(0, 1).toUpperCase() : ""));
+
+        if (result.length == 0) {
+            result = "A";
+        }
+
+        return result;
     }
 
     private generateStatement(context: GeneratorContext, statement: im.StatementNode): ts.Statement {
