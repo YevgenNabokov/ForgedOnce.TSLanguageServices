@@ -1,7 +1,7 @@
 ﻿<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Game08.Sdk.LTS.Builder</id>
-    <version>1.0.24</version>
+    <version>1.0.25</version>
     <authors>Yevgen Nabokov</authors>
     <description>Helper classes to work with LTS.Model.</description>
     <dependencies>      

@@ -714,7 +714,7 @@ export class TsTreeGenerator {
     private generateVariableDeclaration(context: GeneratorContext, declaration: im.StatementLocalDeclaration): ts.VariableDeclaration {
         return ts.createVariableDeclaration(
             declaration.Name,
-            this.generateTypeNode(context, context.getTypeReference(declaration.TypeReference.ReferenceKey)),
+            declaration.TypeReference ? this.generateTypeNode(context, context.getTypeReference(declaration.TypeReference.ReferenceKey)) : undefined,
             this.generateExpression(context, declaration.Initializer));
     }
 

@@ -476,7 +476,7 @@ class TsTreeGenerator {
         ]);
     }
     generateVariableDeclaration(context, declaration) {
-        return ts.createVariableDeclaration(declaration.Name, this.generateTypeNode(context, context.getTypeReference(declaration.TypeReference.ReferenceKey)), this.generateExpression(context, declaration.Initializer));
+        return ts.createVariableDeclaration(declaration.Name, declaration.TypeReference ? this.generateTypeNode(context, context.getTypeReference(declaration.TypeReference.ReferenceKey)) : undefined, this.generateExpression(context, declaration.Initializer));
     }
     generateStatementReturn(context, ret) {
         return ts.createReturn(this.generateExpression(context, ret.Expression));
