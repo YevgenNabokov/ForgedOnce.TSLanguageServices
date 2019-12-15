@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Game08.Sdk.LTS.BuilderExtensionsPlugin\Game08.Sdk.LTS.BuilderExtensionsPlugin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Game08.Sdk.CodeMixer.Launcher.MSBuild.WithDefaultAdapters" Version="*" />
+  </ItemGroup>
+
+</Project>

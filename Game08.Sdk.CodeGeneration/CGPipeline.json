@@ -1,0 +1,36 @@
+{
+  "codeFileHandlers": [
+    { "type": "Game08.Sdk.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, Game08.Sdk.CodeMixer.CSharp" }
+  ],
+  "inputs": {
+    "DefinitionTree": "CSharp:Project:Game08.Sdk.LTS.Builder/DefinitionTree/*.cs"
+  },
+  "batches": [
+    {
+      "name": "Batch01",
+      "stages": [
+        {
+          "name": "BuilderExtensionMethods",
+          "plugin": {
+            "pluginFactory": { "type": "Game08.Sdk.LTS.BuilderExtensionsPlugin.PluginFactory, Game08.Sdk.LTS.BuilderExtensionsPlugin" }
+          },
+          "input": {
+            "settings": {
+              "DefinitionTree": "*.cs"
+            }
+          },
+          "output": {
+            "settings": {
+              "PassThrough": "*"
+            }
+          },
+          "mappings": {
+            "PassThrough": {
+              "settings": { "path": "Game08.Sdk.LTS.Builder/ExtensionMethods/Generated" }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -19,6 +19,10 @@
     <ProjectReference Include="..\Game08.Sdk.LTS.Model\Game08.Sdk.LTS.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ExtensionMethods\Generated\" />
+  </ItemGroup>
+
   <Target Name="PublishAll" BeforeTargets="GenerateNuspec">
     <ItemGroup>
       <_TargetFramework Include="$(TargetFrameworks)" />

@@ -1,0 +1,2 @@
+﻿dotnet restore --force
+dotnet game08-cg-msbuild ..\Game08.Sdk.CSToTS.SyntaxTrees.sln CGPipeline.json
