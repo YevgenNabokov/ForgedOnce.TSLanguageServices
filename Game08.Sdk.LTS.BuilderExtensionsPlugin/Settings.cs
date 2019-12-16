@@ -8,8 +8,12 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
 
         public const string RequiredClassBaseTypeKey = "requiredClassBaseType";
 
+        public const string TypesToFoldKey = "typesToFold";
+
         public string OutputNamespace;
 
         public string RequiredClassBaseType;
+
+        public string[] TypesToFold;
     }
 }

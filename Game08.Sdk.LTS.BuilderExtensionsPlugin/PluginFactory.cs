@@ -14,6 +14,8 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
         {
             Settings settings = new Settings();
             this.SetFromConfiguration((v) => settings.OutputNamespace = v, configuration, Settings.OutputNamespaceKey);
+            this.SetFromConfiguration((v) => settings.RequiredClassBaseType = v, configuration, Settings.RequiredClassBaseTypeKey);
+            this.SetFromConfiguration((v) => settings.TypesToFold = v.Split(';'), configuration, Settings.TypesToFoldKey);
 
             return new Plugin()
             {

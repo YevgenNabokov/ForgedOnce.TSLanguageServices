@@ -39,6 +39,10 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
 
         protected override void Implementation(CodeFileCSharp input, Parameters parameters, IMetadataRecorder metadataRecorder, ILogger logger)
         {
+            var typesToFold = this.Settings.TypesToFold != null && this.Settings.TypesToFold.Length > 0
+                ? new HashSet<string>(this.Settings.TypesToFold)
+                : new HashSet<string>();
+
             foreach (var classDeclaration in input.SyntaxTree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())
             {
                 if (!string.IsNullOrEmpty(this.Settings.RequiredClassBaseType))
@@ -70,22 +74,27 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                 var declaredSymbol = input.SemanticModel.GetDeclaredSymbol(classDeclaration);
                 var outputFile = (CodeFileCSharp)this.outputStream.CreateCodeFile($"{declaredSymbol.Name}Extensions.cs");
 
-                this.GenerateForClass(input, classDeclaration, declaredSymbol, outputFile);
+                this.GenerateForClass(input, classDeclaration, declaredSymbol, outputFile, typesToFold);
             }
         }
 
-        private void GenerateForClass(CodeFileCSharp input, ClassDeclarationSyntax classDeclarationSyntax, INamedTypeSymbol declaredSymbol, CodeFileCSharp output)
+        private void GenerateForClass(
+            CodeFileCSharp input,
+            ClassDeclarationSyntax classDeclarationSyntax,
+            INamedTypeSymbol declaredSymbol,
+            CodeFileCSharp output,
+            HashSet<string> typesToFold)
         {
             var unit = SyntaxFactory.CompilationUnit();
             
-            unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(declaredSymbol.ContainingNamespace.ToDisplayString())));
+            unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(declaredSymbol.ContainingNamespace.ToDisplayString())));
 
             foreach (var nsUsage in input.SyntaxTree.GetRoot().DescendantNodes().OfType<UsingDirectiveSyntax>())
             {
                 unit = unit.AddUsings(nsUsage);
             }
 
-            var props = this.GetAllPublicProperties(declaredSymbol);
+            var props = this.GetAllSymbols<IPropertySymbol>(declaredSymbol, SymbolKind.Property, Accessibility.Public);
 
             var additionalUsings = new HashSet<string>();
 
@@ -120,29 +129,52 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
 
             foreach (var import in additionalUsings)
             {
-                unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(import)));
+                unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(import)));
             }
 
             var className = $"{declaredSymbol.Name}Extensions";
 
-            throw new NotImplementedException();
+            var extensionClass = SyntaxFactory.ClassDeclaration(className);
+            extensionClass = extensionClass.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+
+            foreach (var member in members)
+            {
+                extensionClass = this.AddExtensionMethod(member, extensionClass, typesToFold);
+            }
+
+            var nsContainer = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(this.Settings.OutputNamespace));
+            nsContainer = nsContainer.AddMembers(extensionClass);
+            unit = unit.AddMembers(nsContainer);
+            output.SyntaxTree = unit.SyntaxTree;
         }
 
-        private List<IPropertySymbol> GetAllPublicProperties(INamedTypeSymbol symbol)
+        private ClassDeclarationSyntax AddExtensionMethod(ExtensionMember item, ClassDeclarationSyntax target, HashSet<string> typesToFold)
         {
-            var result = new Dictionary<string, IPropertySymbol>();
+            if (!typesToFold.Contains(item.ItemType.MetadataName))
+            {
+
+
+                throw new NotImplementedException();
+            }
+
+            return target;
+        }
+
+        private List<TSymbol> GetAllSymbols<TSymbol>(INamedTypeSymbol symbol, SymbolKind kind, Accessibility accessibility) where TSymbol : ISymbol
+        {
+            var result = new Dictionary<string, TSymbol>();
 
             foreach (var p in symbol
                 .GetMembers()
-                .Where(m => m.DeclaredAccessibility == Accessibility.Public && !m.IsStatic && m.Kind == SymbolKind.Property)
-                .OfType<IPropertySymbol>())
+                .Where(m => m.DeclaredAccessibility == accessibility && !m.IsStatic && m.Kind == kind)
+                .OfType<TSymbol>())
             {
                 result.Add(p.Name, p);
             }
 
             if (symbol.BaseType != null)
             {
-                foreach (var p in this.GetAllPublicProperties(symbol.BaseType))
+                foreach (var p in this.GetAllSymbols<TSymbol>(symbol.BaseType, kind, accessibility))
                 {
                     if (!result.ContainsKey(p.Name))
                     {
