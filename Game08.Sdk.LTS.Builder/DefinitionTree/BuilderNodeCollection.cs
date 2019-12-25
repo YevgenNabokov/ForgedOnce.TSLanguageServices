@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Game08.Sdk.LTS.Builder.DefinitionTree
 {
-    public class BuilderNodeCollection<TItem> : ICollection<TItem> where TItem : Node
+    public class BuilderNodeCollection<TItem> : IReadOnlyList<TItem>, ICollection<TItem> where TItem : Node
     {
         private Node owner;
 
