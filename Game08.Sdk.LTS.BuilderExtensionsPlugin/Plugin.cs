@@ -72,9 +72,11 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                 }
 
                 var declaredSymbol = input.SemanticModel.GetDeclaredSymbol(classDeclaration);
-                var outputFile = (CodeFileCSharp)this.outputStream.CreateCodeFile($"{declaredSymbol.Name}Extensions.cs");
-
-                this.GenerateForClass(input, classDeclaration, declaredSymbol, outputFile, typesToFold);
+                if (!typesToFold.Contains(declaredSymbol.MetadataName))
+                {
+                    var outputFile = (CodeFileCSharp)this.outputStream.CreateCodeFile($"{declaredSymbol.Name}Extensions.cs");
+                    this.GenerateForClass(input, classDeclaration, declaredSymbol, outputFile, typesToFold);
+                }
             }
         }
 
@@ -123,7 +125,8 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                     IsCollection = isCollection,
                     ItemType = itemType,
                     Name = p.Name,
-                    SourcePropertySymbol = p
+                    SourcePropertySymbol = p,
+                    ContainerSymbol = declaredSymbol
                 });
             }
 
@@ -135,12 +138,9 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             var className = $"{declaredSymbol.Name}Extensions";
 
             var extensionClass = SyntaxFactory.ClassDeclaration(className);
-            extensionClass = extensionClass.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+            extensionClass = extensionClass.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword));
 
-            foreach (var member in members)
-            {
-                extensionClass = this.AddExtensionMethod(member, extensionClass, typesToFold);
-            }
+            extensionClass = extensionClass.WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>(members.Select(m => this.CreateExtensionMethod(m, typesToFold, input.SemanticModel))));
 
             var nsContainer = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(this.Settings.OutputNamespace));
             nsContainer = nsContainer.AddMembers(extensionClass);
@@ -148,9 +148,48 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             output.SyntaxTree = unit.SyntaxTree;
         }
 
-        private ClassDeclarationSyntax AddExtensionMethod(ExtensionMember item, ClassDeclarationSyntax target, HashSet<string> typesToFold)
+        private MethodDeclarationSyntax CreateExtensionMethod(ExtensionMember item, HashSet<string> typesToFold, SemanticModel semanticModel)
         {
             if (!typesToFold.Contains(item.ItemType.MetadataName))
+            {
+                if (item.IsCollection)
+                {
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    var subjectIdentifier = "subject";
+                    var containerTypeSyntax = SyntaxFactory.ParseTypeName(item.ContainerSymbol.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat));
+                    var itemTypeString = item.ItemType.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat);
+                    var itemTypeSyntax = SyntaxFactory.ParseTypeName(itemTypeString);
+                    return SyntaxFactory.MethodDeclaration(
+                        SyntaxFactory.List<AttributeListSyntax>(),
+                        SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                        itemTypeSyntax,
+                        null,
+                        SyntaxFactory.Identifier($"With{item.Name}"),
+                        null,
+                        SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(new ParameterSyntax[] 
+                        {
+                            SyntaxFactory.Parameter(SyntaxFactory.List<AttributeListSyntax>(),
+                                SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.ThisKeyword)),
+                                containerTypeSyntax,
+                                SyntaxFactory.Identifier(subjectIdentifier),
+                                null),
+                            SyntaxFactory.Parameter(SyntaxFactory.List<AttributeListSyntax>(),
+                                SyntaxFactory.TokenList(),
+                                SyntaxFactory.ParseTypeName($"Func<{itemTypeString}, {itemTypeString}>"),
+                                SyntaxFactory.Identifier( this.FirstCharToLower(item.Name)),
+                                null),
+                        })),
+                        SyntaxFactory.List<TypeParameterConstraintClauseSyntax>(),
+                        SyntaxFactory.Block(
+                            //// Implement.
+                            ),
+                        null);
+                }
+            }
+            else
             {
 
 
@@ -209,6 +248,16 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                 yield return current;
                 current = current.BaseType;
             }
+        }
+
+        public string FirstCharToLower(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
+
+            return name.Substring(0, 1).ToLower() + (name.Length > 1 ? name.Substring(1) : string.Empty);
         }
     }
 }

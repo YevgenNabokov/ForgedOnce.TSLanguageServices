@@ -14,5 +14,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
         public bool IsCollection;
 
         public ITypeSymbol ItemType;
+
+        public INamedTypeSymbol ContainerSymbol;
     }
 }
