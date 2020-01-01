@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Game08.Sdk.LTS.BuilderExtensionsPlugin": {
+      "commandName": "Executable",
+      "executablePath": "dotnet.exe",
+      "commandLineArgs": "game08-cg-msbuild ..\\..\\..\\Game08.Sdk.CSToTS.SyntaxTrees.sln ..\\..\\CGPipeline.json",
+      "workingDirectory": "G:\\Projects\\Game08\\Src\\Sdk\\Game08.Sdk.CSToTS\\Game08.Sdk.CodeGeneration"
+    }
+  }
+}

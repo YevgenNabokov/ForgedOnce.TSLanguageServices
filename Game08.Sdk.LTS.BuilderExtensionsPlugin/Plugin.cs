@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -195,8 +196,6 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
 
                 throw new NotImplementedException();
             }
-
-            return target;
         }
 
         private List<TSymbol> GetAllSymbols<TSymbol>(INamedTypeSymbol symbol, SymbolKind kind, Accessibility accessibility) where TSymbol : ISymbol
