@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,7 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="Game08.Sdk.CodeMixer.Launcher.MSBuild.WithDefaultAdapters" Version="*" />
+    <DotNetCliToolReference Include="Game08.Sdk.CodeMixer.Launcher.MSBuild.WithDefaultAdapters.CliTool" Version="*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Game08.Sdk.CodeMixer.Launcher.MSBuild.WithDefaultAdapters" Version="1.0.51" />
   </ItemGroup>
 
 </Project>
