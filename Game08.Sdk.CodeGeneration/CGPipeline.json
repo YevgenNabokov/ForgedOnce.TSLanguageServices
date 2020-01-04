@@ -12,7 +12,13 @@
         {
           "name": "BuilderExtensionMethods",
           "plugin": {
-            "pluginFactory": { "type": "Game08.Sdk.LTS.BuilderExtensionsPlugin.PluginFactory, Game08.Sdk.LTS.BuilderExtensionsPlugin" }
+            "pluginFactory": {
+              "type": "Game08.Sdk.LTS.BuilderExtensionsPlugin.PluginFactory, Game08.Sdk.LTS.BuilderExtensionsPlugin",
+              "config": {
+                "outputNamespace": "Game08.Sdk.LTS.Builder.ExtensionMethods",
+                "requiredClassBaseType": "Game08.Sdk.LTS.Model.DefinitionTree.Node"
+              }
+            }
           },
           "input": {
             "settings": {
