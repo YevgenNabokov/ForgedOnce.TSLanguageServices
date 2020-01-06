@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Game08.Sdk.CodeMixer.Launcher.MSBuild.WithDefaultAdapters" Version="1.0.52" />
+    <PackageReference Include="Game08.Sdk.CodeMixer.Launcher.MSBuild.WithDefaultAdapters" Version="1.0.53" />
   </ItemGroup>
 
 </Project>

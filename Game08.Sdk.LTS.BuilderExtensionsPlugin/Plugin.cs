@@ -107,7 +107,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             {
                 var itemType = p.Type;
                 bool isCollection = false;
-                var collectionInterface = p.Type.Interfaces.FirstOrDefault(i => i.MetadataName == typeof(ICollection<>).FullName);
+                var collectionInterface = p.Type.Interfaces.FirstOrDefault(i => i.IsGenericType && this.GetFullMetadataName(i.ConstructedFrom) == typeof(ICollection<>).FullName);
                 
                 if (collectionInterface != null)
                 {
@@ -257,6 +257,11 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             }
 
             return name.Substring(0, 1).ToLower() + (name.Length > 1 ? name.Substring(1) : string.Empty);
+        }
+
+        private string GetFullMetadataName(INamedTypeSymbol symbol)
+        {
+            return $"{symbol.ContainingNamespace.ToDisplayString()}.{symbol.MetadataName}";
         }
     }
 }
