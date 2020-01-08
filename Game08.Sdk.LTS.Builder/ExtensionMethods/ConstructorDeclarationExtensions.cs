@@ -6,14 +6,8 @@ using LTSModel = Game08.Sdk.LTS.Model.DefinitionTree;
 
 namespace Game08.Sdk.LTS.Builder.ExtensionMethods
 {
-    public static class ConstructorDeclarationExtensions
-    {
-        public static ConstructorDeclaration WithBody(this ConstructorDeclaration constructorDeclaration, StatementBlock body)
-        {
-            constructorDeclaration.Body = body;
-            return constructorDeclaration;
-        }
-
+    public static partial class ConstructorDeclarationExtensions
+    {        
         public static ConstructorDeclaration WithParameters(this ConstructorDeclaration constructorDeclaration, params MethodParameter[] parameters)
         {
             foreach (var parameter in parameters)

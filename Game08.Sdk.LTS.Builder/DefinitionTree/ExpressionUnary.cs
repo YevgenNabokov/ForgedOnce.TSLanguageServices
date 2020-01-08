@@ -19,7 +19,7 @@ namespace Game08.Sdk.LTS.Builder.DefinitionTree
             }
         }
 
-        public string Operator;
+        public string Operator { get; set; }
 
         public override LTSModel.Node ToLtsModelNode()
         {

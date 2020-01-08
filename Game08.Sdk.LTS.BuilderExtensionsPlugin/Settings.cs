@@ -10,7 +10,9 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
 
         public const string TypesToUnfoldKey = "typesToUnfold";
 
-        public const string IgnorePropertyNamesKey = "ignorePropertyNamesKey";
+        public const string IgnorePropertyNamesKey = "ignorePropertyNames";
+
+        public const string UnpluralizeVariablesKey = "unpluralizeVariables";
 
         public string OutputNamespace;
 
@@ -19,5 +21,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
         public string[] TypesToUnfold;
 
         public string[] IgnorePropertyNames;
+
+        public bool UnpluralizeVariables;
     }
 }

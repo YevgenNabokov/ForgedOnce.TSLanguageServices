@@ -6,14 +6,8 @@ using LTSModel = Game08.Sdk.LTS.Model.DefinitionTree;
 
 namespace Game08.Sdk.LTS.Builder.ExtensionMethods
 {
-    public static class MethodDeclarationExtensions
+    public static partial class MethodDeclarationExtensions
     {
-        public static MethodDeclaration WithName(this MethodDeclaration methodDeclaration, string name)
-        {
-            methodDeclaration.Name = new Identifier() { Name = name };
-            return methodDeclaration;
-        }
-
         public static MethodDeclaration WithModifiers(this MethodDeclaration methodDeclaration, params LTSModel.Modifier[] modifiers)
         {
             foreach (var modifier in modifiers)
@@ -24,18 +18,6 @@ namespace Game08.Sdk.LTS.Builder.ExtensionMethods
                 }
             }
 
-            return methodDeclaration;
-        }
-
-        public static MethodDeclaration WithReturnType(this MethodDeclaration methodDeclaration, string typeReferenceKey)
-        {
-            methodDeclaration.ReturnType = new TypeReferenceId() { ReferenceKey = typeReferenceKey };
-            return methodDeclaration;
-        }
-
-        public static MethodDeclaration WithBody(this MethodDeclaration methodDeclaration, StatementBlock body)
-        {
-            methodDeclaration.Body = body;
             return methodDeclaration;
         }
 

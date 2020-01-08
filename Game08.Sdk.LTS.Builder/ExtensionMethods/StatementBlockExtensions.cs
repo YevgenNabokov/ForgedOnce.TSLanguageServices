@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Game08.Sdk.LTS.Builder.ExtensionMethods
 {
-    public static class StatementBlockExtensions
+    public static partial class StatementBlockExtensions
     {
         public static StatementBlock WithStatements(this StatementBlock statementBlock, params StatementNode[] statements)
         {

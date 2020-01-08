@@ -7,9 +7,9 @@ namespace Game08.Sdk.LTS.Builder.DefinitionTree
 {
     public class ExpressionLiteral : ExpressionNode
     {
-        public bool IsNumeric;
+        public bool IsNumeric { get; set; }
 
-        public string Text;
+        public string Text { get; set; }
 
         public override LTSModel.Node ToLtsModelNode()
         {

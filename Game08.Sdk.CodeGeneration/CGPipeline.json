@@ -18,7 +18,8 @@
                 "outputNamespace": "Game08.Sdk.LTS.Builder.ExtensionMethods",
                 "requiredClassBaseType": "Game08.Sdk.LTS.Model.DefinitionTree.Node",
                 "typesToUnfold": "Game08.Sdk.LTS.Builder.DefinitionTree.Identifier;Game08.Sdk.LTS.Builder.DefinitionTree.TypeReferenceId",
-                "ignorePropertyNamesKey":  "Parent"
+                "ignorePropertyNames": "Parent",
+                "unpluralizeVariables":  "true"
               }
             }
           },

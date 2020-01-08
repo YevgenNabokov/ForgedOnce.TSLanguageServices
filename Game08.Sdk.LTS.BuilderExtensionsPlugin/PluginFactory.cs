@@ -17,6 +17,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             this.SetFromConfiguration((v) => settings.RequiredClassBaseType = v, configuration, Settings.RequiredClassBaseTypeKey);
             this.SetFromConfiguration((v) => settings.TypesToUnfold = v.Split(';'), configuration, Settings.TypesToUnfoldKey);
             this.SetFromConfiguration((v) => settings.IgnorePropertyNames = v.Split(';'), configuration, Settings.IgnorePropertyNamesKey);
+            this.SetFromConfiguration((v) => bool.TryParse(v, out settings.UnpluralizeVariables), configuration, Settings.UnpluralizeVariablesKey);
 
             return new Plugin()
             {

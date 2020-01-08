@@ -18,6 +18,11 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
     {
         public const string OutStreamName = "PassThrough";
 
+        /// <summary>
+        /// Will be extracted.
+        /// </summary>
+        public readonly HashSet<string> CSharpKeywords = new HashSet<string>() { "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked", "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else", "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock", "long", "namespace", "new", "null", "object", "operator", "out", "override", "params", "private", "protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short", "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort", "using", "using", "static", "virtual", "void", "volatile", "while" };
+
         protected ICodeStream outputStream;
 
         public Plugin()
@@ -168,12 +173,58 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             output.SyntaxTree = unit.SyntaxTree;
         }
 
+        /// <summary>
+        /// Very basic depluralization implementation. But gives some result.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private string UnpluralizeName(string name)
+        {
+            if (name.ToLower().EndsWith("children"))
+            {
+                return name.Remove(name.Length - 3);
+            }
+
+            if (name.EndsWith("zzes"))
+            {
+                return name.Remove(name.Length - 3);
+            }
+
+            if (name.EndsWith("ies"))
+            {
+                return $"{name.Remove(name.Length - 3)}y";
+            }
+
+            if (name.EndsWith("ses")
+                || name.EndsWith("sses")
+                || name.EndsWith("shes")
+                || name.EndsWith("ches")
+                || name.EndsWith("xes")
+                || name.EndsWith("zes"))
+            {
+                return name.Remove(name.Length - 2);
+            }
+
+            if (name.EndsWith("s"))
+            {
+                return name.Remove(name.Length - 1);
+            }
+
+            return name;
+        }
+
         private MethodDeclarationSyntax CreateExtensionMethod(
             ExtensionMember item,
             HashSet<string> typesToFold,
             SemanticModel semanticModel,
             HashSet<string> ignoreProperties)
         {
+            var preparedItemName = item.IsCollection && this.Settings.UnpluralizeVariables ? this.UnpluralizeName(item.Name) : item.Name;
+            if (CSharpKeywords.Contains(preparedItemName))
+            {
+                preparedItemName = $"@{preparedItemName}";
+            }
+
             var subjectIdentifier = "subject";
             var containerTypeSyntax = SyntaxFactory.ParseTypeName(item.ContainerSymbol.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat));
             var itemTypeString = item.ItemType.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat);
@@ -224,7 +275,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             {
                 if (item.ItemTypeInheritsRequiredBaseType && !item.ItemType.IsAbstract)
                 {
-                    itemParameterName = $"{this.FirstCharToLower(item.Name)}Builder";
+                    itemParameterName = $"{this.FirstCharToLower(preparedItemName)}Builder";
                     itemParameters.Add(SyntaxFactory.Parameter(SyntaxFactory.List<AttributeListSyntax>(),
                             SyntaxFactory.TokenList(),
                             SyntaxFactory.ParseTypeName($"Func<{itemTypeString}, {itemTypeString}>"),
@@ -239,7 +290,12 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                 }
                 else
                 {
-                    itemParameterName = this.FirstCharToLower(item.Name);
+                    itemParameterName = this.FirstCharToLower(preparedItemName);
+                    if (CSharpKeywords.Contains(itemParameterName))
+                    {
+                        itemParameterName = $"@{itemParameterName}";
+                    }
+
                     itemParameters.Add(SyntaxFactory.Parameter(SyntaxFactory.List<AttributeListSyntax>(),
                             SyntaxFactory.TokenList(),
                             itemTypeSyntax,
@@ -254,7 +310,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                     SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
                     containerTypeSyntax,
                     null,
-                    SyntaxFactory.Identifier($"With{item.Name}"),
+                    SyntaxFactory.Identifier($"With{preparedItemName}"),
                     null,
                     SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(itemParameters)),
                     SyntaxFactory.List<TypeParameterConstraintClauseSyntax>(),
