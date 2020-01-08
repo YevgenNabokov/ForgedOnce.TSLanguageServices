@@ -40,20 +40,28 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
 
         protected override void Implementation(CodeFileCSharp input, Parameters parameters, IMetadataRecorder metadataRecorder, ILogger logger)
         {
-            var typesToFold = this.Settings.TypesToFold != null && this.Settings.TypesToFold.Length > 0
-                ? new HashSet<string>(this.Settings.TypesToFold)
+            var ignoreProperties = this.Settings.IgnorePropertyNames != null && this.Settings.IgnorePropertyNames.Length > 0
+                ? new HashSet<string>(this.Settings.IgnorePropertyNames)
                 : new HashSet<string>();
+
+            var typesToFold = this.Settings.TypesToUnfold != null && this.Settings.TypesToUnfold.Length > 0
+                ? new HashSet<string>(this.Settings.TypesToUnfold)
+                : new HashSet<string>();
+
+            INamedTypeSymbol requiredType = null;
+            if (!string.IsNullOrEmpty(this.Settings.RequiredClassBaseType))
+            {
+                requiredType = input.SemanticModel.Compilation.GetTypeByMetadataName(this.Settings.RequiredClassBaseType);
+                if (requiredType == null)
+                {
+                    throw new InvalidOperationException($"Cannot resolve required base type {this.Settings.RequiredClassBaseType} from compilation.");
+                }
+            }
 
             foreach (var classDeclaration in input.SyntaxTree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())
             {
-                if (!string.IsNullOrEmpty(this.Settings.RequiredClassBaseType))
+                if (requiredType != null && classDeclaration.BaseList != null)
                 {
-                    INamedTypeSymbol requiredType = input.SemanticModel.Compilation.GetTypeByMetadataName(this.Settings.RequiredClassBaseType);
-                    if (requiredType == null)
-                    {
-                        throw new InvalidOperationException($"Cannot resolve required base type {this.Settings.RequiredClassBaseType} from compilation.");
-                    }
-
                     bool hasRequiredType = false;
                     foreach (var baseType in classDeclaration.BaseList.Types)
                     {
@@ -75,18 +83,30 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                 var declaredSymbol = input.SemanticModel.GetDeclaredSymbol(classDeclaration);
                 if (!typesToFold.Contains(declaredSymbol.MetadataName))
                 {
-                    var outputFile = (CodeFileCSharp)this.outputStream.CreateCodeFile($"{declaredSymbol.Name}Extensions.cs");
-                    this.GenerateForClass(input, classDeclaration, declaredSymbol, outputFile, typesToFold);
+                    var props =
+                        this
+                        .GetAllSymbols<IPropertySymbol>(declaredSymbol, SymbolKind.Property, Accessibility.Public)
+                        .Where(p => !ignoreProperties.Contains(p.Name))
+                        .ToList();
+
+                    if (props.Count > 0)
+                    {
+                        var outputFile = (CodeFileCSharp)this.outputStream.CreateCodeFile($"{declaredSymbol.Name}Extensions.cs");
+                        this.GenerateForClass(props, input, classDeclaration, declaredSymbol, outputFile, typesToFold, requiredType, ignoreProperties);
+                    }
                 }
             }
         }
 
         private void GenerateForClass(
+            IEnumerable<IPropertySymbol> properties,
             CodeFileCSharp input,
             ClassDeclarationSyntax classDeclarationSyntax,
             INamedTypeSymbol declaredSymbol,
             CodeFileCSharp output,
-            HashSet<string> typesToFold)
+            HashSet<string> typesToFold,
+            INamedTypeSymbol requiredBaseType,
+            HashSet<string> ignoreProperties)
         {
             var unit = SyntaxFactory.CompilationUnit();
             
@@ -97,13 +117,11 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                 unit = unit.AddUsings(nsUsage);
             }
 
-            var props = this.GetAllSymbols<IPropertySymbol>(declaredSymbol, SymbolKind.Property, Accessibility.Public);
-
             var additionalUsings = new HashSet<string>();
 
             List<ExtensionMember> members = new List<ExtensionMember>();
 
-            foreach (var p in props)
+            foreach (var p in properties)
             {
                 var itemType = p.Type;
                 bool isCollection = false;
@@ -113,7 +131,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                 {
                     itemType = collectionInterface.TypeArguments.First();
                     isCollection = true;
-                    additionalUsings.Add(typeof(ICollection<>).FullName.Substring(0, typeof(ICollection<>).FullName.LastIndexOf('.')));
+                    ////additionalUsings.Add(typeof(ICollection<>).FullName.Substring(0, typeof(ICollection<>).FullName.LastIndexOf('.')));
                 }
 
                 if (itemType.ContainingNamespace.ToDisplayString() != declaredSymbol.ContainingNamespace.ToDisplayString())
@@ -125,6 +143,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                 {
                     IsCollection = isCollection,
                     ItemType = itemType,
+                    ItemTypeInheritsRequiredBaseType = InheritsFromOrImplementsOrEqualsIgnoringConstruction(itemType, requiredBaseType),
                     Name = p.Name,
                     SourcePropertySymbol = p,
                     ContainerSymbol = declaredSymbol
@@ -139,9 +158,9 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             var className = $"{declaredSymbol.Name}Extensions";
 
             var extensionClass = SyntaxFactory.ClassDeclaration(className);
-            extensionClass = extensionClass.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+            extensionClass = extensionClass.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword));
 
-            extensionClass = extensionClass.WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>(members.Select(m => this.CreateExtensionMethod(m, typesToFold, input.SemanticModel))));
+            extensionClass = extensionClass.WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>(members.Select(m => this.CreateExtensionMethod(m, typesToFold, input.SemanticModel, ignoreProperties))));
 
             var nsContainer = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(this.Settings.OutputNamespace));
             nsContainer = nsContainer.AddMembers(extensionClass);
@@ -149,56 +168,125 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             output.SyntaxTree = unit.SyntaxTree;
         }
 
-        private MethodDeclarationSyntax CreateExtensionMethod(ExtensionMember item, HashSet<string> typesToFold, SemanticModel semanticModel)
+        private MethodDeclarationSyntax CreateExtensionMethod(
+            ExtensionMember item,
+            HashSet<string> typesToFold,
+            SemanticModel semanticModel,
+            HashSet<string> ignoreProperties)
         {
-            if (!typesToFold.Contains(item.ItemType.MetadataName))
-            {
-                if (item.IsCollection)
+            var subjectIdentifier = "subject";
+            var containerTypeSyntax = SyntaxFactory.ParseTypeName(item.ContainerSymbol.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat));
+            var itemTypeString = item.ItemType.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat);
+            var itemTypeSyntax = SyntaxFactory.ParseTypeName(itemTypeString);
+
+            string itemParameterName;
+            List<ParameterSyntax> itemParameters = new List<ParameterSyntax>()
                 {
-                    throw new NotImplementedException();
-                }
-                else
-                {
-                    var subjectIdentifier = "subject";
-                    var containerTypeSyntax = SyntaxFactory.ParseTypeName(item.ContainerSymbol.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat));
-                    var itemTypeString = item.ItemType.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat);
-                    var itemTypeSyntax = SyntaxFactory.ParseTypeName(itemTypeString);
-                    return SyntaxFactory.MethodDeclaration(
-                        SyntaxFactory.List<AttributeListSyntax>(),
-                        SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
-                        itemTypeSyntax,
-                        null,
-                        SyntaxFactory.Identifier($"With{item.Name}"),
-                        null,
-                        SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(new ParameterSyntax[] 
-                        {
-                            SyntaxFactory.Parameter(SyntaxFactory.List<AttributeListSyntax>(),
+                    SyntaxFactory.Parameter(SyntaxFactory.List<AttributeListSyntax>(),
                                 SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.ThisKeyword)),
                                 containerTypeSyntax,
                                 SyntaxFactory.Identifier(subjectIdentifier),
-                                null),
-                            SyntaxFactory.Parameter(SyntaxFactory.List<AttributeListSyntax>(),
-                                SyntaxFactory.TokenList(),
-                                SyntaxFactory.ParseTypeName($"Func<{itemTypeString}, {itemTypeString}>"),
-                                SyntaxFactory.Identifier( this.FirstCharToLower(item.Name)),
-                                null),
-                        })),
-                        SyntaxFactory.List<TypeParameterConstraintClauseSyntax>(),
-                        SyntaxFactory.Block(
-                            //// Implement.
-                            ),
-                        null);
+                                null)
+                };
+            ExpressionSyntax valueSyntax = null;
+            if (typesToFold.Contains(this.GetFullMetadataName(item.ItemType)))
+            {
+                var props = 
+                    this
+                    .GetAllSymbols<IPropertySymbol>(item.ItemType, SymbolKind.Property, Accessibility.Public)
+                    .Where(p => !ignoreProperties.Contains(p.Name));
+                List<ExpressionSyntax> initializerParts = new List<ExpressionSyntax>();
+                foreach (var p in props)
+                {
+                    var propName = p.Name != subjectIdentifier ? this.FirstCharToLower(p.Name) : $"{item.Name}{p.Name}";
+
+                    initializerParts.Add(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.IdentifierName(p.Name),
+                            SyntaxFactory.IdentifierName(propName)));
+
+                    itemParameters.Add(SyntaxFactory.Parameter(SyntaxFactory.List<AttributeListSyntax>(),
+                            SyntaxFactory.TokenList(),
+                            SyntaxFactory.ParseTypeName(p.Type.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat)),
+                            SyntaxFactory.Identifier(propName),
+                            null));
                 }
+
+                valueSyntax = SyntaxFactory.ObjectCreationExpression(
+                    itemTypeSyntax,
+                    null,
+                    SyntaxFactory.InitializerExpression(
+                        SyntaxKind.ObjectInitializerExpression,
+                        SyntaxFactory.SeparatedList<ExpressionSyntax>(initializerParts)));
             }
             else
             {
-
-
-                throw new NotImplementedException();
+                if (item.ItemTypeInheritsRequiredBaseType && !item.ItemType.IsAbstract)
+                {
+                    itemParameterName = $"{this.FirstCharToLower(item.Name)}Builder";
+                    itemParameters.Add(SyntaxFactory.Parameter(SyntaxFactory.List<AttributeListSyntax>(),
+                            SyntaxFactory.TokenList(),
+                            SyntaxFactory.ParseTypeName($"Func<{itemTypeString}, {itemTypeString}>"),
+                            SyntaxFactory.Identifier(itemParameterName),
+                            null));
+                    valueSyntax = SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.IdentifierName(itemParameterName),
+                        SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                            new ArgumentSyntax[] {
+                            SyntaxFactory.Argument(SyntaxFactory.ObjectCreationExpression(itemTypeSyntax, SyntaxFactory.ArgumentList(), null))
+                            })));
+                }
+                else
+                {
+                    itemParameterName = this.FirstCharToLower(item.Name);
+                    itemParameters.Add(SyntaxFactory.Parameter(SyntaxFactory.List<AttributeListSyntax>(),
+                            SyntaxFactory.TokenList(),
+                            itemTypeSyntax,
+                            SyntaxFactory.Identifier(itemParameterName),
+                            null));
+                    valueSyntax = SyntaxFactory.IdentifierName(itemParameterName);
+                }
             }
+
+            return SyntaxFactory.MethodDeclaration(
+                    SyntaxFactory.List<AttributeListSyntax>(),
+                    SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                    containerTypeSyntax,
+                    null,
+                    SyntaxFactory.Identifier($"With{item.Name}"),
+                    null,
+                    SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(itemParameters)),
+                    SyntaxFactory.List<TypeParameterConstraintClauseSyntax>(),
+                    SyntaxFactory.Block(
+                        SyntaxFactory.List<StatementSyntax>(new StatementSyntax[]{
+                                SyntaxFactory.ExpressionStatement(
+                                item.IsCollection
+                                ?
+                                (ExpressionSyntax)SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(subjectIdentifier),
+                                        SyntaxFactory.IdentifierName(item.Name)),
+                                    SyntaxFactory.IdentifierName("Add")),
+                                SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new ArgumentSyntax[]{ SyntaxFactory.Argument(valueSyntax) })))
+                                :
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(subjectIdentifier),
+                                        SyntaxFactory.IdentifierName(item.Name)),
+                                    valueSyntax), SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                                SyntaxFactory.ReturnStatement(SyntaxFactory.IdentifierName(subjectIdentifier))
+                        })),
+                    null);
         }
 
-        private List<TSymbol> GetAllSymbols<TSymbol>(INamedTypeSymbol symbol, SymbolKind kind, Accessibility accessibility) where TSymbol : ISymbol
+        private List<TSymbol> GetAllSymbols<TSymbol>(ITypeSymbol symbol, SymbolKind kind, Accessibility accessibility) where TSymbol : ISymbol
         {
             var result = new Dictionary<string, TSymbol>();
 
@@ -259,7 +347,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             return name.Substring(0, 1).ToLower() + (name.Length > 1 ? name.Substring(1) : string.Empty);
         }
 
-        private string GetFullMetadataName(INamedTypeSymbol symbol)
+        private string GetFullMetadataName(ITypeSymbol symbol)
         {
             return $"{symbol.ContainingNamespace.ToDisplayString()}.{symbol.MetadataName}";
         }

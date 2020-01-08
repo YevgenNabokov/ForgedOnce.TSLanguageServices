@@ -15,6 +15,8 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
 
         public ITypeSymbol ItemType;
 
+        public bool ItemTypeInheritsRequiredBaseType;
+
         public INamedTypeSymbol ContainerSymbol;
     }
 }

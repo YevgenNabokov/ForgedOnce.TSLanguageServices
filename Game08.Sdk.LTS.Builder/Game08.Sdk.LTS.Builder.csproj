@@ -1,9 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>    
+  <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
-
   <PropertyGroup>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <NuspecFile>Game08.Sdk.LTS.Builder.nuspec</NuspecFile>
@@ -14,20 +12,16 @@
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Game08.Sdk.LTS.Model\Game08.Sdk.LTS.Model.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="ExtensionMethods\Generated\" />
   </ItemGroup>
-
   <Target Name="PublishAll" BeforeTargets="GenerateNuspec">
     <ItemGroup>
       <_TargetFramework Include="$(TargetFrameworks)" />
     </ItemGroup>
     <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" Properties="TargetFramework=%(_TargetFramework.Identity)" />
   </Target>
-
 </Project>
