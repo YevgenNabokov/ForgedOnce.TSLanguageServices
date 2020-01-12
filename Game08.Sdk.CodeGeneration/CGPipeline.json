@@ -19,7 +19,7 @@
                 "requiredClassBaseType": "Game08.Sdk.LTS.Model.DefinitionTree.Node",
                 "typesToUnfold": "Game08.Sdk.LTS.Builder.DefinitionTree.Identifier;Game08.Sdk.LTS.Builder.DefinitionTree.TypeReferenceId",
                 "ignorePropertyNames": "Parent",
-                "unpluralizeVariables":  "true"
+                "unpluralizeVariables": "true"
               }
             }
           },
@@ -33,11 +33,12 @@
               "PassThrough": "*"
             }
           },
-          "mappings": {
+          "destinationMapping": {
             "PassThrough": {
               "settings": { "path": "Game08.Sdk.LTS.Builder/ExtensionMethods/Generated" }
             }
-          }
+          },
+          "cleanDestinations" : true
         }
       ]
     }
