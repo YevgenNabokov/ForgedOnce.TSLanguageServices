@@ -8,7 +8,7 @@ namespace Game08.Sdk.LTS.Builder.ExtensionMethods
 {
     public static partial class StatementExpressionExtensions
     {
-        static Game08.Sdk.LTS.Builder.DefinitionTree.StatementExpression WithExpression(this Game08.Sdk.LTS.Builder.DefinitionTree.StatementExpression subject, Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNode expression)
+        public static Game08.Sdk.LTS.Builder.DefinitionTree.StatementExpression WithExpression(this Game08.Sdk.LTS.Builder.DefinitionTree.StatementExpression subject, Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNode expression)
         {
             subject.Expression = expression;
             return subject;

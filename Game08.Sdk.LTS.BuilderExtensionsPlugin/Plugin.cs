@@ -307,7 +307,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
 
             return SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.List<AttributeListSyntax>(),
-                    SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                    SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
                     containerTypeSyntax,
                     null,
                     SyntaxFactory.Identifier($"With{preparedItemName}"),

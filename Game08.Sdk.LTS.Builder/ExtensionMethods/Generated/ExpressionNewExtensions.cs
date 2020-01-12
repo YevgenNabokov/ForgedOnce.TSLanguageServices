@@ -9,13 +9,13 @@ namespace Game08.Sdk.LTS.Builder.ExtensionMethods
 {
     public static partial class ExpressionNewExtensions
     {
-        static Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNew WithArgument(this Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNew subject, Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNode argument)
+        public static Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNew WithArgument(this Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNew subject, Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNode argument)
         {
             subject.Arguments.Add(argument);
             return subject;
         }
 
-        static Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNew WithSubjectType(this Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNew subject, string referenceKey)
+        public static Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNew WithSubjectType(this Game08.Sdk.LTS.Builder.DefinitionTree.ExpressionNew subject, string referenceKey)
         {
             subject.SubjectType = new Game08.Sdk.LTS.Builder.DefinitionTree.TypeReferenceId{ReferenceKey = referenceKey};
             return subject;
