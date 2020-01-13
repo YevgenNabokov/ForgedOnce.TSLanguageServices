@@ -18,6 +18,8 @@ namespace Game08.Sdk.LTS.Builder.Interfaces
 
         string RegisterTypeReferenceUnion(IEnumerable<string> typeReferenceIds);
 
+        string RegisterTypeReferenceInlineIndexer(string keyName, string valueTypeId);
+
         TypeDefinitionUpdateResult UpdateTypeDefinitionFile(string typeDefinitionId, string file);
     }
 }

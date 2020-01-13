@@ -200,6 +200,29 @@ namespace Game08.Sdk.LTS.Builder.TypeData
             return result.Id;
         }
 
+        public string RegisterTypeReferenceInlineIndexer(string keyName, string valueTypeId)
+        {
+            var valueTypeReference = this.ResolveTypeReference(valueTypeId);
+
+            var result = new TypeReferenceInline()
+            {
+                Indexer = new TypeReferenceInlineIndexer()
+                {
+                    KeyName = keyName,
+                    ValueType = valueTypeReference
+                }
+            };
+
+            result.RefreshId();
+            if (!this.typeReferenceIndex.ContainsKey(result.Id))
+            {
+                this.typeReferenceIndex.Add(result.Id, result);
+                this.RegisterReferenceUsage(result, new TypeReference[] { valueTypeReference });
+            }
+
+            return result.Id;
+        }
+
         public string RegisterTypeReferenceExternal(string name, string ns, string module, IEnumerable<string> parameterTypeReferenceIds = null)
         {
             List<TypeReference> parameters = this.ResolveTypeReferences(parameterTypeReferenceIds);
@@ -257,18 +280,23 @@ namespace Game08.Sdk.LTS.Builder.TypeData
             {
                 foreach (var p in parameterTypeReferenceIds)
                 {
-                    if (this.typeReferenceIndex.ContainsKey(p))
-                    {
-                        result.Add(this.typeReferenceIndex[p]);
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException($"Type reference cannot be resolved {p}.");
-                    }
+                    result.Add(this.ResolveTypeReference(p));
                 }
             }
 
             return result;
+        }
+
+        private TypeReference ResolveTypeReference(string typeReferenceId)
+        {
+            if (this.typeReferenceIndex.ContainsKey(typeReferenceId))
+            {
+                return this.typeReferenceIndex[typeReferenceId];
+            }
+            else
+            {
+                throw new InvalidOperationException($"Type reference cannot be resolved {typeReferenceId}.");
+            }
         }
 
         private void RegisterReferenceUsage(TypeReference user, IEnumerable<TypeReference> refs = null)

@@ -463,7 +463,7 @@ export class TsTreeGenerator {
             var elements: ts.TypeElement[] = [];
 
             if (inlineTypeReference.Indexer != null) {
-                var parameter = ts.createParameter([], [], undefined, inlineTypeReference.Indexer.KeyName);
+                var parameter = ts.createParameter([], [], undefined, inlineTypeReference.Indexer.KeyName, undefined, ts.createTypeReferenceNode(ts.createIdentifier('string'), []));
                 var valueTypeReference = context.getTypeReference(inlineTypeReference.Indexer.ValueType.Id);
                 elements.push(ts.createIndexSignature([], [], [parameter], this.generateTypeNode(context, valueTypeReference)));
             }

@@ -1,5 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Modifier;
+(function (Modifier) {
+    Modifier[Modifier["Public"] = 0] = "Public";
+    Modifier[Modifier["Private"] = 1] = "Private";
+    Modifier[Modifier["Protected"] = 2] = "Protected";
+    Modifier[Modifier["Abstract"] = 3] = "Abstract";
+    Modifier[Modifier["Export"] = 4] = "Export";
+})(Modifier = exports.Modifier || (exports.Modifier = {}));
 var NodeType;
 (function (NodeType) {
     NodeType[NodeType["Root"] = 0] = "Root";
@@ -28,14 +36,6 @@ var NodeType;
     NodeType[NodeType["StatementExpression"] = 23] = "StatementExpression";
     NodeType[NodeType["StatementFor"] = 24] = "StatementFor";
 })(NodeType = exports.NodeType || (exports.NodeType = {}));
-var Modifier;
-(function (Modifier) {
-    Modifier[Modifier["Public"] = 0] = "Public";
-    Modifier[Modifier["Private"] = 1] = "Private";
-    Modifier[Modifier["Protected"] = 2] = "Protected";
-    Modifier[Modifier["Abstract"] = 3] = "Abstract";
-    Modifier[Modifier["Export"] = 4] = "Export";
-})(Modifier = exports.Modifier || (exports.Modifier = {}));
 var TypeReferenceKind;
 (function (TypeReferenceKind) {
     TypeReferenceKind[TypeReferenceKind["Builtin"] = 0] = "Builtin";

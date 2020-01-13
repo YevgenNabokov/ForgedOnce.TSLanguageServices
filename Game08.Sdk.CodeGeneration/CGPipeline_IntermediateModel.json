@@ -1,0 +1,49 @@
+{
+  "codeFileHandlers": [
+    { "type": "Game08.Sdk.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, Game08.Sdk.CodeMixer.CSharp" },
+    { "type": "Game08.Sdk.CodeMixer.LimitedTypeScript.LtsCodeFileHandlerFactory, Game08.Sdk.CodeMixer.LimitedTypeScript" }
+  ],
+  "inputs": {
+    "DefinitionTree": "CSharp:Project:Game08.Sdk.LTS.Model/DefinitionTree/*.cs",
+    "TypeData": "CSharp:Project:Game08.Sdk.LTS.Model/TypeData/*.cs",
+    "Common": "CSharp:Project:Game08.Sdk.LTS.Model/CodeFile.cs;Game08.Sdk.LTS.Model/CodeGenerationTask.cs"
+  },
+  "batches": [
+    {
+      "name": "Batch01",
+      "stages": [
+        {
+          "name": "TypeScriptModelInterfaces",
+          "plugin": {
+            "pluginFactory": {
+              "type": "Game08.Sdk.LTS.ModelTsInterfacesPlugin.PluginFactory, Game08.Sdk.LTS.ModelTsInterfacesPlugin",
+              "config": {
+                "modelBaseNamespace": "Game08.Sdk.LTS.Model"
+              }
+            }
+          },
+          "input": {
+            "settings": {
+              "DefinitionTree": "*.cs",
+              "TypeData": "*.cs",
+              "Common": "*.cs"
+            }
+          },
+          "output": {
+            "settings": {
+              "PassThrough": "*"
+            }
+          },
+          "destinationMapping": {
+            "PassThrough": {
+              "name": "fileSystem",
+              "settings": {
+                "path": "..\\Game08.Sdk.CSToTS.TypeScriptBuilder\\Generated"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

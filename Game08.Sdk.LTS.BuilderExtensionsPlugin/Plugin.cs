@@ -130,7 +130,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             {
                 var itemType = p.Type;
                 bool isCollection = false;
-                var collectionInterface = p.Type.Interfaces.FirstOrDefault(i => i.IsGenericType && this.GetFullMetadataName(i.ConstructedFrom) == typeof(ICollection<>).FullName);
+                var collectionInterface = p.Type.Interfaces.FirstOrDefault(i => i.IsGenericType && GetFullMetadataName(i.ConstructedFrom) == typeof(ICollection<>).FullName);
                 
                 if (collectionInterface != null)
                 {
@@ -240,7 +240,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                                 null)
                 };
             ExpressionSyntax valueSyntax = null;
-            if (typesToFold.Contains(this.GetFullMetadataName(item.ItemType)))
+            if (typesToFold.Contains(GetFullMetadataName(item.ItemType)))
             {
                 var props = 
                     this
@@ -374,13 +374,13 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             var originalBaseType = baseType.OriginalDefinition;
             type = type.OriginalDefinition;
 
-            if (type.MetadataName == originalBaseType.MetadataName)
+            if (GetFullMetadataName(type) == GetFullMetadataName(originalBaseType))
             {
                 return true;
             }
 
             IEnumerable<ITypeSymbol> baseTypes = (baseType.TypeKind == TypeKind.Interface) ? type.AllInterfaces : GetBaseTypes(type);
-            return baseTypes.Any(t => t.OriginalDefinition.MetadataName == originalBaseType.MetadataName);
+            return baseTypes.Any(t => GetFullMetadataName(t.OriginalDefinition) == GetFullMetadataName(originalBaseType));
         }
 
         public static IEnumerable<INamedTypeSymbol> GetBaseTypes(ITypeSymbol type)
@@ -403,7 +403,7 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             return name.Substring(0, 1).ToLower() + (name.Length > 1 ? name.Substring(1) : string.Empty);
         }
 
-        private string GetFullMetadataName(ITypeSymbol symbol)
+        private static string GetFullMetadataName(ITypeSymbol symbol)
         {
             return $"{symbol.ContainingNamespace.ToDisplayString()}.{symbol.MetadataName}";
         }
