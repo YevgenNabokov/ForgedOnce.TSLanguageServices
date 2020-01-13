@@ -15,6 +15,7 @@ namespace Game08.Sdk.LTS.ModelTsInterfacesPlugin
             Settings settings = new Settings();
             this.SetFromConfiguration((v) => settings.ModelBaseNamespace = v, configuration, Settings.ModelBaseNamespaceKey);
             this.SetFromConfiguration((v) => bool.TryParse(v, out settings.SkipUnmappedTypeReferences), configuration, Settings.SkipUnmappedTypeReferencesKey);
+            this.SetFromConfiguration((v) => settings.OutputFileName = v, configuration, Settings.OutputFileNameKey);
 
             return new Plugin()
             {

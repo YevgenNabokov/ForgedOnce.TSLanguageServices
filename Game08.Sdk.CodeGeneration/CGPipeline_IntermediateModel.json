@@ -6,6 +6,7 @@
   "inputs": {
     "DefinitionTree": "CSharp:Project:Game08.Sdk.LTS.Model/DefinitionTree/*.cs",
     "TypeData": "CSharp:Project:Game08.Sdk.LTS.Model/TypeData/*.cs",
+    "ResultModel": "CSharp:Project:Game08.Sdk.LTS.Model/ResultModel/*.cs",
     "Common": "CSharp:Project:Game08.Sdk.LTS.Model/CodeFile.cs;Game08.Sdk.LTS.Model/CodeGenerationTask.cs"
   },
   "batches": [
@@ -18,7 +19,8 @@
             "pluginFactory": {
               "type": "Game08.Sdk.LTS.ModelTsInterfacesPlugin.PluginFactory, Game08.Sdk.LTS.ModelTsInterfacesPlugin",
               "config": {
-                "modelBaseNamespace": "Game08.Sdk.LTS.Model"
+                "modelBaseNamespace": "Game08.Sdk.LTS.Model",
+                "outputFileName": "IntermadiateModel.ts"
               }
             }
           },
@@ -26,6 +28,7 @@
             "settings": {
               "DefinitionTree": "*.cs",
               "TypeData": "*.cs",
+              "ResultModel": "*.cs",
               "Common": "*.cs"
             }
           },
@@ -38,7 +41,7 @@
             "PassThrough": {
               "name": "fileSystem",
               "settings": {
-                "path": "..\\Game08.Sdk.CSToTS.TypeScriptBuilder\\Generated"
+                "path": "..\\Game08.Sdk.CSToTS.TypeScriptBuilder"
               }
             }
           }

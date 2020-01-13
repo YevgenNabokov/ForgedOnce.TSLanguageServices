@@ -181,7 +181,8 @@ namespace Game08.Sdk.LTS.ModelTsInterfacesPlugin
             {
                 if (this.singleOutputFile == null)
                 {
-                    this.singleOutputFile = (CodeFileLtsModel)this.outputStream.CreateCodeFile($"IntermediateModelGenerated.ts");
+                    this.singleOutputFile = (CodeFileLtsModel)this.outputStream.CreateCodeFile(
+                        string.IsNullOrEmpty(this.Settings.OutputFileName) ? $"IntermediateModelGenerated.ts" : this.Settings.OutputFileName);
                 }
 
                 return this.singleOutputFile;

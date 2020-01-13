@@ -1,4 +1,103 @@
-﻿export enum NodeType {
+export interface ClassDefinition extends NamedTypeDefinition {
+    Modifiers: Array<Modifier>;
+    BaseType: TypeReferenceId;
+    Implements: Array<TypeReferenceId>;
+    Fields: Array<FieldDeclaration>;
+    Methods: Array<MethodDeclaration>;
+    Properties: Array<PropertyDeclaration>;
+    Constructor: ConstructorDeclaration;
+}
+export interface ConstructorDeclaration extends Node {
+    Modifiers: Array<Modifier>;
+    Parameters: Array<MethodParameter>;
+    Body: StatementBlock;
+}
+export interface EnumDefinition extends NamedTypeDefinition {
+    Modifiers: Array<Modifier>;
+    Members: Array<EnumMember>;
+}
+export interface EnumMember extends Node {
+    Name: string;
+    Value: ExpressionNode;
+}
+export interface ExpressionAssignment extends ExpressionNode {
+    Left: ExpressionNode;
+    Right: ExpressionNode;
+}
+export interface ExpressionBinary extends ExpressionNode {
+    Left: ExpressionNode;
+    Right: ExpressionNode;
+    Operator: string;
+}
+export interface ExpressionIdentifierReference extends ExpressionNode {
+    Name: string;
+}
+export interface ExpressionInvocation extends ExpressionNode {
+    Arguments: Array<ExpressionNode>;
+    Expression: ExpressionNode;
+}
+export interface ExpressionLiteral extends ExpressionNode {
+    IsNumeric: boolean;
+    Text: string;
+}
+export interface ExpressionMemberAccess extends ExpressionNode {
+    Expression: ExpressionNode;
+    Name: string;
+}
+export interface ExpressionNew extends ExpressionNode {
+    Arguments: Array<ExpressionNode>;
+    SubjectType: TypeReferenceId;
+}
+export interface ExpressionNode extends Node {
+}
+export interface ExpressionThis extends ExpressionNode {
+}
+export interface ExpressionUnary extends ExpressionNode {
+    Left: ExpressionNode;
+    Operator: string;
+}
+export interface FieldDeclaration extends Node {
+    Modifiers: Array<Modifier>;
+    TypeReference: TypeReferenceId;
+    Name: string;
+    Initializer: ExpressionNode;
+}
+export interface FileRoot extends Node {
+    Items: Array<Node>;
+}
+export interface InterfaceDefinition extends NamedTypeDefinition {
+    Modifiers: Array<Modifier>;
+    Implements: Array<TypeReferenceId>;
+    Fields: Array<FieldDeclaration>;
+    Methods: Array<MethodDeclaration>;
+}
+export interface MethodDeclaration extends Node {
+    Modifiers: Array<Modifier>;
+    Name: string;
+    Parameters: Array<MethodParameter>;
+    Body: StatementBlock;
+    ReturnType: TypeReferenceId;
+}
+export interface MethodParameter extends Node {
+    Name: string;
+    TypeReference: TypeReferenceId;
+    DefaultValue: ExpressionLiteral;
+}
+export enum Modifier {
+    Public,
+    Private,
+    Protected,
+    Abstract,
+    Export
+}
+export interface NamedTypeDefinition extends Node {
+    Name: string;
+    TypeKey: string;
+}
+export interface Node {
+    NodeType: NodeType;
+}
+export enum NodeType {
     Root,
     ClassDefinition,
     InterfaceDefinition,
@@ -10,7 +109,6 @@
     EnumMember,
     TypeReferenceId,
     MethodParameter,
-
     ExpressionLiteral,
     ExpressionBinary,
     ExpressionIdentifierReference,
@@ -20,22 +118,87 @@
     ExpressionAssignment,
     ExpressionNew,
     ExpressionUnary,
-
     StatementBlock,
     StatementLocalDeclaration,
     StatementReturn,
     StatementExpression,
     StatementFor
 }
-
-export enum Modifier {
-    Public,
-    Private,
-    Protected,
-    Abstract,
-    Export
+export interface PropertyDeclaration extends Node {
+    Modifiers: Array<Modifier>;
+    TypeReference: TypeReferenceId;
+    Name: string;
+    Getter: MethodDeclaration;
+    Setter: MethodDeclaration;
 }
-
+export interface StatementBlock extends StatementNode {
+    Statements: Array<StatementNode>;
+}
+export interface StatementExpression extends StatementNode {
+    Expression: ExpressionNode;
+}
+export interface StatementFor extends StatementNode {
+    Initializer: StatementLocalDeclaration;
+    Condition: ExpressionNode;
+    Increment: ExpressionNode;
+    Statement: StatementNode;
+}
+export interface StatementLocalDeclaration extends StatementNode {
+    TypeReference: TypeReferenceId;
+    Name: string;
+    Initializer: ExpressionNode;
+}
+export interface StatementNode extends Node {
+}
+export interface StatementReturn extends StatementNode {
+    Expression: ExpressionNode;
+}
+export interface TypeReferenceId extends Node {
+    ReferenceKey: string;
+}
+export interface TypeCache {
+    Definitions: {
+        [key: string]: TypeDefinition;
+    };
+    References: {
+        [key: string]: TypeReference;
+    };
+}
+export interface TypeDefinition {
+    Id: string;
+    Name: string;
+    Namespace: string;
+    FileLocation: string;
+    Parameters: Array<TypeParameter>;
+}
+export interface TypeParameter {
+    Name: string;
+}
+export interface TypeReference {
+    Id: string;
+    Kind: TypeReferenceKind;
+}
+export interface TypeReferenceBuiltin extends TypeReference {
+    Name: string;
+    TypeParameters: Array<TypeReference>;
+}
+export interface TypeReferenceDefined extends TypeReference {
+    ReferenceTypeId: string;
+    TypeParameters: Array<TypeReference>;
+}
+export interface TypeReferenceExternal extends TypeReference {
+    Name: string;
+    Namespace: string;
+    Module: string;
+    TypeParameters: Array<TypeReference>;
+}
+export interface TypeReferenceInline extends TypeReference {
+    Indexer: TypeReferenceInlineIndexer;
+}
+export interface TypeReferenceInlineIndexer {
+    KeyName: string;
+    ValueType: TypeReference;
+}
 export enum TypeReferenceKind {
     Builtin,
     Defined,
@@ -44,329 +207,25 @@ export enum TypeReferenceKind {
     Inline,
     Union
 }
-
-export interface Node {
-    NodeType: NodeType;
-}
-
-export interface ClassDefinition extends Node
-{
-    Modifiers: Modifier[];
-
-    TypeKey: string;
-
-    Name: string;
-
-    BaseType: TypeReferenceId;
-
-    Implements: TypeReferenceId[];
-
-    Fields: FieldDeclaration[];
-
-    Methods: MethodDeclaration[];
-
-    Properties: PropertyDeclaration[];
-
-    Constructor: ConstructorDeclaration;
-}
-
-export interface ConstructorDeclaration extends Node
-{
-    Modifiers: Modifier[];
-
-    Parameters: MethodParameter[];
-
-    Body: StatementBlock;
-}
-
-export interface EnumDefinition extends Node
-{
-    Name: string;
-
-    TypeKey: string;
-
-    Modifiers: Modifier[];
-
-    Members: EnumMember[];
-}
-
-export interface EnumMember extends Node
-{
-    Name: string;
-
-    Value: ExpressionNode;
-}
-
-export interface ExpressionAssignment extends ExpressionNode
-{
-    Left: ExpressionNode;
-
-    Right: ExpressionNode;
-}
-
-export interface ExpressionBinary extends ExpressionNode
-{
-    Left: ExpressionNode;
-
-    Right: ExpressionNode;
-
-    Operator: string;
-}
-
-export interface ExpressionUnary extends ExpressionNode {
-    Left: ExpressionNode;    
-
-    Operator: string;
-}
-
-export interface ExpressionIdentifierReference extends ExpressionNode
-{
-    Name: string;
-}
-
-export interface ExpressionInvocation extends ExpressionNode
-{
-    Arguments: ExpressionNode[];
-
-    Expression: ExpressionNode;
-}
-
-export interface ExpressionNew extends ExpressionNode {
-    Arguments: ExpressionNode[];
-
-    SubjectType: TypeReferenceId;
-}
-
-
-export interface ExpressionLiteral extends ExpressionNode
-{
-    IsNumeric: boolean;
-
-    Text: string;
-}
-
-export interface ExpressionMemberAccess extends ExpressionNode
-{
-    Expression: ExpressionNode;
-
-    Name: string;
-}
-
-export interface ExpressionNode extends Node
-{
-}
-
-export interface ExpressionThis extends ExpressionNode
-{
-}
-
-export interface FieldDeclaration extends Node
-{
-    Modifiers: Modifier[];
-
-    TypeReference: TypeReferenceId;
-
-    Name: string;
-
-    Initializer: ExpressionNode;
-}
-
-export interface FileRoot extends Node
-{
-    Items: Node[];
-}
-
-export interface InterfaceDefinition extends Node
-{
-    Modifiers: Modifier[];
-
-    TypeKey: string;
-
-    Name: string;
-
-    Implements: TypeReferenceId[];
-
-    Fields: FieldDeclaration[];
-
-    Methods: MethodDeclaration[];
-}
-
-export interface MethodDeclaration extends Node
-{
-    Modifiers: Modifier[];
-
-    Name: string;
-
-    Parameters: MethodParameter[];
-
-    Body: StatementBlock;
-
-    ReturnType: TypeReferenceId;
-}
-
-export interface MethodParameter extends Node {
-    Name: string;
-
-    TypeReference: TypeReferenceId;
-
-    DefaultValue: ExpressionLiteral;
-}
-
-export interface PropertyDeclaration extends Node
-{
-    Modifiers: Modifier[];
-
-    TypeReference: TypeReferenceId;
-
-    Name: string;
-
-    Getter: MethodDeclaration;
-
-    Setter: MethodDeclaration;
-}
-
-export interface StatementBlock extends StatementNode
-{    
-    Statements: StatementNode[];
-}
-
-export interface StatementExpression extends StatementNode
-{
-    Expression: ExpressionNode;
-}
-
-export interface StatementLocalDeclaration extends StatementNode
-{
-    TypeReference: TypeReferenceId;
-
-    Name: string;
-
-    Initializer: ExpressionNode;
-}
-
-export interface StatementFor extends StatementNode
-{
-    Initializer: StatementLocalDeclaration;
-
-    Condition: ExpressionNode;
-
-    Increment: ExpressionNode;
-
-    Statement: StatementNode;
-}
-
-export interface StatementNode extends Node
-{
-}
-
-export interface StatementReturn extends StatementNode
-{
-    Expression: ExpressionNode;
-}
-
-export interface TypeReferenceId extends Node {
-    ReferenceKey: string;
-}
-
-export interface TypeCache {
-    Definitions: { [key: string]: TypeDefinition };
-
-    References: { [key: string]: TypeReference };
-}
-
-export interface TypeDefinition {
-    Id: string;
-
-    Name: string;
-
-    Namespace: string;
-
-    FileLocation: string;
-
-    Parameters: TypeParameter[];
-
-    RefreshId(): string;
-}
-
-export interface TypeParameter {
-    Name: string;
-}
-
-export interface TypeReference {
-    Id: string;
-
-    Kind: TypeReferenceKind;
-
-    RefreshId(): string;
-
-    AggregateTypeParametersForId(typeParameters: TypeReference[]): string;
-}
-
-export interface TypeReferenceBuiltin extends TypeReference
-{
-    Name: string;
-
-    TypeParameters: TypeReference[];
-}
-
-export interface TypeReferenceDefined extends TypeReference
-{
-    ReferenceTypeId: string;
-
-    TypeParameters: TypeReference[];
-}
-
-export interface TypeReferenceExternal extends TypeReference
-{
-    Name: string;
-
-    Namespace: string;
-
-    Module: string;
-
-    TypeParameters: TypeReference[];
-}
-
-export interface TypeReferenceInline extends TypeReference
-{    
-    Indexer: TypeReferenceInlineIndexer;
-}
-
-export interface TypeReferenceUnion extends TypeReference {
-    Types: TypeReference[];
-}
-
-export interface TypeReferenceInlineIndexer {
-    KeyName: string;
-
-    ValueType: TypeReference;
-}
-
-export interface TypeReferenceLocalGeneric extends TypeReference
-{
+export interface TypeReferenceLocalGeneric extends TypeReference {
     ArgumentName: string;
-
     ReferenceTypeId: string;
 }
-
-export interface CodeFile {
-    FileName: string;
-
-    IsDefinitionFile: boolean;
-
-    RootNode: FileRoot;
+export interface TypeReferenceUnion extends TypeReference {
+    Types: Array<TypeReference>;
 }
-
-export interface CodeGenerationTask {
-    Files: CodeFile[];
-
-    Types: TypeCache;
-}
-
 export interface CodeGenerationError {
     Message: string;
 }
-
 export interface CodeGenerationResult {
-    Errors: CodeGenerationError[];
+    Errors: Array<CodeGenerationError>;
+}
+export interface CodeFile {
+    FileName: string;
+    IsDefinitionFile: boolean;
+    RootNode: FileRoot;
+}
+export interface CodeGenerationTask {
+    Files: Array<CodeFile>;
+    Types: TypeCache;
 }
