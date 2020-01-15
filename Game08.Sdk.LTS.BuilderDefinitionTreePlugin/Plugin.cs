@@ -70,6 +70,9 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
         {
             var outputFile = (CodeFileCSharp)this.outputStream.CreateCodeFile($"{declaredType.Name}.cs");
             var unit = SyntaxFactory.CompilationUnit();
+            unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Generic")));
+            unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Linq")));
+
             var nsContainer = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(this.Settings.OutputNamespace));
 
             var nodeClass = SyntaxFactory.ClassDeclaration(declaredType.Name);
@@ -92,7 +95,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                                     SyntaxFactory.SeparatedList(
                                         new BaseTypeSyntax[]
                                         {
-                                            SyntaxFactory.SimpleBaseType(GetTypeSyntax(declaredType.BaseType, sourceNodeBaseType, semanticModel))
+                                            SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(GetTypeName(declaredType.BaseType, sourceNodeBaseType, semanticModel)))
                                         })));
                 }
             }
@@ -114,6 +117,18 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                 {
                     member.ItemType = collectionInterface.TypeArguments.First();
                     member.IsCollection = true;
+
+                    if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(member.ItemType, sourceNodeBaseType))
+                    {
+                        var itemTypeString = this.GetTypeName(member.ItemType, sourceNodeBaseType, semanticModel);
+                        var collectionTypeString = this.Settings.TrackingCollectionType.Replace("<", string.Empty).Replace(">", string.Empty);
+                        member.CollectionTypeString = $"{collectionTypeString}<{itemTypeString}>";
+                    }
+                    else
+                    {
+                        var itemTypeString = member.ItemType.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat);
+                        member.CollectionTypeString = $"System.Collections.Generic.List<{itemTypeString}>";
+                    }
                 }
 
                 members.Add(member);
@@ -124,36 +139,202 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                 nodeClass = nodeClass.AddMembers(
                     SyntaxFactory.FieldDeclaration(
                         SyntaxFactory.VariableDeclaration(
-                            this.GetTypeSyntax(member.OriginalField.Type, sourceNodeBaseType, semanticModel),
+                            SyntaxFactory.ParseTypeName(this.GetTypeName(member.OriginalField.Type, sourceNodeBaseType, semanticModel)),
                             SyntaxFactory.SeparatedList(new VariableDeclaratorSyntax[] { SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(FirstCharToLower(member.OriginalField.Name))) }))));
             }
 
-            //// Generate constructor.
+            var constructor = SyntaxFactory.ConstructorDeclaration(declaredType.Name);
+            constructor = constructor.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+            List<StatementSyntax> statements = new List<StatementSyntax>();
+            foreach (var member in members.Where(m => m.IsCollection))
+            {
+                ExpressionSyntax right = null;
+                if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(member.ItemType, sourceNodeBaseType))
+                {
+                    right = SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.ParseTypeName(member.CollectionTypeString),
+                        SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(new ArgumentSyntax[] { SyntaxFactory.Argument(SyntaxFactory.ThisExpression()) })),
+                        null);
+                }
+                else
+                {                    
+                    right = SyntaxFactory.ObjectCreationExpression(SyntaxFactory.ParseTypeName(member.CollectionTypeString));
+                }
 
-            //// Generate properties.
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName(member.OriginalField.Name)),
+                            right)));
+            }
 
-            //// Generate ToLtsModelNode method.
+            constructor = constructor.WithBody(SyntaxFactory.Block(statements));
+            nodeClass = nodeClass.AddMembers(constructor);
+
+
+            foreach (var member in members)
+            {
+                if (member.IsCollection)
+                {
+                    nodeClass = nodeClass.AddMembers(
+                        SyntaxFactory
+                        .PropertyDeclaration(
+                            SyntaxFactory.ParseTypeName(member.CollectionTypeString),
+                            member.OriginalField.Name)
+                        .WithAccessorList(
+                            SyntaxFactory.AccessorList(
+                                SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
+                                {
+                                    SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration),
+                                    SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword)),
+                                })))
+                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword)));
+                }
+                else
+                {
+                    List<StatementSyntax> setterStatements = new List<StatementSyntax>();
+                    if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(member.ItemType, sourceNodeBaseType))
+                    {
+                        setterStatements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("SetAsParentFor")),
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SeparatedList(new ArgumentSyntax[]
+                                        {
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(FirstCharToLower(member.OriginalField.Name)))),
+                                            SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value"))
+                                        })))));
+                    }
+
+                    setterStatements.Add(
+                         SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(FirstCharToLower(member.OriginalField.Name))),
+                                SyntaxFactory.IdentifierName("value")
+                         )));
+
+                    nodeClass = nodeClass.AddMembers(
+                    SyntaxFactory
+                    .PropertyDeclaration(
+                        SyntaxFactory.ParseTypeName(this.GetTypeName(member.OriginalField.Type, sourceNodeBaseType, semanticModel)),
+                        member.OriginalField.Name)
+                    .WithAccessorList(
+                        SyntaxFactory.AccessorList(
+                            SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
+                            {
+                                    SyntaxFactory.AccessorDeclaration(
+                                        SyntaxKind.GetAccessorDeclaration,
+                                        SyntaxFactory.Block(new StatementSyntax[]
+                                        {
+                                            SyntaxFactory.ReturnStatement(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(FirstCharToLower(member.OriginalField.Name))))
+                                            })),
+                                    SyntaxFactory.AccessorDeclaration(
+                                        SyntaxKind.SetAccessorDeclaration,
+                                        SyntaxFactory.Block(setterStatements))
+                            })))
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword)));
+                }
+            }
+
+            var toLtsModelNodeMethodName = "ToLtsModelNode";
+            List<ExpressionSyntax> initializerStatements = new List<ExpressionSyntax>();
+            foreach (var member in members)
+            {
+                if (member.IsCollection)
+                {
+                    //// Implement for collections.
+                }
+                else
+                {
+                    if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(member.OriginalField.Type, sourceNodeBaseType))
+                    {
+                        initializerStatements.Add(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.IdentifierName(member.OriginalField.Name),
+                                SyntaxFactory.CastExpression(
+                                    SyntaxFactory.ParseTypeName(member.OriginalField.Type.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat)),
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.ConditionalAccessExpression(                                            
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(member.OriginalField.Name)),                                        
+                                        SyntaxFactory.IdentifierName(toLtsModelNodeMethodName)
+                                        )))));
+                    }
+                    else
+                    {
+                        initializerStatements.Add(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.IdentifierName(member.OriginalField.Name),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(member.OriginalField.Name))));
+                    }
+                }
+            }
+
+            nodeClass = nodeClass.AddMembers(
+                SyntaxFactory.MethodDeclaration(
+                    SyntaxFactory.ParseTypeName(this.Settings.SourceNodeBaseType),
+                    "ToLtsModelNode")
+                .AddModifiers(SyntaxFactory.Token(SyntaxKind.OverrideKeyword))
+                .WithBody(SyntaxFactory.Block(
+                    new StatementSyntax[] {
+                            SyntaxFactory.ReturnStatement(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.ParseTypeName(declaredType.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat)),
+                                    null,
+                                    SyntaxFactory.InitializerExpression(
+                                        SyntaxKind.ObjectInitializerExpression,
+                                        SyntaxFactory.SeparatedList(initializerStatements)
+                                    )))
+                    }))
+                );
 
             nsContainer = nsContainer.AddMembers(nodeClass);
             unit = unit.AddMembers(nsContainer);
             outputFile.SyntaxTree = unit.SyntaxTree;
         }
 
-        private TypeSyntax GetTypeSyntax(ITypeSymbol typeSymbol, INamedTypeSymbol sourceNodeBaseType, SemanticModel semanticModel)
+        private string GetTypeName(ITypeSymbol typeSymbol, INamedTypeSymbol sourceNodeBaseType, SemanticModel semanticModel)
         {
             if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(typeSymbol, sourceNodeBaseType))
             {
                 if (Equals(typeSymbol, sourceNodeBaseType))
                 {
-                    return SyntaxFactory.ParseTypeName(this.Settings.DestinationNodeBaseType);
+                    return this.Settings.DestinationNodeBaseType;
                 }
                 else
                 {
-                    return SyntaxFactory.ParseTypeName($"{this.Settings.OutputNamespace}.{typeSymbol.Name}");
+                    return $"{this.Settings.OutputNamespace}.{typeSymbol.Name}";
                 }
             }
 
-            return SyntaxFactory.ParseTypeName(typeSymbol.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat));
+            return typeSymbol.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat);
         }
 
         //// Should be extracted to common library.

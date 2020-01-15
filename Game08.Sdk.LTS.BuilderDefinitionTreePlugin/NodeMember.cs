@@ -12,5 +12,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
         public bool IsCollection;
 
         public ITypeSymbol ItemType;
+
+        public string CollectionTypeString;
     }
 }
