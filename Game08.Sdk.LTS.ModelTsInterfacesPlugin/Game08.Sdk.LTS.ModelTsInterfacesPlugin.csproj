@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Game08.Sdk.CodeMixer.CSharp" Version="1.0.30" />
-    <PackageReference Include="Game08.Sdk.CodeMixer.LimitedTypeScript" Version="1.0.56" />
-    <PackageReference Include="Game08.Sdk.LTS.Builder" Version="1.0.31" />
+    <PackageReference Include="Game08.Sdk.CodeMixer.CSharp" Version="1.0.31" />
+    <PackageReference Include="Game08.Sdk.CodeMixer.LimitedTypeScript" Version="1.0.57" />
+    <PackageReference Include="Game08.Sdk.LTS.Builder" Version="1.0.33" />
   </ItemGroup>
 
 </Project>

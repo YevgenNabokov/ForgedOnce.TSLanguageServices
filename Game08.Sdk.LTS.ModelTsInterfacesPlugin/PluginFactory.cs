@@ -10,7 +10,7 @@ namespace Game08.Sdk.LTS.ModelTsInterfacesPlugin
 {
     public class PluginFactory : ICodeGenerationPluginFactory<Settings, Parameters, CodeFileCSharp>
     {
-        public ICodeGenerationPlugin CreatePlugin(JObject configuration, IPluginPreprocessor<CodeFileCSharp, Parameters> pluginPreprocessor = null)
+        public ICodeGenerationPlugin CreatePlugin(JObject configuration, IPluginPreprocessor<CodeFileCSharp, Parameters, Settings> pluginPreprocessor = null)
         {
             Settings settings = new Settings();
             this.SetFromConfiguration((v) => settings.ModelBaseNamespace = v, configuration, Settings.ModelBaseNamespaceKey);
