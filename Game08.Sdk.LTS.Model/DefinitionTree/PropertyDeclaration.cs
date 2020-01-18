@@ -15,7 +15,7 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
 
         public TypeReferenceId TypeReference;
 
-        public string Name;
+        public Identifier Name;
 
         public MethodDeclaration Getter;
 

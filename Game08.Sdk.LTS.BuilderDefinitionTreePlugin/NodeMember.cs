@@ -14,5 +14,9 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
         public ITypeSymbol ItemType;
 
         public string CollectionTypeString;
+
+        public bool IsInherited;
+
+        public string DestinationFieldName;
     }
 }

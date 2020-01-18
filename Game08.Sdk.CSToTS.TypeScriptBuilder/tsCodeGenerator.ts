@@ -221,7 +221,7 @@ export class TsTreeGenerator {
         if (enumModel.Members != null) {
             for (var m = 0; m < enumModel.Members.length; m++) {
                 members.push(ts.createEnumMember(
-                    enumModel.Members[m].Name,
+                    enumModel.Members[m].Name.Name,
                     enumModel.Members[m].Value != null ? this.generateExpression(context, enumModel.Members[m].Value) : undefined
                 ));
             }
@@ -230,7 +230,7 @@ export class TsTreeGenerator {
         var result = ts.createEnumDeclaration(
             [],
             this.generateModifiers(enumModel.Modifiers),
-            enumModel.Name,
+            enumModel.Name.Name,
             members);
 
         context.currentFileContext.currentType = null;
@@ -248,7 +248,7 @@ export class TsTreeGenerator {
             for (var f = 0; f < interfaceModel.Fields.length; f++) {
                 members.push(ts.createPropertySignature(
                     this.generateModifiers(interfaceModel.Fields[f].Modifiers),
-                    interfaceModel.Fields[f].Name,
+                    interfaceModel.Fields[f].Name.Name,
                     undefined,
                     this.generateTypeNode(context, context.getTypeReference(interfaceModel.Fields[f].TypeReference.ReferenceKey)),
                     this.generateExpression(context, interfaceModel.Fields[f].Initializer)
@@ -262,7 +262,7 @@ export class TsTreeGenerator {
                     undefined,
                     this.generateParameterDeclarations(context, interfaceModel.Methods[m].Parameters),
                     this.generateTypeNode(context, context.getTypeReference(interfaceModel.Methods[m].ReturnType.ReferenceKey)),
-                    interfaceModel.Methods[m].Name,
+                    interfaceModel.Methods[m].Name.Name,
                     undefined
                 ));
             }
@@ -271,7 +271,7 @@ export class TsTreeGenerator {
         var result = ts.createInterfaceDeclaration(
             [],
             this.generateModifiers(interfaceModel.Modifiers),
-            interfaceModel.Name,
+            interfaceModel.Name.Name,
             this.generateDeclaredTypeParameters(context, declaredType.Parameters),
             this.generateInterfaceHeritageClauses(context, interfaceModel),
             members
@@ -302,7 +302,7 @@ export class TsTreeGenerator {
                 members.push(ts.createProperty(
                     [],
                     this.generateModifiers(classModel.Fields[f].Modifiers),
-                    classModel.Fields[f].Name,
+                    classModel.Fields[f].Name.Name,
                     undefined,
                     this.generateTypeNode(context, context.getTypeReference(classModel.Fields[f].TypeReference.ReferenceKey)),
                     this.generateExpression(context, classModel.Fields[f].Initializer)
@@ -316,7 +316,7 @@ export class TsTreeGenerator {
                     members.push(ts.createGetAccessor(
                         [],
                         this.generateModifiers(classModel.Properties[p].Getter.Modifiers),
-                        classModel.Properties[p].Getter.Name,
+                        classModel.Properties[p].Getter.Name.Name,
                         this.generateParameterDeclarations(context, classModel.Properties[p].Getter.Parameters),
                         this.generateTypeNode(context, context.getTypeReference(classModel.Properties[p].TypeReference.ReferenceKey)),
                         this.generateStatementBlock(context, classModel.Properties[p].Getter.Body, true)
@@ -327,7 +327,7 @@ export class TsTreeGenerator {
                     members.push(ts.createSetAccessor(
                         [],
                         this.generateModifiers(classModel.Properties[p].Setter.Modifiers),
-                        classModel.Properties[p].Setter.Name,
+                        classModel.Properties[p].Setter.Name.Name,
                         this.generateParameterDeclarations(context, classModel.Properties[p].Setter.Parameters),
                         this.generateStatementBlock(context, classModel.Properties[p].Setter.Body, true)
                     ));
@@ -341,7 +341,7 @@ export class TsTreeGenerator {
                     [],
                     this.generateModifiers(classModel.Methods[m].Modifiers),
                     undefined,
-                    classModel.Methods[m].Name,
+                    classModel.Methods[m].Name.Name,
                     undefined,
                     undefined,
                     this.generateParameterDeclarations(context, classModel.Methods[m].Parameters),
@@ -354,7 +354,7 @@ export class TsTreeGenerator {
         var result = ts.createClassDeclaration(
             [],
             this.generateModifiers(classModel.Modifiers),
-            classModel.Name,
+            classModel.Name.Name,
             this.generateDeclaredTypeParameters(context, declaredType.Parameters),
             this.generateClassHeritageClauses(context, classModel),
             members
@@ -373,7 +373,7 @@ export class TsTreeGenerator {
                     [],
                     [],
                     undefined,
-                    parameters[p].Name,
+                    parameters[p].Name.Name,
                     undefined,
                     this.generateTypeNode(context, context.getTypeReference(parameters[p].TypeReference.ReferenceKey)),
                     this.generateExpression(context, parameters[p].DefaultValue)
@@ -713,7 +713,7 @@ export class TsTreeGenerator {
 
     private generateVariableDeclaration(context: GeneratorContext, declaration: im.StatementLocalDeclaration): ts.VariableDeclaration {
         return ts.createVariableDeclaration(
-            declaration.Name,
+            declaration.Name.Name,
             declaration.TypeReference ? this.generateTypeNode(context, context.getTypeReference(declaration.TypeReference.ReferenceKey)) : undefined,
             this.generateExpression(context, declaration.Initializer));
     }
@@ -749,7 +749,7 @@ export class TsTreeGenerator {
 
         if (expression.NodeType == im.NodeType.ExpressionIdentifierReference) {
             var expressionIdentifierReference = expression as im.ExpressionIdentifierReference;
-            return ts.createIdentifier(expressionIdentifierReference.Name);
+            return ts.createIdentifier(expressionIdentifierReference.Name.Name);
         }
 
         if (expression.NodeType == im.NodeType.ExpressionInvocation) {
@@ -776,7 +776,7 @@ export class TsTreeGenerator {
 
         if (expression.NodeType == im.NodeType.ExpressionMemberAccess) {
             var expressionMemberAccess = expression as im.ExpressionMemberAccess;
-            return ts.createPropertyAccess(this.generateExpression(context, expressionMemberAccess.Expression), expressionMemberAccess.Name);
+            return ts.createPropertyAccess(this.generateExpression(context, expressionMemberAccess.Expression), expressionMemberAccess.Name.Name);
         }
 
         if (expression.NodeType == im.NodeType.ExpressionThis) {

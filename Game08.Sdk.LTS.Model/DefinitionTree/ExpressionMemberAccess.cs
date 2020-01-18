@@ -13,6 +13,6 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
 
         public ExpressionNode Expression;
 
-        public string Name;
+        public Identifier Name;
     }
 }

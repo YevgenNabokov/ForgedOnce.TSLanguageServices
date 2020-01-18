@@ -1,0 +1,46 @@
+{
+  "codeFileHandlers": [
+    { "type": "Game08.Sdk.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, Game08.Sdk.CodeMixer.CSharp" }
+  ],
+  "inputs": {
+    "DefinitionTree": "CSharp:Project:Game08.Sdk.LTS.Builder/DefinitionTree/*.cs"
+  },
+  "batches": [
+    {
+      "name": "Batch01",
+      "stages": [
+        {
+          "name": "BuilderExtensionMethods",
+          "plugin": {
+            "pluginFactory": {
+              "type": "Game08.Sdk.LTS.BuilderExtensionsPlugin.PluginFactory, Game08.Sdk.LTS.BuilderExtensionsPlugin",
+              "config": {
+                "outputNamespace": "Game08.Sdk.LTS.Builder.ExtensionMethods",
+                "requiredClassBaseType": "Game08.Sdk.LTS.Builder.DefinitionTree.Node",
+                "typesToUnfold": "Game08.Sdk.LTS.Builder.DefinitionTree.Identifier;Game08.Sdk.LTS.Builder.DefinitionTree.TypeReferenceId",
+                "ignorePropertyNames": "Parent",
+                "unpluralizeVariables": "true"
+              }
+            }
+          },
+          "input": {
+            "settings": {
+              "DefinitionTree": "*.cs"
+            }
+          },
+          "output": {
+            "settings": {
+              "PassThrough": "*"
+            }
+          },
+          "destinationMapping": {
+            "PassThrough": {
+              "settings": { "path": "Game08.Sdk.LTS.Builder/ExtensionMethods/Generated" }
+            }
+          },
+          "cleanDestinations" : true
+        }
+      ]
+    }
+  ]
+}

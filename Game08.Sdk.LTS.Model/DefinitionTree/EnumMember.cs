@@ -11,7 +11,7 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
             this.NodeType = NodeType.EnumMember;
         }
 
-        public string Name;
+        public Identifier Name;
 
         public ExpressionNode Value;
     }

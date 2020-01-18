@@ -114,13 +114,18 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
             HashSet<string> ignoreProperties)
         {
             var unit = SyntaxFactory.CompilationUnit();
-            
-            unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(declaredSymbol.ContainingNamespace.ToDisplayString())));
 
-            foreach (var nsUsage in input.SyntaxTree.GetRoot().DescendantNodes().OfType<UsingDirectiveSyntax>())
-            {
-                unit = unit.AddUsings(nsUsage);
-            }
+            unit = unit.AddUsings(
+                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")),
+                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Generic")),
+                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Linq")));
+
+            ////unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(declaredSymbol.ContainingNamespace.ToDisplayString())));
+
+            ////foreach (var nsUsage in input.SyntaxTree.GetRoot().DescendantNodes().OfType<UsingDirectiveSyntax>())
+            ////{
+            ////    unit = unit.AddUsings(nsUsage);
+            ////}
 
             var additionalUsings = new HashSet<string>();
 
@@ -155,10 +160,10 @@ namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
                 });
             }
 
-            foreach (var import in additionalUsings)
-            {
-                unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(import)));
-            }
+            ////foreach (var import in additionalUsings)
+            ////{
+            ////    unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(import)));
+            ////}
 
             var className = $"{declaredSymbol.Name}Extensions";
 

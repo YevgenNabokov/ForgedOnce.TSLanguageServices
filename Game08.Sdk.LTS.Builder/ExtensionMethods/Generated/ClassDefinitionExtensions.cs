@@ -1,10 +1,6 @@
-using Game08.Sdk.LTS.Builder.DefinitionTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using LTSModel = Game08.Sdk.LTS.Model.DefinitionTree;
-using Game08.Sdk.LTS.Model.DefinitionTree;
 
 namespace Game08.Sdk.LTS.Builder.ExtensionMethods
 {
@@ -55,6 +51,12 @@ namespace Game08.Sdk.LTS.Builder.ExtensionMethods
         public static Game08.Sdk.LTS.Builder.DefinitionTree.ClassDefinition WithName(this Game08.Sdk.LTS.Builder.DefinitionTree.ClassDefinition subject, string name)
         {
             subject.Name = new Game08.Sdk.LTS.Builder.DefinitionTree.Identifier{Name = name};
+            return subject;
+        }
+
+        public static Game08.Sdk.LTS.Builder.DefinitionTree.ClassDefinition WithTypeKey(this Game08.Sdk.LTS.Builder.DefinitionTree.ClassDefinition subject, string typeKey)
+        {
+            subject.TypeKey = typeKey;
             return subject;
         }
     }

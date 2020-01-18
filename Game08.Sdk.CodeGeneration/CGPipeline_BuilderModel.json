@@ -3,7 +3,7 @@
     { "type": "Game08.Sdk.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, Game08.Sdk.CodeMixer.CSharp" }
   ],
   "inputs": {
-    "SourceTree": "CSharp:Project:Game08.Sdk.LTS.Model/DefinitionTree/ClassDefinition.cs"
+    "SourceTree": "CSharp:Project:Game08.Sdk.LTS.Model/DefinitionTree/*.cs"
   },
   "batches": [
     {
@@ -19,7 +19,7 @@
                 "sourceNodeBaseType": "Game08.Sdk.LTS.Model.DefinitionTree.Node",
                 "trackingCollectionType": "Game08.Sdk.LTS.Builder.DefinitionTree.BuilderNodeCollection<>",
                 "destinationNodeBaseType": "Game08.Sdk.LTS.Builder.DefinitionTree.Node",
-                "typesToSkip": ""
+                "typesToSkip": "Game08.Sdk.LTS.Model.DefinitionTree.Node"
               }
             }
           },

@@ -17,7 +17,7 @@ export interface EnumDefinition extends NamedTypeDefinition {
     Members: Array<EnumMember>;
 }
 export interface EnumMember extends Node {
-    Name: string;
+    Name: Identifier;
     Value: ExpressionNode;
 }
 export interface ExpressionAssignment extends ExpressionNode {
@@ -30,7 +30,7 @@ export interface ExpressionBinary extends ExpressionNode {
     Operator: string;
 }
 export interface ExpressionIdentifierReference extends ExpressionNode {
-    Name: string;
+    Name: Identifier;
 }
 export interface ExpressionInvocation extends ExpressionNode {
     Arguments: Array<ExpressionNode>;
@@ -42,7 +42,7 @@ export interface ExpressionLiteral extends ExpressionNode {
 }
 export interface ExpressionMemberAccess extends ExpressionNode {
     Expression: ExpressionNode;
-    Name: string;
+    Name: Identifier;
 }
 export interface ExpressionNew extends ExpressionNode {
     Arguments: Array<ExpressionNode>;
@@ -59,11 +59,14 @@ export interface ExpressionUnary extends ExpressionNode {
 export interface FieldDeclaration extends Node {
     Modifiers: Array<Modifier>;
     TypeReference: TypeReferenceId;
-    Name: string;
+    Name: Identifier;
     Initializer: ExpressionNode;
 }
 export interface FileRoot extends Node {
     Items: Array<Node>;
+}
+export interface Identifier extends Node {
+    Name: string;
 }
 export interface InterfaceDefinition extends NamedTypeDefinition {
     Modifiers: Array<Modifier>;
@@ -73,13 +76,13 @@ export interface InterfaceDefinition extends NamedTypeDefinition {
 }
 export interface MethodDeclaration extends Node {
     Modifiers: Array<Modifier>;
-    Name: string;
+    Name: Identifier;
     Parameters: Array<MethodParameter>;
     Body: StatementBlock;
     ReturnType: TypeReferenceId;
 }
 export interface MethodParameter extends Node {
-    Name: string;
+    Name: Identifier;
     TypeReference: TypeReferenceId;
     DefaultValue: ExpressionLiteral;
 }
@@ -91,7 +94,7 @@ export enum Modifier {
     Export
 }
 export interface NamedTypeDefinition extends Node {
-    Name: string;
+    Name: Identifier;
     TypeKey: string;
 }
 export interface Node {
@@ -109,6 +112,7 @@ export enum NodeType {
     EnumMember,
     TypeReferenceId,
     MethodParameter,
+    Identifier,
     ExpressionLiteral,
     ExpressionBinary,
     ExpressionIdentifierReference,
@@ -127,7 +131,7 @@ export enum NodeType {
 export interface PropertyDeclaration extends Node {
     Modifiers: Array<Modifier>;
     TypeReference: TypeReferenceId;
-    Name: string;
+    Name: Identifier;
     Getter: MethodDeclaration;
     Setter: MethodDeclaration;
 }
@@ -145,7 +149,7 @@ export interface StatementFor extends StatementNode {
 }
 export interface StatementLocalDeclaration extends StatementNode {
     TypeReference: TypeReferenceId;
-    Name: string;
+    Name: Identifier;
     Initializer: ExpressionNode;
 }
 export interface StatementNode extends Node {

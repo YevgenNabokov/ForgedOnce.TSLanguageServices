@@ -11,6 +11,6 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
             this.NodeType = NodeType.ExpressionIdentifierReference;
         }
 
-        public string Name;
+        public Identifier Name;
     }
 }

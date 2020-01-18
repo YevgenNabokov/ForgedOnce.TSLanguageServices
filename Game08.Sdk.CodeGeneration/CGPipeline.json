@@ -1,13 +1,92 @@
 {
   "codeFileHandlers": [
-    { "type": "Game08.Sdk.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, Game08.Sdk.CodeMixer.CSharp" }
+    { "type": "Game08.Sdk.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, Game08.Sdk.CodeMixer.CSharp" },
+    { "type": "Game08.Sdk.CodeMixer.LimitedTypeScript.LtsCodeFileHandlerFactory, Game08.Sdk.CodeMixer.LimitedTypeScript" }
   ],
   "inputs": {
-    "DefinitionTree": "CSharp:Project:Game08.Sdk.LTS.Builder/DefinitionTree/*.cs"
+    "DefinitionTree": "CSharp:Project:Game08.Sdk.LTS.Model/DefinitionTree/*.cs",
+    "TypeData": "CSharp:Project:Game08.Sdk.LTS.Model/TypeData/*.cs",
+    "ResultModel": "CSharp:Project:Game08.Sdk.LTS.Model/ResultModel/*.cs",
+    "Common": "CSharp:Project:Game08.Sdk.LTS.Model/CodeFile.cs;Game08.Sdk.LTS.Model/CodeGenerationTask.cs"
   },
   "batches": [
     {
       "name": "Batch01",
+      "stages": [
+        {
+          "name": "TypeScriptModelInterfaces",
+          "plugin": {
+            "pluginFactory": {
+              "type": "Game08.Sdk.LTS.ModelTsInterfacesPlugin.PluginFactory, Game08.Sdk.LTS.ModelTsInterfacesPlugin",
+              "config": {
+                "modelBaseNamespace": "Game08.Sdk.LTS.Model",
+                "outputFileName": "IntermadiateModel.ts"
+              }
+            }
+          },
+          "input": {
+            "settings": {
+              "DefinitionTree": "*.cs",
+              "TypeData": "*.cs",
+              "ResultModel": "*.cs",
+              "Common": "*.cs"
+            }
+          },
+          "output": {
+            "settings": {
+              "PassThrough": "*"
+            }
+          },
+          "outputStreamRenames": {
+            "PassThrough": "TsModel"
+          },
+          "destinationMapping": {
+            "PassThrough": {
+              "name": "fileSystem",
+              "settings": {
+                "path": "..\\Game08.Sdk.CSToTS.TypeScriptBuilder"
+              }
+            }
+          }
+        },
+        {
+          "name": "BuilderDefinitionTree",
+          "plugin": {
+            "pluginFactory": {
+              "type": "Game08.Sdk.LTS.BuilderDefinitionTreePlugin.PluginFactory, Game08.Sdk.LTS.BuilderDefinitionTreePlugin",
+              "config": {
+                "outputNamespace": "Game08.Sdk.LTS.Builder.DefinitionTree",
+                "sourceNodeBaseType": "Game08.Sdk.LTS.Model.DefinitionTree.Node",
+                "trackingCollectionType": "Game08.Sdk.LTS.Builder.DefinitionTree.BuilderNodeCollection<>",
+                "destinationNodeBaseType": "Game08.Sdk.LTS.Builder.DefinitionTree.Node",
+                "typesToSkip": "Game08.Sdk.LTS.Model.DefinitionTree.Node"
+              }
+            }
+          },
+          "input": {
+            "settings": {
+              "DefinitionTree": "*.cs"
+            }
+          },
+          "output": {
+            "settings": {
+              "PassThrough": "*"
+            }
+          },
+          "outputStreamRenames": {
+            "PassThrough": "BuilderTree"
+          },
+          "destinationMapping": {
+            "PassThrough": {
+              "settings": { "path": "Game08.Sdk.LTS.Builder/DefinitionTree/Generated" }
+            }
+          },
+          "cleanDestinations": true
+        }
+      ]
+    },
+    {
+      "name": "Batch02",
       "stages": [
         {
           "name": "BuilderExtensionMethods",
@@ -25,7 +104,7 @@
           },
           "input": {
             "settings": {
-              "DefinitionTree": "*.cs"
+              "BuilderTree": "*.cs"
             }
           },
           "output": {
@@ -38,7 +117,7 @@
               "settings": { "path": "Game08.Sdk.LTS.Builder/ExtensionMethods/Generated" }
             }
           },
-          "cleanDestinations" : true
+          "cleanDestinations": true
         }
       ]
     }

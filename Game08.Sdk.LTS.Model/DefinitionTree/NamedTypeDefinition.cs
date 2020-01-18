@@ -6,7 +6,7 @@ namespace Game08.Sdk.LTS.Model.DefinitionTree
 {
     public abstract class NamedTypeDefinition : Node
     {
-        public string Name;
+        public Identifier Name;
 
         public string TypeKey;
     }

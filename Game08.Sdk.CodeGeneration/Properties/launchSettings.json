@@ -2,7 +2,7 @@
   "profiles": {
     "Game08.Sdk.CodeGeneration": {
       "commandName": "Project",
-      "commandLineArgs": "$(SolutionDir)Game08.Sdk.CSToTS.SyntaxTrees.sln $(ProjectDir)CGPipeline_BuilderModel.json",
+      "commandLineArgs": "$(SolutionDir)Game08.Sdk.CSToTS.SyntaxTrees.sln $(ProjectDir)CGPipeline.json",
       "workingDirectory": "$(ProjectDir)",
       "nativeDebugging": false
     }
