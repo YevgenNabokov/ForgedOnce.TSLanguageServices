@@ -12,6 +12,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using Game08.Sdk.LTS.Model.TypeData;
 using Game08.Sdk.LTS.Builder.DefinitionTree;
+using Game08.Sdk.CodeMixer.CSharp.Helpers.SemanticAnalysis;
 
 namespace Game08.Sdk.LTS.ModelTsInterfacesPlugin
 {
@@ -79,7 +80,7 @@ namespace Game08.Sdk.LTS.ModelTsInterfacesPlugin
             interfaceDefinition.Name = new Identifier() { Name = classSymbol.Name };
             interfaceDefinition.TypeKey = this.OutputFile.TypeRepository.RegisterTypeDefinition(classSymbol.Name, string.Empty, this.OutputFile.Name, Array.Empty<TypeParameter>());
 
-            if (classSymbol.BaseType != null && typeof(object).FullName != GetFullMetadataName(classSymbol.BaseType))
+            if (classSymbol.BaseType != null && typeof(object).FullName != classSymbol.BaseType.GetFullMetadataName())
             {
                 var mappedKey = this.MapTypeReference(classSymbol.BaseType);
                 if (mappedKey != null)
@@ -108,7 +109,7 @@ namespace Game08.Sdk.LTS.ModelTsInterfacesPlugin
                 return this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin("Array", new string[] { this.MapTypeReference(arraySymbol.ElementType) });
             }
 
-            var typeName = GetFullMetadataName(typeSymbol);
+            var typeName = typeSymbol.GetFullMetadataName();
             if (this.PrimitiveTypeMappings.ContainsKey(typeName))
             {
                 return this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin(this.PrimitiveTypeMappings[typeName]);
@@ -117,14 +118,14 @@ namespace Game08.Sdk.LTS.ModelTsInterfacesPlugin
             var dictionaryInterface = typeSymbol
                 .Interfaces
                 .FirstOrDefault(i => i.IsGenericType 
-                    && GetFullMetadataName(i.ConstructedFrom) == typeof(IDictionary<,>).FullName
-                    && GetFullMetadataName(i.TypeArguments[0]) == typeof(string).FullName);
+                    && i.ConstructedFrom.GetFullMetadataName() == typeof(IDictionary<,>).FullName
+                    && i.TypeArguments[0].GetFullMetadataName() == typeof(string).FullName);
             if (dictionaryInterface != null)
             {
                 return this.OutputFile.TypeRepository.RegisterTypeReferenceInlineIndexer("key", this.MapTypeReference(dictionaryInterface.TypeArguments[1]));
             }
 
-            var collectionInterface = typeSymbol.Interfaces.FirstOrDefault(i => i.IsGenericType && GetFullMetadataName(i.ConstructedFrom) == typeof(IEnumerable<>).FullName);
+            var collectionInterface = typeSymbol.Interfaces.FirstOrDefault(i => i.IsGenericType && i.ConstructedFrom.GetFullMetadataName() == typeof(IEnumerable<>).FullName);
             if (collectionInterface != null)
             {
                 return this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin("Array", new string[] { this.MapTypeReference(collectionInterface.TypeArguments[0]) });
@@ -187,11 +188,6 @@ namespace Game08.Sdk.LTS.ModelTsInterfacesPlugin
 
                 return this.singleOutputFile;
             }
-        }
-
-        private static string GetFullMetadataName(ITypeSymbol symbol)
-        {
-            return $"{symbol.ContainingNamespace.ToDisplayString()}.{symbol.MetadataName}";
         }
     }
 }

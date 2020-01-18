@@ -10,16 +10,13 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Game08.Sdk.CodeMixer.CSharp.Helpers.SemanticAnalysis;
+using Game08.Sdk.CodeMixer.CSharp.Helpers.Syntax.Generation;
 
 namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
 {
     public class Plugin : CodeGenerationFromCSharpPlugin<Settings, Parameters>
     {
-        /// <summary>
-        /// Will be extracted.
-        /// </summary>
-        public readonly HashSet<string> CSharpKeywords = new HashSet<string>() { "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked", "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else", "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock", "long", "namespace", "new", "null", "object", "operator", "out", "override", "params", "private", "protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short", "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort", "using", "using", "static", "virtual", "void", "volatile", "while" };
-
         public const string OutStreamName = "PassThrough";
 
         protected ICodeStream outputStream;
@@ -62,9 +59,9 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
             {
                 var declaredSymbol = input.SemanticModel.GetDeclaredSymbol(classDeclaration);
 
-                var hasRequiredNodeBaseType = InheritsFromOrImplementsOrEqualsIgnoringConstruction(declaredSymbol, sourceNodeBaseType);
+                var hasRequiredNodeBaseType = declaredSymbol.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType);
 
-                if (hasRequiredNodeBaseType && !typesToSkip.Contains(GetFullMetadataName(declaredSymbol)))
+                if (hasRequiredNodeBaseType && !typesToSkip.Contains(declaredSymbol.GetFullMetadataName()))
                 {
                     this.GenerateForClass(classDeclaration, declaredSymbol, sourceNodeBaseType, input.SemanticModel);
                 }
@@ -92,7 +89,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
 
             if (declaredType.BaseType != null)
             {
-                if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(declaredType.BaseType, sourceNodeBaseType))
+                if (declaredType.BaseType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
                 {
                     nodeClass = nodeClass
                             .WithBaseList(
@@ -118,7 +115,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
 
             if (declaredType.BaseType != null)
             {
-                foreach (var f in this.GetAllSymbols<IFieldSymbol>(declaredType.BaseType, SymbolKind.Field, Accessibility.Public, sourceNodeBaseType))
+                foreach (var f in declaredType.BaseType.GetAllSymbols<IFieldSymbol>(SymbolKind.Field, Accessibility.Public, true, sourceNodeBaseType).Where(s => !s.IsStatic))
                 {
                     var member = this.CreateNodeMember(f, sourceNodeBaseType, semanticModel);
                     member.IsInherited = true;
@@ -141,7 +138,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
             foreach (var member in members.Where(m => !m.IsInherited && m.IsCollection))
             {
                 ExpressionSyntax right = null;
-                if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(member.ItemType, sourceNodeBaseType))
+                if (member.ItemType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
                 {
                     right = SyntaxFactory.ObjectCreationExpression(
                         SyntaxFactory.ParseTypeName(member.CollectionTypeString),
@@ -195,7 +192,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                 else
                 {
                     List<StatementSyntax> setterStatements = new List<StatementSyntax>();
-                    if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(member.OriginalField.Type, sourceNodeBaseType))
+                    if (member.OriginalField.Type.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
                     {
                         setterStatements.Add(
                             SyntaxFactory.ExpressionStatement(
@@ -278,7 +275,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                 {
                     if (member.IsCollection)
                     {
-                        if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(member.ItemType, sourceNodeBaseType))
+                        if (member.ItemType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
                         {
                             //// Makes an assumption that source collection is List. Should be changed.
                             var lambdaParameterName = "i";
@@ -346,7 +343,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                     }
                     else
                     {
-                        if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(member.OriginalField.Type, sourceNodeBaseType))
+                        if (member.OriginalField.Type.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
                         {
                             methodStatements.Add(
                                 SyntaxFactory.ExpressionStatement(
@@ -409,19 +406,17 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
             var member = new NodeMember()
             {
                 OriginalField = fieldSymbol,
-                DestinationFieldName = CSharpKeywords.Contains(FirstCharToLower(fieldSymbol.Name)) 
-                ? $"@{FirstCharToLower(fieldSymbol.Name)}"
-                : FirstCharToLower(fieldSymbol.Name)
+                DestinationFieldName = NameHelper.GetSafeVariableName(NameHelper.FirstCharToLower(fieldSymbol.Name))
             };
 
-            var collectionInterface = fieldSymbol.Type.Interfaces.FirstOrDefault(i => i.IsGenericType && GetFullMetadataName(i.ConstructedFrom) == typeof(ICollection<>).FullName);
+            var collectionInterface = fieldSymbol.Type.Interfaces.FirstOrDefault(i => i.IsGenericType && i.ConstructedFrom.GetFullMetadataName() == typeof(ICollection<>).FullName);
 
             if (collectionInterface != null)
             {
                 member.ItemType = collectionInterface.TypeArguments.First();
                 member.IsCollection = true;
 
-                if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(member.ItemType, sourceNodeBaseType))
+                if (member.ItemType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
                 {
                     var itemTypeString = this.GetTypeName(member.ItemType, sourceNodeBaseType, semanticModel);
                     var collectionTypeString = this.Settings.TrackingCollectionType.Replace("<", string.Empty).Replace(">", string.Empty);
@@ -439,9 +434,9 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
 
         private string GetTypeName(ITypeSymbol typeSymbol, INamedTypeSymbol sourceNodeBaseType, SemanticModel semanticModel)
         {
-            if (InheritsFromOrImplementsOrEqualsIgnoringConstruction(typeSymbol, sourceNodeBaseType))
+            if (typeSymbol.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
             {
-                if (Equals(typeSymbol, sourceNodeBaseType))
+                if (SymbolEqualityComparer.Default.Equals(typeSymbol, sourceNodeBaseType))
                 {
                     return this.Settings.DestinationNodeBaseType;
                 }
@@ -452,80 +447,6 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
             }
 
             return typeSymbol.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat);
-        }
-
-        //// Should be extracted to common library.
-        public static bool InheritsFromOrImplementsOrEqualsIgnoringConstruction(
-            ITypeSymbol type, ITypeSymbol baseType)
-        {
-            var originalBaseType = baseType.OriginalDefinition;
-            type = type.OriginalDefinition;
-
-            if (GetFullMetadataName(type) == GetFullMetadataName(originalBaseType))
-            {
-                return true;
-            }
-
-            IEnumerable<ITypeSymbol> baseTypes = (baseType.TypeKind == TypeKind.Interface) ? type.AllInterfaces : GetBaseTypes(type);
-            return baseTypes.Any(t => GetFullMetadataName(t.OriginalDefinition) == GetFullMetadataName(originalBaseType));
-        }
-
-        //// Should be extracted to common library.
-        public static IEnumerable<INamedTypeSymbol> GetBaseTypes(ITypeSymbol type)
-        {
-            var current = type.BaseType;
-            while (current != null)
-            {
-                yield return current;
-                current = current.BaseType;
-            }
-        }
-
-        //// Should be extracted to common library.
-        public string FirstCharToLower(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                return name;
-            }
-
-            return name.Substring(0, 1).ToLower() + (name.Length > 1 ? name.Substring(1) : string.Empty);
-        }
-
-        //// Should be extracted to common library.
-        private static string GetFullMetadataName(ITypeSymbol symbol)
-        {
-            return $"{symbol.ContainingNamespace.ToDisplayString()}.{symbol.MetadataName}";
-        }
-
-        //// Should be extracted to common library.
-        private List<TSymbol> GetAllSymbols<TSymbol>(ITypeSymbol symbol, SymbolKind kind, Accessibility accessibility, ITypeSymbol breakOnType = null) where TSymbol : ISymbol
-        {
-            var result = new Dictionary<string, TSymbol>();
-
-            if (breakOnType == null || !Equals(symbol, breakOnType))
-            {
-                foreach (var p in symbol
-                    .GetMembers()
-                    .Where(m => m.DeclaredAccessibility == accessibility && !m.IsStatic && m.Kind == kind)
-                    .OfType<TSymbol>())
-                {
-                    result.Add(p.Name, p);
-                }
-
-                if (symbol.BaseType != null)
-                {
-                    foreach (var p in this.GetAllSymbols<TSymbol>(symbol.BaseType, kind, accessibility, breakOnType))
-                    {
-                        if (!result.ContainsKey(p.Name))
-                        {
-                            result.Add(p.Name, p);
-                        }
-                    }
-                }
-            }
-
-            return result.Values.ToList();
         }
     }
 }
