@@ -41,57 +41,34 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
 
         protected override void Implementation(CodeFileCSharp input, Parameters parameters, IMetadataRecorder metadataRecorder, ILogger logger)
         {
-            var typesToSkip = this.Settings.TypesToSkip != null && this.Settings.TypesToSkip.Length > 0
-                ? new HashSet<string>(this.Settings.TypesToSkip)
-                : new HashSet<string>();
-
-            INamedTypeSymbol sourceNodeBaseType = null;
-            if (!string.IsNullOrEmpty(this.Settings.SourceNodeBaseType))
+            foreach (var item in parameters.Types)
             {
-                sourceNodeBaseType = input.SemanticModel.Compilation.GetTypeByMetadataName(this.Settings.SourceNodeBaseType);
-                if (sourceNodeBaseType == null)
-                {
-                    throw new InvalidOperationException($"Cannot resolve required base type {this.Settings.SourceNodeBaseType} from compilation.");
-                }
-            }
-
-            foreach (var classDeclaration in input.SyntaxTree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>())
-            {
-                var declaredSymbol = input.SemanticModel.GetDeclaredSymbol(classDeclaration);
-
-                var hasRequiredNodeBaseType = declaredSymbol.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType);
-
-                if (hasRequiredNodeBaseType && !typesToSkip.Contains(declaredSymbol.GetFullMetadataName()))
-                {
-                    this.GenerateForClass(classDeclaration, declaredSymbol, sourceNodeBaseType, input.SemanticModel);
-                }
+                this.GenerateForClass(item, input.SemanticModel);
             }
         }
 
-        protected void GenerateForClass(ClassDeclarationSyntax classDeclaration, INamedTypeSymbol declaredType, INamedTypeSymbol sourceNodeBaseType, SemanticModel semanticModel)
+        protected void GenerateForClass(NodeTypeInfo nodeTypeInfo, SemanticModel semanticModel)
         {
-            var outputFile = (CodeFileCSharp)this.outputStream.CreateCodeFile($"{declaredType.Name}.cs");
+            var outputFile = (CodeFileCSharp)this.outputStream.CreateCodeFile($"{ nodeTypeInfo.DeclaredType.Name}.cs");
             var unit = SyntaxFactory.CompilationUnit();
             unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Generic")));
             unit = unit.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Linq")));
 
             var nsContainer = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(this.Settings.OutputNamespace));
 
-            var nodeClass = SyntaxFactory.ClassDeclaration(declaredType.Name);
+            var nodeClass = SyntaxFactory.ClassDeclaration(nodeTypeInfo.DeclaredType.Name);
             nodeClass = nodeClass.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
-            if (declaredType.IsAbstract)
+            if (nodeTypeInfo.DeclaredType.IsAbstract)
             {
                 nodeClass = nodeClass.AddModifiers(SyntaxFactory.Token(SyntaxKind.AbstractKeyword));
             }
 
             nodeClass = nodeClass.AddModifiers(SyntaxFactory.Token(SyntaxKind.PartialKeyword));
 
-            if (declaredType.BaseType != null)
+            if (!string.IsNullOrEmpty(nodeTypeInfo.BaseTypeString))
             {
-                if (declaredType.BaseType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
-                {
-                    nodeClass = nodeClass
+                nodeClass = nodeClass
                             .WithBaseList(
                                 SyntaxFactory
                                 .BaseList(
@@ -99,46 +76,26 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                                     SyntaxFactory.SeparatedList(
                                         new BaseTypeSyntax[]
                                         {
-                                            SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(GetTypeName(declaredType.BaseType, sourceNodeBaseType, semanticModel)))
+                                            SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(nodeTypeInfo.BaseTypeString))
                                         })));
-                }
             }
 
-            List<NodeMember> members = new List<NodeMember>();
-
-            foreach (var f in declaredType.GetMembers()
-                .Where(m => m.DeclaredAccessibility == Accessibility.Public && !m.IsStatic && m.Kind == SymbolKind.Field)
-                .OfType<IFieldSymbol>())
-            {
-                members.Add(this.CreateNodeMember(f, sourceNodeBaseType, semanticModel));
-            }
-
-            if (declaredType.BaseType != null)
-            {
-                foreach (var f in declaredType.BaseType.GetAllSymbols<IFieldSymbol>(SymbolKind.Field, Accessibility.Public, true, sourceNodeBaseType).Where(s => !s.IsStatic))
-                {
-                    var member = this.CreateNodeMember(f, sourceNodeBaseType, semanticModel);
-                    member.IsInherited = true;
-                    members.Add(member);
-                }
-            }
-
-            foreach (var member in members.Where(m => !m.IsInherited && !m.IsCollection))
+            foreach (var member in nodeTypeInfo.Members.Where(m => !m.IsInherited && !m.IsCollection))
             {
                 nodeClass = nodeClass.AddMembers(
                     SyntaxFactory.FieldDeclaration(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.ParseTypeName(this.GetTypeName(member.OriginalField.Type, sourceNodeBaseType, semanticModel)),
+                            SyntaxFactory.ParseTypeName(member.FullySpecifiedOutputTypeString),
                             SyntaxFactory.SeparatedList(new VariableDeclaratorSyntax[] { SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(member.DestinationFieldName)) }))));
             }
 
-            var constructor = SyntaxFactory.ConstructorDeclaration(declaredType.Name);
+            var constructor = SyntaxFactory.ConstructorDeclaration(nodeTypeInfo.DeclaredType.Name);
             constructor = constructor.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
             List<StatementSyntax> statements = new List<StatementSyntax>();
-            foreach (var member in members.Where(m => !m.IsInherited && m.IsCollection))
+            foreach (var member in nodeTypeInfo.Members.Where(m => !m.IsInherited && m.IsCollection))
             {
                 ExpressionSyntax right = null;
-                if (member.ItemType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
+                if (member.ItemTypeInheritsFromSourceNodeType)
                 {
                     right = SyntaxFactory.ObjectCreationExpression(
                         SyntaxFactory.ParseTypeName(member.CollectionTypeString),
@@ -168,7 +125,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
             nodeClass = nodeClass.AddMembers(constructor);
 
 
-            foreach (var member in members.Where(m => !m.IsInherited))
+            foreach (var member in nodeTypeInfo.Members.Where(m => !m.IsInherited))
             {
                 if (member.IsCollection)
                 {
@@ -192,7 +149,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                 else
                 {
                     List<StatementSyntax> setterStatements = new List<StatementSyntax>();
-                    if (member.OriginalField.Type.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
+                    if (member.TypeInheritsFromSourceNodeType)
                     {
                         setterStatements.Add(
                             SyntaxFactory.ExpressionStatement(
@@ -227,7 +184,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                     nodeClass = nodeClass.AddMembers(
                     SyntaxFactory
                     .PropertyDeclaration(
-                        SyntaxFactory.ParseTypeName(this.GetTypeName(member.OriginalField.Type, sourceNodeBaseType, semanticModel)),
+                        SyntaxFactory.ParseTypeName(member.FullySpecifiedOutputTypeString),
                         member.OriginalField.Name)
                     .WithAccessorList(
                         SyntaxFactory.AccessorList(
@@ -251,7 +208,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                 }
             }
 
-            if (!declaredType.IsAbstract)
+            if (!nodeTypeInfo.DeclaredType.IsAbstract)
             {
                 var toLtsModelNodeMethodName = "ToLtsModelNode";
                 string resultVarName = "result";
@@ -266,16 +223,16 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                             null,
                             SyntaxFactory.EqualsValueClause(
                                 SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.ParseTypeName(declaredType.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat)),
+                                    SyntaxFactory.ParseTypeName(nodeTypeInfo.DeclaredType.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat)),
                                     SyntaxFactory.ArgumentList(),
                                     null)))
                         }))));
 
-                foreach (var member in members)
+                foreach (var member in nodeTypeInfo.Members)
                 {
                     if (member.IsCollection)
                     {
-                        if (member.ItemType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
+                        if (member.ItemTypeInheritsFromSourceNodeType)
                         {
                             //// Makes an assumption that source collection is List. Should be changed.
                             var lambdaParameterName = "i";
@@ -318,7 +275,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                         }
                         else
                         {
-                            //// Makes an assumption that collection can be constructed with IENumerable as an argument to populate it. Not very nice.
+                            //// Makes an assumption that collection can be constructed with IEnumerable as an argument to populate it. Not very nice.
                             methodStatements.Add(
                                 SyntaxFactory.ExpressionStatement(
                                 SyntaxFactory.AssignmentExpression(
@@ -343,7 +300,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                     }
                     else
                     {
-                        if (member.OriginalField.Type.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
+                        if (member.TypeInheritsFromSourceNodeType)
                         {
                             methodStatements.Add(
                                 SyntaxFactory.ExpressionStatement(
@@ -399,54 +356,6 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
             nsContainer = nsContainer.AddMembers(nodeClass);
             unit = unit.AddMembers(nsContainer);
             outputFile.SyntaxTree = unit.SyntaxTree;
-        }
-
-        private NodeMember CreateNodeMember(IFieldSymbol fieldSymbol, INamedTypeSymbol sourceNodeBaseType, SemanticModel semanticModel)
-        {
-            var member = new NodeMember()
-            {
-                OriginalField = fieldSymbol,
-                DestinationFieldName = NameHelper.GetSafeVariableName(NameHelper.FirstCharToLower(fieldSymbol.Name))
-            };
-
-            var collectionInterface = fieldSymbol.Type.Interfaces.FirstOrDefault(i => i.IsGenericType && i.ConstructedFrom.GetFullMetadataName() == typeof(ICollection<>).FullName);
-
-            if (collectionInterface != null)
-            {
-                member.ItemType = collectionInterface.TypeArguments.First();
-                member.IsCollection = true;
-
-                if (member.ItemType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
-                {
-                    var itemTypeString = this.GetTypeName(member.ItemType, sourceNodeBaseType, semanticModel);
-                    var collectionTypeString = this.Settings.TrackingCollectionType.Replace("<", string.Empty).Replace(">", string.Empty);
-                    member.CollectionTypeString = $"{collectionTypeString}<{itemTypeString}>";
-                }
-                else
-                {
-                    var itemTypeString = member.ItemType.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat);
-                    member.CollectionTypeString = $"System.Collections.Generic.List<{itemTypeString}>";
-                }
-            }
-
-            return member;
-        }
-
-        private string GetTypeName(ITypeSymbol typeSymbol, INamedTypeSymbol sourceNodeBaseType, SemanticModel semanticModel)
-        {
-            if (typeSymbol.InheritsFromOrImplementsOrEqualsIgnoringConstruction(sourceNodeBaseType))
-            {
-                if (SymbolEqualityComparer.Default.Equals(typeSymbol, sourceNodeBaseType))
-                {
-                    return this.Settings.DestinationNodeBaseType;
-                }
-                else
-                {
-                    return $"{this.Settings.OutputNamespace}.{typeSymbol.Name}";
-                }
-            }
-
-            return typeSymbol.ToMinimalDisplayString(semanticModel, 0, SymbolDisplayFormat.MinimallyQualifiedFormat);
         }
     }
 }
