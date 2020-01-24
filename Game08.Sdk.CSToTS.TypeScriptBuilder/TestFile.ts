@@ -1,10 +1,20 @@
 ﻿import * as otf from "./OtherTestFile"
 
 
+export class My<T> {
+    public static A() {
+        return "";
+    }
+}
+
 export class BaseP {
     public AAA: number;
 
     public A: { [key: string]: BaseP }
+
+    public M() {
+        return My.A();
+    }
 }
 
 export class BaseC<T> {

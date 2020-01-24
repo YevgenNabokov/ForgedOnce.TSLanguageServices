@@ -13,7 +13,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>11926c92-3a3e-43de-8b4d-1ea9bc09c528</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>generatorTest.ts</StartupFile>
+    <StartupFile>app.ts</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>

@@ -493,6 +493,11 @@ class TsTreeGenerator {
             var expressionBinary = expression;
             return ts.createBinary(this.generateExpression(context, expressionBinary.Left), this.generateOperatorToken(expressionBinary.Operator), this.generateExpression(context, expressionBinary.Right));
         }
+        if (expression.NodeType == im.NodeType.ExpressionTypeReference) {
+            var expressionTypeReference = expression;
+            var parts = this.generateTypeReferenceParts(context, context.getTypeReference(expressionTypeReference.TypeId.ReferenceKey));
+            return this.entityNameToExpression(parts.identifier);
+        }
         if (expression.NodeType == im.NodeType.ExpressionUnary) {
             var expressionUnary = expression;
             return ts.createPostfix(this.generateExpression(context, expressionUnary.Left), this.generatePostfixUnaryOperatorToken(expressionUnary.Operator));

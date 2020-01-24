@@ -52,6 +52,9 @@ export interface ExpressionNode extends Node {
 }
 export interface ExpressionThis extends ExpressionNode {
 }
+export interface ExpressionTypeReference extends ExpressionNode {
+    TypeId: TypeReferenceId;
+}
 export interface ExpressionUnary extends ExpressionNode {
     Left: ExpressionNode;
     Operator: string;
@@ -122,6 +125,7 @@ export enum NodeType {
     ExpressionAssignment,
     ExpressionNew,
     ExpressionUnary,
+    ExpressionTypeReference,
     StatementBlock,
     StatementLocalDeclaration,
     StatementReturn,

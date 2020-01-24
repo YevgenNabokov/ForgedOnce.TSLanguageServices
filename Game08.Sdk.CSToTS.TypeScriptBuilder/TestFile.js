@@ -1,7 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const otf = require("./OtherTestFile");
+class My {
+    static A() {
+        return "";
+    }
+}
+exports.My = My;
 class BaseP {
+    M() {
+        return My.A();
+    }
 }
 exports.BaseP = BaseP;
 class BaseC {

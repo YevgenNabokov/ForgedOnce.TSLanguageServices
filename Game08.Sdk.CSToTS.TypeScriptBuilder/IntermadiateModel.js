@@ -31,11 +31,12 @@ var NodeType;
     NodeType[NodeType["ExpressionAssignment"] = 18] = "ExpressionAssignment";
     NodeType[NodeType["ExpressionNew"] = 19] = "ExpressionNew";
     NodeType[NodeType["ExpressionUnary"] = 20] = "ExpressionUnary";
-    NodeType[NodeType["StatementBlock"] = 21] = "StatementBlock";
-    NodeType[NodeType["StatementLocalDeclaration"] = 22] = "StatementLocalDeclaration";
-    NodeType[NodeType["StatementReturn"] = 23] = "StatementReturn";
-    NodeType[NodeType["StatementExpression"] = 24] = "StatementExpression";
-    NodeType[NodeType["StatementFor"] = 25] = "StatementFor";
+    NodeType[NodeType["ExpressionTypeReference"] = 21] = "ExpressionTypeReference";
+    NodeType[NodeType["StatementBlock"] = 22] = "StatementBlock";
+    NodeType[NodeType["StatementLocalDeclaration"] = 23] = "StatementLocalDeclaration";
+    NodeType[NodeType["StatementReturn"] = 24] = "StatementReturn";
+    NodeType[NodeType["StatementExpression"] = 25] = "StatementExpression";
+    NodeType[NodeType["StatementFor"] = 26] = "StatementFor";
 })(NodeType = exports.NodeType || (exports.NodeType = {}));
 var TypeReferenceKind;
 (function (TypeReferenceKind) {

@@ -740,6 +740,12 @@ export class TsTreeGenerator {
                 this.generateExpression(context, expressionBinary.Right));
         }
 
+        if (expression.NodeType == im.NodeType.ExpressionTypeReference) {
+            var expressionTypeReference = expression as im.ExpressionTypeReference;
+            var parts = this.generateTypeReferenceParts(context, context.getTypeReference(expressionTypeReference.TypeId.ReferenceKey));
+            return this.entityNameToExpression(parts.identifier);
+        }
+
         if (expression.NodeType == im.NodeType.ExpressionUnary) {
             var expressionUnary = expression as im.ExpressionUnary;
             return ts.createPostfix(
