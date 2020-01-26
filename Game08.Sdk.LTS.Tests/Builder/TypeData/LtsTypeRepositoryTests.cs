@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Game08.Sdk.LTS.UnitTests.Builder.TypeData
+namespace Game08.Sdk.LTS.Tests.Builder.TypeData
 {
     [TestFixture]
     public class LtsTypeRepositoryTests
