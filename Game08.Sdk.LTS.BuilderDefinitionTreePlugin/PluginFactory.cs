@@ -18,6 +18,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
             this.SetFromConfiguration((v) => settings.TrackingCollectionType = v, configuration, Settings.TrackingCollectionTypeKey);
             this.SetFromConfiguration((v) => settings.DestinationNodeBaseType = v, configuration, Settings.DestinationNodeBaseTypeKey);
             this.SetFromConfiguration((v) => settings.TypesToSkip = v.Split(';'), configuration, Settings.TypesToSkipKey);
+            this.SetFromConfiguration((v) => settings.AllowedModificationCheckMethodName = v, configuration, Settings.AllowedModificationCheckMethodNameKey);
 
             return new Plugin()
             {

@@ -19,6 +19,7 @@ namespace Game08.Sdk.LTS.Builder.DefinitionTree
 
             set
             {
+                this.EnsureIsEditable();
                 this.referenceKey = value;
             }
         }

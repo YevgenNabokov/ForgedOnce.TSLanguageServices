@@ -20,6 +20,7 @@ namespace Game08.Sdk.LTS.Builder.DefinitionTree
 
             set
             {
+                this.EnsureIsEditable();
                 this.isNumeric = value;
             }
         }
@@ -33,6 +34,7 @@ namespace Game08.Sdk.LTS.Builder.DefinitionTree
 
             set
             {
+                this.EnsureIsEditable();
                 this.text = value;
             }
         }

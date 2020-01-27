@@ -9,7 +9,36 @@ namespace Game08.Sdk.LTS.Builder.DefinitionTree
     {
         protected Dictionary<string, string> annotations;
 
-        public Node Parent { get; set; }
+        protected Node parent;
+
+        private bool isReadonly;
+
+        protected List<Node> childNodes = new List<Node>();
+
+        public Node Parent
+        {
+            get
+            {
+                return this.parent;
+            }
+
+            set
+            {
+                if (this.parent != null)
+                {
+                    this.parent.EnsureIsEditable();
+                    this.parent.childNodes.Remove(this);
+                }
+
+                if (value != null)
+                {
+                    value.EnsureIsEditable();
+                    value.childNodes.Add(this);
+                }
+
+                this.parent = value;
+            }
+        }
 
         public abstract LTSModel.Node ToLtsModelNode();
 
@@ -45,6 +74,15 @@ namespace Game08.Sdk.LTS.Builder.DefinitionTree
             return this.annotations[key];
         }
 
+        public void MakeReadonly()
+        {
+            this.isReadonly = true;
+            foreach (var item in this.childNodes)
+            {
+                item.MakeReadonly();
+            }
+        }
+
         protected void SetAsParentFor(Node oldValue, Node newValue)
         {
             if (oldValue != null)
@@ -55,6 +93,14 @@ namespace Game08.Sdk.LTS.Builder.DefinitionTree
             if (newValue != null)
             {
                 newValue.Parent = this;
+            }
+        }
+
+        protected void EnsureIsEditable()
+        {
+            if (this.isReadonly)
+            {
+                throw new InvalidOperationException("Attempt to modify a readonly node.");
             }
         }
     }

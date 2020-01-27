@@ -16,6 +16,8 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
 
         public const string TypesToSkipKey = "typesToSkip";
 
+        public const string AllowedModificationCheckMethodNameKey = "allowedModificationCheckMethodName";
+
         public string OutputNamespace;
 
         public string SourceNodeBaseType;
@@ -25,5 +27,7 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
         public string DestinationNodeBaseType;
 
         public string[] TypesToSkip;
+
+        public string AllowedModificationCheckMethodName;
     }
 }

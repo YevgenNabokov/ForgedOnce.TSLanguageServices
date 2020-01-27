@@ -169,6 +169,20 @@ namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
                                             SyntaxFactory.Argument(SyntaxFactory.IdentifierName("value"))
                                         })))));
                     }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(this.Settings.AllowedModificationCheckMethodName))
+                        {
+                            setterStatements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(this.Settings.AllowedModificationCheckMethodName)),
+                                    SyntaxFactory.ArgumentList())));
+                        }
+                    }
 
                     setterStatements.Add(
                          SyntaxFactory.ExpressionStatement(
