@@ -14,7 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
+namespace Game08.Sdk.SyntaxTreeExtensionsPlugin
 {
     public class Plugin : CodeGenerationFromCSharpPlugin<Settings, Parameters>
     {

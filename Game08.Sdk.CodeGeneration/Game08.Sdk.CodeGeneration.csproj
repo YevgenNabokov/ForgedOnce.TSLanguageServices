@@ -7,15 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Game08.Sdk.LTS.BuilderExtensionsPlugin\Game08.Sdk.LTS.BuilderExtensionsPlugin.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <DotNetCliToolReference Include="Game08.Sdk.CodeMixer.Launcher.MSBuild.WithDefaultAdapters.CliTool" Version="*" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Game08.Sdk.CodeMixer.Launcher.MSBuild.WithDefaultAdapters" Version="1.0.70" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Game08.Sdk.SyntaxTreeExtensionsPlugin\Game08.Sdk.SyntaxTreeExtensionsPlugin.csproj" />
   </ItemGroup>
 
 </Project>

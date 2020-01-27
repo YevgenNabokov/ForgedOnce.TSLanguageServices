@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Game08.Sdk.LTS.BuilderExtensionsPlugin
+namespace Game08.Sdk.SyntaxTreeExtensionsPlugin
 {
     public class Settings
     {

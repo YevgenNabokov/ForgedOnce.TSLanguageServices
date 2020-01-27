@@ -93,7 +93,7 @@
           "name": "BuilderExtensionMethods",
           "plugin": {
             "pluginFactory": {
-              "type": "Game08.Sdk.LTS.BuilderExtensionsPlugin.PluginFactory, Game08.Sdk.LTS.BuilderExtensionsPlugin",
+              "type": "Game08.Sdk.SyntaxTreeExtensionsPlugin.PluginFactory, Game08.Sdk.SyntaxTreeExtensionsPlugin",
               "config": {
                 "outputNamespace": "Game08.Sdk.LTS.Builder.ExtensionMethods",
                 "requiredClassBaseType": "Game08.Sdk.LTS.Builder.DefinitionTree.Node",

@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.LTS.Model", "Gam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.LTS.Builder", "Game08.Sdk.LTS.Builder\Game08.Sdk.LTS.Builder.csproj", "{1B526CE9-EC03-4A26-9A14-62525FD9ECFC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.LTS.BuilderExtensionsPlugin", "Game08.Sdk.LTS.BuilderExtensionsPlugin\Game08.Sdk.LTS.BuilderExtensionsPlugin.csproj", "{4EE3CE05-2321-4DA6-86C5-C96281B94EC0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CodeGeneration", "Game08.Sdk.CodeGeneration\Game08.Sdk.CodeGeneration.csproj", "{75511089-E25D-4839-A90E-B23F9098BF80}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.LTS.ModelTsInterfacesPlugin", "Game08.Sdk.LTS.ModelTsInterfacesPlugin\Game08.Sdk.LTS.ModelTsInterfacesPlugin.csproj", "{567EDDF7-1495-4CAC-91B7-24F0D3F6BC98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game08.Sdk.LTS.BuilderDefinitionTreePlugin", "Game08.Sdk.LTS.BuilderDefinitionTreePlugin\Game08.Sdk.LTS.BuilderDefinitionTreePlugin.csproj", "{2EE19454-C112-48DB-AFC2-9913E5DAC6AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.LTS.BuilderDefinitionTreePlugin", "Game08.Sdk.LTS.BuilderDefinitionTreePlugin\Game08.Sdk.LTS.BuilderDefinitionTreePlugin.csproj", "{2EE19454-C112-48DB-AFC2-9913E5DAC6AD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.SyntaxTreeExtensionsPlugin", "Game08.Sdk.SyntaxTreeExtensionsPlugin\Game08.Sdk.SyntaxTreeExtensionsPlugin.csproj", "{EDB20A42-1F3B-4EFD-B435-756BBB49A948}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,6 @@ Global
 		{1B526CE9-EC03-4A26-9A14-62525FD9ECFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B526CE9-EC03-4A26-9A14-62525FD9ECFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B526CE9-EC03-4A26-9A14-62525FD9ECFC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4EE3CE05-2321-4DA6-86C5-C96281B94EC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4EE3CE05-2321-4DA6-86C5-C96281B94EC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4EE3CE05-2321-4DA6-86C5-C96281B94EC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4EE3CE05-2321-4DA6-86C5-C96281B94EC0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75511089-E25D-4839-A90E-B23F9098BF80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{75511089-E25D-4839-A90E-B23F9098BF80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75511089-E25D-4839-A90E-B23F9098BF80}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +41,10 @@ Global
 		{2EE19454-C112-48DB-AFC2-9913E5DAC6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EE19454-C112-48DB-AFC2-9913E5DAC6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EE19454-C112-48DB-AFC2-9913E5DAC6AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDB20A42-1F3B-4EFD-B435-756BBB49A948}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDB20A42-1F3B-4EFD-B435-756BBB49A948}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDB20A42-1F3B-4EFD-B435-756BBB49A948}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDB20A42-1F3B-4EFD-B435-756BBB49A948}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
