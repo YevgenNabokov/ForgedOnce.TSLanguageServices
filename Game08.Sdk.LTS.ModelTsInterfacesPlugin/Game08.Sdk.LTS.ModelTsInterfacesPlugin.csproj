@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Game08.Sdk.CodeMixer.CSharp" Version="1.0.31" />
+    <PackageReference Include="Game08.Sdk.CodeMixer.CSharp" Version="1.0.34" />
     <PackageReference Include="Game08.Sdk.CodeMixer.CSharp.Helpers" Version="1.0.1" />
-    <PackageReference Include="Game08.Sdk.CodeMixer.LimitedTypeScript" Version="1.0.57" />
-    <PackageReference Include="Game08.Sdk.LTS.Builder" Version="1.0.33" />
+    <PackageReference Include="Game08.Sdk.CodeMixer.LimitedTypeScript" Version="1.0.60" />
+    <PackageReference Include="Game08.Sdk.LTS.Builder" Version="1.0.35" />
   </ItemGroup>
 
 </Project>
