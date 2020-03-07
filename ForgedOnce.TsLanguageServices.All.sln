@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ForgedOnce.TsLanguageServices.TsBuilder", "ForgedOnce.TsLanguageServices.TSBuilder\ForgedOnce.TsLanguageServices.TsBuilder.njsproj", "{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.ModelToCode", "ForgedOnce.TsLanguageServices.ModelToCode\ForgedOnce.TsLanguageServices.ModelToCode.csproj", "{E961047A-F76C-4A99-8D0B-7444B5CA565D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528} = {11926C92-3A3E-43DE-8B4D-1EA9BC09C528}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.Model", "ForgedOnce.TsLanguageServices.Model\ForgedOnce.TsLanguageServices.Model.csproj", "{06ED9789-68C8-49F0-834F-E3EF6F7E8934}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.ModelBuilder", "ForgedOnce.TsLanguageServices.ModelBuilder\ForgedOnce.TsLanguageServices.ModelBuilder.csproj", "{DB41F3B9-CC2D-4F04-ABAD-A2096C4349B3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.Tests", "ForgedOnce.TsLanguageServices.Tests\ForgedOnce.TsLanguageServices.Tests.csproj", "{4B132802-4727-4BAA-BCF9-841A13203A5C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E961047A-F76C-4A99-8D0B-7444B5CA565D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E961047A-F76C-4A99-8D0B-7444B5CA565D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E961047A-F76C-4A99-8D0B-7444B5CA565D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E961047A-F76C-4A99-8D0B-7444B5CA565D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06ED9789-68C8-49F0-834F-E3EF6F7E8934}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06ED9789-68C8-49F0-834F-E3EF6F7E8934}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06ED9789-68C8-49F0-834F-E3EF6F7E8934}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06ED9789-68C8-49F0-834F-E3EF6F7E8934}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB41F3B9-CC2D-4F04-ABAD-A2096C4349B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB41F3B9-CC2D-4F04-ABAD-A2096C4349B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB41F3B9-CC2D-4F04-ABAD-A2096C4349B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB41F3B9-CC2D-4F04-ABAD-A2096C4349B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B132802-4727-4BAA-BCF9-841A13203A5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B132802-4727-4BAA-BCF9-841A13203A5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B132802-4727-4BAA-BCF9-841A13203A5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B132802-4727-4BAA-BCF9-841A13203A5C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FC77887E-ED0C-470F-9373-2252BB3DF38D}
+	EndGlobalSection
+EndGlobal

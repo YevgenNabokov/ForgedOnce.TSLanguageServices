@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>netstandard2.0;netcoreapp2.2;net472</TargetFrameworks>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <NuspecFile>ForgedOnce.TsLanguageServices.ModelToCode.Generator.nuspec</NuspecFile>
+    <IntermediatePackDir>$(MSBuildProjectDirectory)/bin/$(Configuration)/publish/</IntermediatePackDir>
+    <PublishDir>$(IntermediatePackDir)$(TargetFramework)/</PublishDir>
+    <NuspecProperties>publishDir=$([MSBuild]::NormalizeDirectory($(IntermediatePackDir)))</NuspecProperties>
+    <PackageOutputPath>$(SolutionDir)/NugetOutputs</PackageOutputPath>
+    <ApplicationIcon />
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="NodeRedist\win-x64\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(Pkgnode_js_redist)\tools\win-x64\node.exe" Link="NodeRedist\win-x64\node.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="$(Pkgnode_js_redist)\tools\win-x86\node.exe" Link="NodeRedist\win-x86\node.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="$(Pkgnode_js_redist)\tools\osx-x64\node" Link="NodeRedist\osx-x64\node">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="$(Pkgnode_js_redist)\tools\linux-x64\node" Link="NodeRedist\linux-x64\node">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="$(SolutionDir)\GeneratorAppOutput\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>CodeGeneratorJs\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Node.js.redist" Version="13.1.0">
+      <GeneratePathProperty>true</GeneratePathProperty>
+    </PackageReference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\ForgedOnce.TsLanguageServices.Model\ForgedOnce.TsLanguageServices.Model.csproj" />
+  </ItemGroup>
+
+  <Target Name="PublishAll" BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <_TargetFramework Include="$(TargetFrameworks)" />
+    </ItemGroup>
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" Properties="TargetFramework=%(_TargetFramework.Identity)" />
+  </Target>
+
+</Project>
