@@ -8,7 +8,7 @@
 
   <PropertyGroup>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <NuspecFile>ForgedOnce.TsLanguageServices.ModelToCode.Generator.nuspec</NuspecFile>
+    <NuspecFile>ForgedOnce.TsLanguageServices.ModelToCode.nuspec</NuspecFile>
     <IntermediatePackDir>$(MSBuildProjectDirectory)/bin/$(Configuration)/publish/</IntermediatePackDir>
     <PublishDir>$(IntermediatePackDir)$(TargetFramework)/</PublishDir>
     <NuspecProperties>publishDir=$([MSBuild]::NormalizeDirectory($(IntermediatePackDir)))</NuspecProperties>
@@ -52,6 +52,12 @@
   
   <ItemGroup>
     <ProjectReference Include="..\ForgedOnce.TsLanguageServices.Model\ForgedOnce.TsLanguageServices.Model.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="NodeRedist\LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="PublishAll" BeforeTargets="GenerateNuspec">

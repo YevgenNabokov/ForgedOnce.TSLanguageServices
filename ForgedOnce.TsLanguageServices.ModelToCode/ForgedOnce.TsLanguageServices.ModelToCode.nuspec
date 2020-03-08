@@ -1,9 +1,9 @@
 ﻿<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
-    <id>ForgedOnce.TsLanguageServices.ModelToCode.Generator</id>
-    <version>1.0.26</version>
+    <id>ForgedOnce.TsLanguageServices.ModelToCode</id>
+    <version>0.1.0</version>
     <authors>Yevgen Nabokov</authors>
-    <description>Translates LTS model to TypeScript files.</description>
+    <description>Translates ForgedOnce.TsLanguageServices.Model to TypeScript files.</description>
     <dependencies>      
     </dependencies>
   </metadata>
