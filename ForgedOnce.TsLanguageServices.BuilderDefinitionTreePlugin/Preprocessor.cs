@@ -1,17 +1,17 @@
-﻿using ForgedOnce.TsLanguageServices.CodeMixer.Core.Interfaces;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Plugins;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp;
+﻿using ForgedOnce.Core.Interfaces;
+using ForgedOnce.Core.Plugins;
+using ForgedOnce.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers.SemanticAnalysis;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers.Syntax.Generation;
+using ForgedOnce.CSharp.Helpers.SemanticAnalysis;
+using ForgedOnce.CSharp.Helpers.Syntax.Generation;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin
+namespace ForgedOnce.TsLanguageServices.BuilderDefinitionTreePlugin
 {
     public class Preprocessor : IPluginPreprocessor<CodeFileCSharp, Parameters, Settings>
     {

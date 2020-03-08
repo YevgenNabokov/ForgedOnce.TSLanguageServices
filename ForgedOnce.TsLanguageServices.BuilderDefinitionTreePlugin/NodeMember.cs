@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin
+namespace ForgedOnce.TsLanguageServices.BuilderDefinitionTreePlugin
 {
     public class NodeMember
     {

@@ -1,2 +1,2 @@
 ﻿dotnet restore --force
-dotnet forgedonce-cg-msbuild ..\ForgedOnce.TsLanguageServices.CSToTS.SyntaxTrees.sln CGPipeline.json
+dotnet forgedonce-cg-msbuild ..\ForgedOnce.TsLanguageServices.SyntaxTrees.sln CGPipeline.json

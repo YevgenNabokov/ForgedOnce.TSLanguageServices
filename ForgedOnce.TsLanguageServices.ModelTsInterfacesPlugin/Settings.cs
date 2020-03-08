@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin
+namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
 {
     public class Settings
     {

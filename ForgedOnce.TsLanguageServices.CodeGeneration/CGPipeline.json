@@ -1,13 +1,13 @@
 {
   "codeFileHandlers": [
-    { "type": "ForgedOnce.TsLanguageServices.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, ForgedOnce.TsLanguageServices.CodeMixer.CSharp" },
-    { "type": "ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript.LtsCodeFileHandlerFactory, ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript" }
+    { "type": "ForgedOnce.CSharp.CSharpCodeFileHandlerFactory, ForgedOnce.CSharp" },
+    { "type": "ForgedOnce.TypeScript.TsCodeFileHandlerFactory, ForgedOnce.TypeScript" }
   ],
   "inputs": {
-    "DefinitionTree": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/DefinitionTree/*.cs",
-    "TypeData": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/TypeData/*.cs",
-    "ResultModel": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/ResultModel/*.cs",
-    "Common": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/CodeFile.cs;ForgedOnce.TsLanguageServices.LTS.Model/CodeGenerationTask.cs"
+    "DefinitionTree": "CSharp:Project:ForgedOnce.TsLanguageServices.Model/DefinitionTree/*.cs",
+    "TypeData": "CSharp:Project:ForgedOnce.TsLanguageServices.Model/TypeData/*.cs",
+    "ResultModel": "CSharp:Project:ForgedOnce.TsLanguageServices.Model/ResultModel/*.cs",
+    "Common": "CSharp:Project:ForgedOnce.TsLanguageServices.Model/CodeFile.cs;ForgedOnce.TsLanguageServices.Model/CodeGenerationTask.cs"
   },
   "batches": [
     {
@@ -17,9 +17,9 @@
           "name": "TypeScriptModelInterfaces",
           "plugin": {
             "pluginFactory": {
-              "type": "ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin.PluginFactory, ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin",
+              "type": "ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin.PluginFactory, ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin",
               "config": {
-                "modelBaseNamespace": "ForgedOnce.TsLanguageServices.LTS.Model",
+                "modelBaseNamespace": "ForgedOnce.TsLanguageServices.Model",
                 "outputFileName": "IntermadiateModel.ts"
               }
             }
@@ -44,7 +44,7 @@
             "PassThrough": {
               "name": "fileSystem",
               "settings": {
-                "path": "..\\ForgedOnce.TsLanguageServices.CSToTS.TypeScriptBuilder"
+                "path": "..\\ForgedOnce.TsLanguageServices.TSBuilder"
               }
             }
           }
@@ -53,13 +53,13 @@
           "name": "BuilderDefinitionTree",
           "plugin": {
             "pluginFactory": {
-              "type": "ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin.PluginFactory, ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin",
+              "type": "ForgedOnce.TsLanguageServices.BuilderDefinitionTreePlugin.PluginFactory, ForgedOnce.TsLanguageServices.BuilderDefinitionTreePlugin",
               "config": {
-                "outputNamespace": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree",
-                "sourceNodeBaseType": "ForgedOnce.TsLanguageServices.LTS.Model.DefinitionTree.Node",
-                "trackingCollectionType": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.BuilderNodeCollection<>",
-                "destinationNodeBaseType": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.Node",
-                "typesToSkip": "ForgedOnce.TsLanguageServices.LTS.Model.DefinitionTree.Node",
+                "outputNamespace": "ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree",
+                "sourceNodeBaseType": "ForgedOnce.TsLanguageServices.Model.DefinitionTree.Node",
+                "trackingCollectionType": "ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.BuilderNodeCollection<>",
+                "destinationNodeBaseType": "ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.Node",
+                "typesToSkip": "ForgedOnce.TsLanguageServices.Model.DefinitionTree.Node",
                 "allowedModificationCheckMethodName": "EnsureIsEditable"
               }
             }
@@ -79,7 +79,7 @@
           },
           "destinationMapping": {
             "PassThrough": {
-              "settings": { "path": "ForgedOnce.TsLanguageServices.LTS.Builder/DefinitionTree/Generated" }
+              "settings": { "path": "ForgedOnce.TsLanguageServices.ModelBuilder/DefinitionTree/Generated" }
             }
           },
           "cleanDestinations": true
@@ -95,9 +95,9 @@
             "pluginFactory": {
               "type": "ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin.PluginFactory, ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin",
               "config": {
-                "outputNamespace": "ForgedOnce.TsLanguageServices.LTS.Builder.ExtensionMethods",
-                "requiredClassBaseType": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.Node",
-                "typesToUnfold": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.Identifier;ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.TypeReferenceId",
+                "outputNamespace": "ForgedOnce.TsLanguageServices.ModelBuilder.ExtensionMethods",
+                "requiredClassBaseType": "ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.Node",
+                "typesToUnfold": "ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.Identifier;ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.TypeReferenceId",
                 "ignorePropertyNames": "Parent",
                 "unpluralizeVariables": "true"
               }
@@ -115,7 +115,7 @@
           },
           "destinationMapping": {
             "PassThrough": {
-              "settings": { "path": "ForgedOnce.TsLanguageServices.LTS.Builder/ExtensionMethods/Generated" }
+              "settings": { "path": "ForgedOnce.TsLanguageServices.ModelBuilder/ExtensionMethods/Generated" }
             }
           },
           "cleanDestinations": true

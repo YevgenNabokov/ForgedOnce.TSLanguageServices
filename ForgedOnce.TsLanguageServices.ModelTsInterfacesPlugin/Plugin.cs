@@ -1,20 +1,20 @@
-﻿using ForgedOnce.TsLanguageServices.CodeMixer.Core;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Interfaces;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Metadata.Interfaces;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Plugins;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp;
-using ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript;
+﻿using ForgedOnce.Core;
+using ForgedOnce.Core.Interfaces;
+using ForgedOnce.Core.Metadata.Interfaces;
+using ForgedOnce.Core.Plugins;
+using ForgedOnce.CSharp;
+using ForgedOnce.TypeScript;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
-using ForgedOnce.TsLanguageServices.LTS.Model.TypeData;
-using ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers.SemanticAnalysis;
+using ForgedOnce.TsLanguageServices.Model.TypeData;
+using ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree;
+using ForgedOnce.CSharp.Helpers.SemanticAnalysis;
 
-namespace ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin
+namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
 {
     public class Plugin : CodeGenerationFromCSharpPlugin<Settings, Parameters>
     {
@@ -31,7 +31,7 @@ namespace ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin
 
         protected ICodeStream outputStream;
 
-        protected CodeFileLtsModel singleOutputFile;
+        protected CodeFileTsModel singleOutputFile;
 
         public Plugin()
         {
@@ -176,13 +176,13 @@ namespace ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin
             return string.IsNullOrEmpty(this.Settings.ModelBaseNamespace) || symbol.ContainingNamespace.ToDisplayString().StartsWith(this.Settings.ModelBaseNamespace);
         }
 
-        protected CodeFileLtsModel OutputFile
+        protected CodeFileTsModel OutputFile
         {
             get
             {
                 if (this.singleOutputFile == null)
                 {
-                    this.singleOutputFile = (CodeFileLtsModel)this.outputStream.CreateCodeFile(
+                    this.singleOutputFile = (CodeFileTsModel)this.outputStream.CreateCodeFile(
                         string.IsNullOrEmpty(this.Settings.OutputFileName) ? $"IntermediateModelGenerated.ts" : this.Settings.OutputFileName);
                 }
 

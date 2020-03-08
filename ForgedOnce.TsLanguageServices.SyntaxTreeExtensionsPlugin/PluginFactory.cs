@@ -1,6 +1,6 @@
-﻿using ForgedOnce.TsLanguageServices.CodeMixer.Core.Interfaces;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp;
-using ForgedOnce.TsLanguageServices.CodeMixer.Environment.Interfaces;
+﻿using ForgedOnce.Core.Interfaces;
+using ForgedOnce.CSharp;
+using ForgedOnce.Environment.Interfaces;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

@@ -1,13 +1,13 @@
 {
   "codeFileHandlers": [
-    { "type": "ForgedOnce.TsLanguageServices.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, ForgedOnce.TsLanguageServices.CodeMixer.CSharp" },
-    { "type": "ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript.LtsCodeFileHandlerFactory, ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript" }
+    { "type": "ForgedOnce.CSharp.CSharpCodeFileHandlerFactory, ForgedOnce.CSharp" },
+    { "type": "ForgedOnce.TypeScript.TsCodeFileHandlerFactory, ForgedOnce.TypeScript" }
   ],
   "inputs": {
-    "DefinitionTree": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/DefinitionTree/*.cs",
-    "TypeData": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/TypeData/*.cs",
-    "ResultModel": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/ResultModel/*.cs",
-    "Common": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/CodeFile.cs;ForgedOnce.TsLanguageServices.LTS.Model/CodeGenerationTask.cs"
+    "DefinitionTree": "CSharp:Project:ForgedOnce.TsLanguageServices.Model/DefinitionTree/*.cs",
+    "TypeData": "CSharp:Project:ForgedOnce.TsLanguageServices.Model/TypeData/*.cs",
+    "ResultModel": "CSharp:Project:ForgedOnce.TsLanguageServices.Model/ResultModel/*.cs",
+    "Common": "CSharp:Project:ForgedOnce.TsLanguageServices.Model/CodeFile.cs;ForgedOnce.TsLanguageServices.Model/CodeGenerationTask.cs"
   },
   "batches": [
     {
@@ -17,9 +17,9 @@
           "name": "TypeScriptModelInterfaces",
           "plugin": {
             "pluginFactory": {
-              "type": "ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin.PluginFactory, ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin",
+              "type": "ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin.PluginFactory, ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin",
               "config": {
-                "modelBaseNamespace": "ForgedOnce.TsLanguageServices.LTS.Model",
+                "modelBaseNamespace": "ForgedOnce.TsLanguageServices.Model",
                 "outputFileName": "IntermadiateModel.ts"
               }
             }
@@ -41,7 +41,7 @@
             "PassThrough": {
               "name": "fileSystem",
               "settings": {
-                "path": "..\\ForgedOnce.TsLanguageServices.CSToTS.TypeScriptBuilder"
+                "path": "..\\ForgedOnce.TsLanguageServices.TSBuilder"
               }
             }
           }

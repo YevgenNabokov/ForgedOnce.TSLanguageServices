@@ -1,8 +1,8 @@
-﻿using ForgedOnce.TsLanguageServices.CodeMixer.Core;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Interfaces;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Metadata.Interfaces;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Plugins;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp;
+﻿using ForgedOnce.Core;
+using ForgedOnce.Core.Interfaces;
+using ForgedOnce.Core.Metadata.Interfaces;
+using ForgedOnce.Core.Plugins;
+using ForgedOnce.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
@@ -10,10 +10,10 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers.SemanticAnalysis;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers.Syntax.Generation;
+using ForgedOnce.CSharp.Helpers.SemanticAnalysis;
+using ForgedOnce.CSharp.Helpers.Syntax.Generation;
 
-namespace ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin
+namespace ForgedOnce.TsLanguageServices.BuilderDefinitionTreePlugin
 {
     public class Plugin : CodeGenerationFromCSharpPlugin<Settings, Parameters>
     {

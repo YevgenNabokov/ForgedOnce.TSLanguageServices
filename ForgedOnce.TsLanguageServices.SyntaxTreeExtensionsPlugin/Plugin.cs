@@ -1,10 +1,10 @@
-﻿using ForgedOnce.TsLanguageServices.CodeMixer.Core;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Interfaces;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Metadata.Interfaces;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Plugins;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers.SemanticAnalysis;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers.Syntax.Generation;
+﻿using ForgedOnce.Core;
+using ForgedOnce.Core.Interfaces;
+using ForgedOnce.Core.Metadata.Interfaces;
+using ForgedOnce.Core.Plugins;
+using ForgedOnce.CSharp;
+using ForgedOnce.CSharp.Helpers.SemanticAnalysis;
+using ForgedOnce.CSharp.Helpers.Syntax.Generation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

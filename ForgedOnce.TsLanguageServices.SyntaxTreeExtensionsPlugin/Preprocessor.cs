@@ -1,6 +1,6 @@
-﻿using ForgedOnce.TsLanguageServices.CodeMixer.Core.Interfaces;
-using ForgedOnce.TsLanguageServices.CodeMixer.Core.Plugins;
-using ForgedOnce.TsLanguageServices.CodeMixer.CSharp;
+﻿using ForgedOnce.Core.Interfaces;
+using ForgedOnce.Core.Plugins;
+using ForgedOnce.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;

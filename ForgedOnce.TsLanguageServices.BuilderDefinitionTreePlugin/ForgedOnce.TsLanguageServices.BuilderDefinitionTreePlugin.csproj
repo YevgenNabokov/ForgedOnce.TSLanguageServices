@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ForgedOnce.TsLanguageServices.CodeMixer.CSharp" Version="1.0.34" />
-    <PackageReference Include="ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers" Version="1.0.1" />
+    <PackageReference Include="ForgedOnce.CSharp" Version="0.1.0" />
+    <PackageReference Include="ForgedOnce.CSharp.Helpers" Version="0.1.0" />
   </ItemGroup>
 
 </Project>

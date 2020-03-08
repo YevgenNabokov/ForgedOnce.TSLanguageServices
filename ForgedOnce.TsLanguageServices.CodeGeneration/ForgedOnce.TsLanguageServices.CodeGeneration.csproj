@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="ForgedOnce.TsLanguageServices.CodeMixer.Launcher.MSBuild.WithDefaultAdapters.CliTool" Version="*" />
+    <DotNetCliToolReference Include="ForgedOnce.Launcher.MSBuild.WithDefaultAdapters.CliTool" Version="*" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ForgedOnce.TsLanguageServices.CodeMixer.Launcher.MSBuild.WithDefaultAdapters" Version="1.0.73" />
+    <PackageReference Include="ForgedOnce.Launcher.MSBuild.WithDefaultAdapters" Version="0.1.0" />
   </ItemGroup>
 
 </Project>
