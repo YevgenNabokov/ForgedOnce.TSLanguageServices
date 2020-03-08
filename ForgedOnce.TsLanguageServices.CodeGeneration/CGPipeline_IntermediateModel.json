@@ -1,13 +1,13 @@
 {
   "codeFileHandlers": [
-    { "type": "Game08.Sdk.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, Game08.Sdk.CodeMixer.CSharp" },
-    { "type": "Game08.Sdk.CodeMixer.LimitedTypeScript.LtsCodeFileHandlerFactory, Game08.Sdk.CodeMixer.LimitedTypeScript" }
+    { "type": "ForgedOnce.TsLanguageServices.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, ForgedOnce.TsLanguageServices.CodeMixer.CSharp" },
+    { "type": "ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript.LtsCodeFileHandlerFactory, ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript" }
   ],
   "inputs": {
-    "DefinitionTree": "CSharp:Project:Game08.Sdk.LTS.Model/DefinitionTree/*.cs",
-    "TypeData": "CSharp:Project:Game08.Sdk.LTS.Model/TypeData/*.cs",
-    "ResultModel": "CSharp:Project:Game08.Sdk.LTS.Model/ResultModel/*.cs",
-    "Common": "CSharp:Project:Game08.Sdk.LTS.Model/CodeFile.cs;Game08.Sdk.LTS.Model/CodeGenerationTask.cs"
+    "DefinitionTree": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/DefinitionTree/*.cs",
+    "TypeData": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/TypeData/*.cs",
+    "ResultModel": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/ResultModel/*.cs",
+    "Common": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/CodeFile.cs;ForgedOnce.TsLanguageServices.LTS.Model/CodeGenerationTask.cs"
   },
   "batches": [
     {
@@ -17,9 +17,9 @@
           "name": "TypeScriptModelInterfaces",
           "plugin": {
             "pluginFactory": {
-              "type": "Game08.Sdk.LTS.ModelTsInterfacesPlugin.PluginFactory, Game08.Sdk.LTS.ModelTsInterfacesPlugin",
+              "type": "ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin.PluginFactory, ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin",
               "config": {
-                "modelBaseNamespace": "Game08.Sdk.LTS.Model",
+                "modelBaseNamespace": "ForgedOnce.TsLanguageServices.LTS.Model",
                 "outputFileName": "IntermadiateModel.ts"
               }
             }
@@ -41,7 +41,7 @@
             "PassThrough": {
               "name": "fileSystem",
               "settings": {
-                "path": "..\\Game08.Sdk.CSToTS.TypeScriptBuilder"
+                "path": "..\\ForgedOnce.TsLanguageServices.CSToTS.TypeScriptBuilder"
               }
             }
           }

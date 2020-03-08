@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "Game08.Sdk.CodeGeneration": {
+    "ForgedOnce.TsLanguageServices.CodeGeneration": {
       "commandName": "Project",
-      "commandLineArgs": "$(SolutionDir)Game08.Sdk.CSToTS.SyntaxTrees.sln $(ProjectDir)CGPipeline.json",
+      "commandLineArgs": "$(SolutionDir)ForgedOnce.TsLanguageServices.CSToTS.SyntaxTrees.sln $(ProjectDir)CGPipeline.json",
       "workingDirectory": "$(ProjectDir)",
       "nativeDebugging": false
     }

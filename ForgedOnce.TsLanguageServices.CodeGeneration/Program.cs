@@ -1,9 +1,9 @@
-﻿using Game08.Sdk.CodeMixer.Launcher.MSBuild.WithDefaultAdapters;
+﻿using ForgedOnce.TsLanguageServices.CodeMixer.Launcher.MSBuild.WithDefaultAdapters;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Game08.Sdk.CodeGeneration
+namespace ForgedOnce.TsLanguageServices.CodeGeneration
 {
     public static class Program
     {

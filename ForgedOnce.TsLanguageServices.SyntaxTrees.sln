@@ -5,15 +5,15 @@ VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.Model", "ForgedOnce.TsLanguageServices.Model\ForgedOnce.TsLanguageServices.Model.csproj", "{3AEAA1ED-B179-484E-B099-A5FE1798829A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.Builder", "ForgedOnce.TsLanguageServices.Builder\ForgedOnce.TsLanguageServices.Builder.csproj", "{1B526CE9-EC03-4A26-9A14-62525FD9ECFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.ModelBuilder", "ForgedOnce.TsLanguageServices.ModelBuilder\ForgedOnce.TsLanguageServices.ModelBuilder.csproj", "{1B526CE9-EC03-4A26-9A14-62525FD9ECFC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.CodeGeneration", "Game08.Sdk.CodeGeneration\Game08.Sdk.CodeGeneration.csproj", "{75511089-E25D-4839-A90E-B23F9098BF80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.CodeGeneration", "ForgedOnce.TsLanguageServices.CodeGeneration\ForgedOnce.TsLanguageServices.CodeGeneration.csproj", "{75511089-E25D-4839-A90E-B23F9098BF80}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin", "ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin\ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin.csproj", "{567EDDF7-1495-4CAC-91B7-24F0D3F6BC98}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.BuilderDefinitionTreePlugin", "ForgedOnce.TsLanguageServices.BuilderDefinitionTreePlugin\ForgedOnce.TsLanguageServices.BuilderDefinitionTreePlugin.csproj", "{2EE19454-C112-48DB-AFC2-9913E5DAC6AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game08.Sdk.SyntaxTreeExtensionsPlugin", "Game08.Sdk.SyntaxTreeExtensionsPlugin\Game08.Sdk.SyntaxTreeExtensionsPlugin.csproj", "{EDB20A42-1F3B-4EFD-B435-756BBB49A948}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin", "ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin\ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin.csproj", "{EDB20A42-1F3B-4EFD-B435-756BBB49A948}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Game08.Sdk.SyntaxTreeExtensionsPlugin
+namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
 {
     public class Parameters
     {

@@ -1,9 +1,9 @@
 {
   "codeFileHandlers": [
-    { "type": "Game08.Sdk.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, Game08.Sdk.CodeMixer.CSharp" }
+    { "type": "ForgedOnce.TsLanguageServices.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, ForgedOnce.TsLanguageServices.CodeMixer.CSharp" }
   ],
   "inputs": {
-    "SourceTree": "CSharp:Project:Game08.Sdk.LTS.Model/DefinitionTree/*.cs"
+    "SourceTree": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/DefinitionTree/*.cs"
   },
   "batches": [
     {
@@ -13,13 +13,13 @@
           "name": "BuilderDefinitionTree",
           "plugin": {
             "pluginFactory": {
-              "type": "Game08.Sdk.LTS.BuilderDefinitionTreePlugin.PluginFactory, Game08.Sdk.LTS.BuilderDefinitionTreePlugin",
+              "type": "ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin.PluginFactory, ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin",
               "config": {
-                "outputNamespace": "Game08.Sdk.LTS.Builder.DefinitionTree",
-                "sourceNodeBaseType": "Game08.Sdk.LTS.Model.DefinitionTree.Node",
-                "trackingCollectionType": "Game08.Sdk.LTS.Builder.DefinitionTree.BuilderNodeCollection<>",
-                "destinationNodeBaseType": "Game08.Sdk.LTS.Builder.DefinitionTree.Node",
-                "typesToSkip": "Game08.Sdk.LTS.Model.DefinitionTree.Node",
+                "outputNamespace": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree",
+                "sourceNodeBaseType": "ForgedOnce.TsLanguageServices.LTS.Model.DefinitionTree.Node",
+                "trackingCollectionType": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.BuilderNodeCollection<>",
+                "destinationNodeBaseType": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.Node",
+                "typesToSkip": "ForgedOnce.TsLanguageServices.LTS.Model.DefinitionTree.Node",
                 "allowedModificationCheckMethodName": "EnsureIsEditable"
               }
             }
@@ -36,7 +36,7 @@
           },
           "destinationMapping": {
             "PassThrough": {
-              "settings": { "path": "Game08.Sdk.LTS.Builder/DefinitionTree/Generated" }
+              "settings": { "path": "ForgedOnce.TsLanguageServices.LTS.Builder/DefinitionTree/Generated" }
             }
           },
           "cleanDestinations": true

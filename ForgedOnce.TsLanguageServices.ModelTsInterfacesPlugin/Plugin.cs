@@ -1,20 +1,20 @@
-﻿using Game08.Sdk.CodeMixer.Core;
-using Game08.Sdk.CodeMixer.Core.Interfaces;
-using Game08.Sdk.CodeMixer.Core.Metadata.Interfaces;
-using Game08.Sdk.CodeMixer.Core.Plugins;
-using Game08.Sdk.CodeMixer.CSharp;
-using Game08.Sdk.CodeMixer.LimitedTypeScript;
+﻿using ForgedOnce.TsLanguageServices.CodeMixer.Core;
+using ForgedOnce.TsLanguageServices.CodeMixer.Core.Interfaces;
+using ForgedOnce.TsLanguageServices.CodeMixer.Core.Metadata.Interfaces;
+using ForgedOnce.TsLanguageServices.CodeMixer.Core.Plugins;
+using ForgedOnce.TsLanguageServices.CodeMixer.CSharp;
+using ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
-using Game08.Sdk.LTS.Model.TypeData;
-using Game08.Sdk.LTS.Builder.DefinitionTree;
-using Game08.Sdk.CodeMixer.CSharp.Helpers.SemanticAnalysis;
+using ForgedOnce.TsLanguageServices.LTS.Model.TypeData;
+using ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree;
+using ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers.SemanticAnalysis;
 
-namespace Game08.Sdk.LTS.ModelTsInterfacesPlugin
+namespace ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin
 {
     public class Plugin : CodeGenerationFromCSharpPlugin<Settings, Parameters>
     {

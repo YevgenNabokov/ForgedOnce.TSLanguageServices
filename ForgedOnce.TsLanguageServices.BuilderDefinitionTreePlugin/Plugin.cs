@@ -1,8 +1,8 @@
-﻿using Game08.Sdk.CodeMixer.Core;
-using Game08.Sdk.CodeMixer.Core.Interfaces;
-using Game08.Sdk.CodeMixer.Core.Metadata.Interfaces;
-using Game08.Sdk.CodeMixer.Core.Plugins;
-using Game08.Sdk.CodeMixer.CSharp;
+﻿using ForgedOnce.TsLanguageServices.CodeMixer.Core;
+using ForgedOnce.TsLanguageServices.CodeMixer.Core.Interfaces;
+using ForgedOnce.TsLanguageServices.CodeMixer.Core.Metadata.Interfaces;
+using ForgedOnce.TsLanguageServices.CodeMixer.Core.Plugins;
+using ForgedOnce.TsLanguageServices.CodeMixer.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
@@ -10,10 +10,10 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Game08.Sdk.CodeMixer.CSharp.Helpers.SemanticAnalysis;
-using Game08.Sdk.CodeMixer.CSharp.Helpers.Syntax.Generation;
+using ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers.SemanticAnalysis;
+using ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers.Syntax.Generation;
 
-namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
+namespace ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin
 {
     public class Plugin : CodeGenerationFromCSharpPlugin<Settings, Parameters>
     {

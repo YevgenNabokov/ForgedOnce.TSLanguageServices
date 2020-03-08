@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Game08.Sdk.LTS.BuilderDefinitionTreePlugin
+namespace ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin
 {
     public class Settings
     {

@@ -1,10 +1,10 @@
 {
   "profiles": {
-    "Game08.Sdk.SyntaxTreeExtensionsPlugin": {
+    "ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin": {
       "commandName": "Executable",
       "executablePath": "dotnet.exe",
-      "commandLineArgs": "game08-cg-msbuild ..\\..\\..\\Game08.Sdk.CSToTS.SyntaxTrees.sln ..\\..\\CGPipeline.json",
-      "workingDirectory": "G:\\Projects\\Game08\\Src\\Sdk\\Game08.Sdk.CSToTS\\Game08.Sdk.CodeGeneration"
+      "commandLineArgs": "game08-cg-msbuild ..\\..\\..\\ForgedOnce.TsLanguageServices.CSToTS.SyntaxTrees.sln ..\\..\\CGPipeline.json",
+      "workingDirectory": "G:\\Projects\\Game08\\Src\\Sdk\\ForgedOnce.TsLanguageServices.CSToTS\\ForgedOnce.TsLanguageServices.CodeGeneration"
     }
   }
 }

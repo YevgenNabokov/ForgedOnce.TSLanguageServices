@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Game08.Sdk.SyntaxTreeExtensionsPlugin
+namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
 {
     public class Settings
     {

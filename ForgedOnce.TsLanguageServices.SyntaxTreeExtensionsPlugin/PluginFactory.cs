@@ -1,12 +1,12 @@
-﻿using Game08.Sdk.CodeMixer.Core.Interfaces;
-using Game08.Sdk.CodeMixer.CSharp;
-using Game08.Sdk.CodeMixer.Environment.Interfaces;
+﻿using ForgedOnce.TsLanguageServices.CodeMixer.Core.Interfaces;
+using ForgedOnce.TsLanguageServices.CodeMixer.CSharp;
+using ForgedOnce.TsLanguageServices.CodeMixer.Environment.Interfaces;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Game08.Sdk.SyntaxTreeExtensionsPlugin
+namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
 {
     public class PluginFactory : ICodeGenerationPluginFactory<Settings, Parameters, CodeFileCSharp>
     {

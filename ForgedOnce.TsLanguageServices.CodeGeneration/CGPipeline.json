@@ -1,13 +1,13 @@
 {
   "codeFileHandlers": [
-    { "type": "Game08.Sdk.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, Game08.Sdk.CodeMixer.CSharp" },
-    { "type": "Game08.Sdk.CodeMixer.LimitedTypeScript.LtsCodeFileHandlerFactory, Game08.Sdk.CodeMixer.LimitedTypeScript" }
+    { "type": "ForgedOnce.TsLanguageServices.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, ForgedOnce.TsLanguageServices.CodeMixer.CSharp" },
+    { "type": "ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript.LtsCodeFileHandlerFactory, ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript" }
   ],
   "inputs": {
-    "DefinitionTree": "CSharp:Project:Game08.Sdk.LTS.Model/DefinitionTree/*.cs",
-    "TypeData": "CSharp:Project:Game08.Sdk.LTS.Model/TypeData/*.cs",
-    "ResultModel": "CSharp:Project:Game08.Sdk.LTS.Model/ResultModel/*.cs",
-    "Common": "CSharp:Project:Game08.Sdk.LTS.Model/CodeFile.cs;Game08.Sdk.LTS.Model/CodeGenerationTask.cs"
+    "DefinitionTree": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/DefinitionTree/*.cs",
+    "TypeData": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/TypeData/*.cs",
+    "ResultModel": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/ResultModel/*.cs",
+    "Common": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Model/CodeFile.cs;ForgedOnce.TsLanguageServices.LTS.Model/CodeGenerationTask.cs"
   },
   "batches": [
     {
@@ -17,9 +17,9 @@
           "name": "TypeScriptModelInterfaces",
           "plugin": {
             "pluginFactory": {
-              "type": "Game08.Sdk.LTS.ModelTsInterfacesPlugin.PluginFactory, Game08.Sdk.LTS.ModelTsInterfacesPlugin",
+              "type": "ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin.PluginFactory, ForgedOnce.TsLanguageServices.LTS.ModelTsInterfacesPlugin",
               "config": {
-                "modelBaseNamespace": "Game08.Sdk.LTS.Model",
+                "modelBaseNamespace": "ForgedOnce.TsLanguageServices.LTS.Model",
                 "outputFileName": "IntermadiateModel.ts"
               }
             }
@@ -44,7 +44,7 @@
             "PassThrough": {
               "name": "fileSystem",
               "settings": {
-                "path": "..\\Game08.Sdk.CSToTS.TypeScriptBuilder"
+                "path": "..\\ForgedOnce.TsLanguageServices.CSToTS.TypeScriptBuilder"
               }
             }
           }
@@ -53,13 +53,13 @@
           "name": "BuilderDefinitionTree",
           "plugin": {
             "pluginFactory": {
-              "type": "Game08.Sdk.LTS.BuilderDefinitionTreePlugin.PluginFactory, Game08.Sdk.LTS.BuilderDefinitionTreePlugin",
+              "type": "ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin.PluginFactory, ForgedOnce.TsLanguageServices.LTS.BuilderDefinitionTreePlugin",
               "config": {
-                "outputNamespace": "Game08.Sdk.LTS.Builder.DefinitionTree",
-                "sourceNodeBaseType": "Game08.Sdk.LTS.Model.DefinitionTree.Node",
-                "trackingCollectionType": "Game08.Sdk.LTS.Builder.DefinitionTree.BuilderNodeCollection<>",
-                "destinationNodeBaseType": "Game08.Sdk.LTS.Builder.DefinitionTree.Node",
-                "typesToSkip": "Game08.Sdk.LTS.Model.DefinitionTree.Node",
+                "outputNamespace": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree",
+                "sourceNodeBaseType": "ForgedOnce.TsLanguageServices.LTS.Model.DefinitionTree.Node",
+                "trackingCollectionType": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.BuilderNodeCollection<>",
+                "destinationNodeBaseType": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.Node",
+                "typesToSkip": "ForgedOnce.TsLanguageServices.LTS.Model.DefinitionTree.Node",
                 "allowedModificationCheckMethodName": "EnsureIsEditable"
               }
             }
@@ -79,7 +79,7 @@
           },
           "destinationMapping": {
             "PassThrough": {
-              "settings": { "path": "Game08.Sdk.LTS.Builder/DefinitionTree/Generated" }
+              "settings": { "path": "ForgedOnce.TsLanguageServices.LTS.Builder/DefinitionTree/Generated" }
             }
           },
           "cleanDestinations": true
@@ -93,11 +93,11 @@
           "name": "BuilderExtensionMethods",
           "plugin": {
             "pluginFactory": {
-              "type": "Game08.Sdk.SyntaxTreeExtensionsPlugin.PluginFactory, Game08.Sdk.SyntaxTreeExtensionsPlugin",
+              "type": "ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin.PluginFactory, ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin",
               "config": {
-                "outputNamespace": "Game08.Sdk.LTS.Builder.ExtensionMethods",
-                "requiredClassBaseType": "Game08.Sdk.LTS.Builder.DefinitionTree.Node",
-                "typesToUnfold": "Game08.Sdk.LTS.Builder.DefinitionTree.Identifier;Game08.Sdk.LTS.Builder.DefinitionTree.TypeReferenceId",
+                "outputNamespace": "ForgedOnce.TsLanguageServices.LTS.Builder.ExtensionMethods",
+                "requiredClassBaseType": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.Node",
+                "typesToUnfold": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.Identifier;ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.TypeReferenceId",
                 "ignorePropertyNames": "Parent",
                 "unpluralizeVariables": "true"
               }
@@ -115,7 +115,7 @@
           },
           "destinationMapping": {
             "PassThrough": {
-              "settings": { "path": "Game08.Sdk.LTS.Builder/ExtensionMethods/Generated" }
+              "settings": { "path": "ForgedOnce.TsLanguageServices.LTS.Builder/ExtensionMethods/Generated" }
             }
           },
           "cleanDestinations": true

@@ -1,9 +1,9 @@
 {
   "codeFileHandlers": [
-    { "type": "Game08.Sdk.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, Game08.Sdk.CodeMixer.CSharp" }
+    { "type": "ForgedOnce.TsLanguageServices.CodeMixer.CSharp.CSharpCodeFileHandlerFactory, ForgedOnce.TsLanguageServices.CodeMixer.CSharp" }
   ],
   "inputs": {
-    "DefinitionTree": "CSharp:Project:Game08.Sdk.LTS.Builder/DefinitionTree/*.cs"
+    "DefinitionTree": "CSharp:Project:ForgedOnce.TsLanguageServices.LTS.Builder/DefinitionTree/*.cs"
   },
   "batches": [
     {
@@ -13,11 +13,11 @@
           "name": "BuilderExtensionMethods",
           "plugin": {
             "pluginFactory": {
-              "type": "Game08.Sdk.SyntaxTreeExtensionsPlugin.PluginFactory, Game08.Sdk.SyntaxTreeExtensionsPlugin",
+              "type": "ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin.PluginFactory, ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin",
               "config": {
-                "outputNamespace": "Game08.Sdk.LTS.Builder.ExtensionMethods",
-                "requiredClassBaseType": "Game08.Sdk.LTS.Builder.DefinitionTree.Node",
-                "typesToUnfold": "Game08.Sdk.LTS.Builder.DefinitionTree.Identifier;Game08.Sdk.LTS.Builder.DefinitionTree.TypeReferenceId",
+                "outputNamespace": "ForgedOnce.TsLanguageServices.LTS.Builder.ExtensionMethods",
+                "requiredClassBaseType": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.Node",
+                "typesToUnfold": "ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.Identifier;ForgedOnce.TsLanguageServices.LTS.Builder.DefinitionTree.TypeReferenceId",
                 "ignorePropertyNames": "Parent",
                 "unpluralizeVariables": "true"
               }
@@ -35,7 +35,7 @@
           },
           "destinationMapping": {
             "PassThrough": {
-              "settings": { "path": "Game08.Sdk.LTS.Builder/ExtensionMethods/Generated" }
+              "settings": { "path": "ForgedOnce.TsLanguageServices.LTS.Builder/ExtensionMethods/Generated" }
             }
           },
           "cleanDestinations" : true

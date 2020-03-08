@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ForgedOnce.TsLanguageServices.CodeMixer.CSharp" Version="1.0.34" />
+    <PackageReference Include="ForgedOnce.TsLanguageServices.CodeMixer.CSharp.Helpers" Version="1.0.1" />
+    <PackageReference Include="ForgedOnce.TsLanguageServices.CodeMixer.LimitedTypeScript" Version="1.0.60" />
+    <PackageReference Include="ForgedOnce.TsLanguageServices.LTS.Builder" Version="1.0.35" />
+  </ItemGroup>
+
+</Project>
