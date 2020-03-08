@@ -1,3 +1,3 @@
-﻿# Game08.Sdk.CSToTS.TypeScriptBuilder
+﻿# ForgedOnce.TsLanguageServices.TsBuilder
 
 

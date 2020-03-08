@@ -3,7 +3,7 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>ForgedOnce.TsLanguageServices.TsBuilder</Name>
-    <RootNamespace>Game08.Sdk.CSToTS.TypeScriptBuilder</RootNamespace>
+    <RootNamespace>ForgedOnce.TsLanguageServices.TsBuilder</RootNamespace>
     <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
     <ScriptArguments>TestClassModel2.json Output/TranslatedFiles Output/ResultMetadata.json</ScriptArguments>
   </PropertyGroup>
@@ -36,9 +36,6 @@
   </PropertyGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app.ts" />
-    <Content Include="BiggerTestTask.json">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="TestClassInterfaceEnum.json">

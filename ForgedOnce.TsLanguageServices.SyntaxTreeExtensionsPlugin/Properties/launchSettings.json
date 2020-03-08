@@ -3,8 +3,8 @@
     "ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin": {
       "commandName": "Executable",
       "executablePath": "dotnet.exe",
-      "commandLineArgs": "game08-cg-msbuild ..\\..\\..\\ForgedOnce.TsLanguageServices.CSToTS.SyntaxTrees.sln ..\\..\\CGPipeline.json",
-      "workingDirectory": "G:\\Projects\\Game08\\Src\\Sdk\\ForgedOnce.TsLanguageServices.CSToTS\\ForgedOnce.TsLanguageServices.CodeGeneration"
+      "commandLineArgs": "",
+      "workingDirectory": ""
     }
   }
 }

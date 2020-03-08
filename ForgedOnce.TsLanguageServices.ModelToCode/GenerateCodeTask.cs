@@ -17,7 +17,6 @@ namespace ForgedOnce.TsLanguageServices.ModelToCode
 
         private readonly string TaskJsFileName = "generationLauncher.js";
 
-        //private readonly string CodeGeneratorJsAppFolder = "..\\..\\..\\..\\Game08.Sdk.CSToTS.TypeScriptBuilder\\GeneratorAppOutput";
         private readonly string CodeGeneratorJsAppFolder = "CodeGeneratorJs";
 
         private string generationDataJsonPath;
