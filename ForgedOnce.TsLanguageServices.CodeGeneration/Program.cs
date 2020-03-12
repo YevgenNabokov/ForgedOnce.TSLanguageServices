@@ -1,4 +1,4 @@
-﻿using L = ForgedOnce.Launcher.MSBuild.WithDefaultAdapters;
+﻿using L = ForgedOnce.Launcher.MSBuild.Default;
 using System;
 using System.Collections.Generic;
 using System.Text;
