@@ -12,6 +12,7 @@
   "batches": [
     {
       "name": "Batch01",
+      "shadow": [ "CSharp:Project:ForgedOnce.TsLanguageServices.ModelBuilder/ExtensionMethods/*.cs" ],
       "stages": [
         {
           "name": "TypeScriptModelInterfaces",

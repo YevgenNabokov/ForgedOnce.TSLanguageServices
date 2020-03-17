@@ -9,39 +9,40 @@ namespace ForgedOnce.TsLanguageServices.ModelBuilder.ExtensionMethods
     {
         public static StatementFor WithSimpleInitializer(this StatementFor statementFor, string name, ExpressionNode expression, string typeReferenceKey = null)
         {
-            statementFor.Initializer = new StatementLocalDeclaration() { Name = new Identifier() { Name = name }, Initializer = expression };
+            return
+                statementFor
+                .WithInitializer(i =>
+                {
+                    var ini = i.WithName(name).WithInitializer(expression);
+                    if (typeReferenceKey != null)
+                    {
+                        ini = ini.WithTypeReference(typeReferenceKey);
+                    }
 
-            if (typeReferenceKey != null)
-            {
-                statementFor.Initializer.TypeReference = new TypeReferenceId() { ReferenceKey = typeReferenceKey };
-            }
-
-            return statementFor;
+                    return ini;
+                });
         }
 
         public static StatementFor WithSimpleCondition(this StatementFor statementFor, string variableName, string binaryOperator, ExpressionNode expression)
         {
-            statementFor.Condition = new ExpressionBinary()
-            {
-                Left = new ExpressionIdentifierReference()
-                {
-                    Name = new Identifier() { Name = variableName }
-                },
-                Operator = binaryOperator,
-                Right = expression
-            };
-            return statementFor;
+            return
+                statementFor
+                .WithCondition(
+                    new ExpressionBinary()
+                    .WithLeft(new ExpressionIdentifierReference()
+                        .WithName(variableName))
+                    .WithOperator(binaryOperator)
+                    .WithRight(expression));
         }
 
         public static StatementFor WithSimpleIncrement(this StatementFor statementFor, string variableName, string unaryOperator)
         {
-            statementFor.Increment = new ExpressionUnary()
-            {
-                Left = new ExpressionIdentifierReference() { Name = new Identifier() { Name = variableName } },
-                Operator = unaryOperator
-            };
-
-            return statementFor;
+            return
+                statementFor.WithIncrement(
+                    new ExpressionUnary()
+                    .WithLeft(new ExpressionIdentifierReference()
+                        .WithName(variableName))
+                    .WithOperator(unaryOperator));
         }
     }
 }
