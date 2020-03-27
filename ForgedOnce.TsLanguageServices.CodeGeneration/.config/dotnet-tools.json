@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "forgedonce.launcher.msbuild.default.clitool": {
+      "version": "0.3.1",
+      "commands": [
+        "forgedonce-cg-msbuild"
+      ]
+    }
+  }
+}

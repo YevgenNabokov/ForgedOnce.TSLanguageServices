@@ -2,16 +2,16 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="ForgedOnce.Launcher.MSBuild.Default.CliTool" Version="*" />
+    <Content Include=".config\dotnet-tools.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ForgedOnce.Launcher.MSBuild.Default" Version="0.2.1" />
+    <PackageReference Include="ForgedOnce.Launcher.MSBuild.Default" Version="0.3.1" />
   </ItemGroup>
 
 </Project>
