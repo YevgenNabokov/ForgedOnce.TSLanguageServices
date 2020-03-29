@@ -11,7 +11,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ForgedOnce.Launcher.MSBuild.Default" Version="0.3.1" />
+    <PackageReference Include="ForgedOnce.Launcher.MSBuild.Default" Version="0.3.19">
+      <GeneratePathProperty>true</GeneratePathProperty>
+    </PackageReference>
   </ItemGroup>
+
+  <ItemGroup>
+    <NodeRedist Include="$(PkgForgedOnce_Launcher_MSBuild_Default)\lib\netcoreapp3.1\NodeRedist\**\*.*" />
+    <CodeGeneratorJs Include="$(PkgForgedOnce_Launcher_MSBuild_Default)\lib\netcoreapp3.1\CodeGeneratorJs\**\*.*" />
+  </ItemGroup>
+
+  <Target Name="CopyRedist" AfterTargets="Build">
+    <Copy SourceFiles="@(NodeRedist)" DestinationFolder="$(OutDir)\NodeRedist\%(RecursiveDir)" />
+    <Copy SourceFiles="@(CodeGeneratorJs)" DestinationFolder="$(OutDir)\CodeGeneratorJs\%(RecursiveDir)" />
+  </Target>
 
 </Project>
