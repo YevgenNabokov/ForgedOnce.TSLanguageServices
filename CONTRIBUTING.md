@@ -1,5 +1,5 @@
 # Contributing
-This project is primarily created for [ForgedOnce] (https://github.com/YevgenNabokov/ForgedOnce), so priorities defined in that project are currently dominant.
+This project is primarily created for [ForgedOnce](https://github.com/YevgenNabokov/ForgedOnce), so priorities defined in that project are currently dominant.
 If you'd like to contribute to this project please check project priorities given below and discuss the intended change with project author before implementing that.
 ## Project Priorities
 See priorities in [first milestone](https://github.com/YevgenNabokov/ForgedOnce.TSLanguageServices/milestone/1)
