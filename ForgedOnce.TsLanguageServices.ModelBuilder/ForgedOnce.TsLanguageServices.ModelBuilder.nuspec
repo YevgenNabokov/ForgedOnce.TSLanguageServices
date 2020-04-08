@@ -3,9 +3,14 @@
     <id>ForgedOnce.TsLanguageServices.ModelBuilder</id>
     <version>0.1.0</version>
     <authors>Yevgen Nabokov</authors>
+    <owners>Yevgen Nabokov</owners>
+    <licenseUrl>https://github.com/yevgennabokov/forgedonce.tslanguageservices/blob/master/license</licenseUrl>
+    <projectUrl>https://github.com/yevgennabokov/forgedonce.tslanguageservices</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Helper classes to work with ForgedOnce.TsLanguageServices.Model.</description>
     <dependencies>      
     </dependencies>
+    <tags>forgedonce code generation tool typescript model</tags>
   </metadata>
   <files>
     <file src="$publishdir$\netstandard2.0\**\*" target="lib/netstandard2.0/" />

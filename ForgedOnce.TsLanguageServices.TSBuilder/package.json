@@ -1,10 +1,10 @@
 {
-  "name": "ForgedOnce.TsLanguageServices.ts-builder",
-  "version": "0.0.0",
-  "description": "ForgedOnce.TsLanguageServices.TsBuilder",
-  "main": "app.js",
+  "name": "ForgedOnce-TsLanguageServices-tsbuilder",
+  "version": "0.1.0",
+  "description": "Translates ForgedOnce TypeScript intermediate model to code.",
+  "main": "generationLauncher.js",
   "author": {
-    "name": ""
+    "name": "Yevgen Nabokov"
   },
   "devDependencies": {
     "@types/node": "^8.0.14",
