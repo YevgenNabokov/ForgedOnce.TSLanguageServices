@@ -15,7 +15,7 @@ namespace ForgedOnce.TsLanguageServices.BuilderDefinitionTreePlugin
 {
     public class Preprocessor : IPluginPreprocessor<CodeFileCSharp, Parameters, Settings>
     {
-        public Parameters GenerateMetadata(CodeFileCSharp input, Settings pluginSettings, IMetadataReader metadataReader, ILogger logger, IFileGroup<CodeFileCSharp, GroupItemDetails> fileGroup = null)
+        public Parameters GenerateParameters(CodeFileCSharp input, Settings pluginSettings, IMetadataReader metadataReader, ILogger logger, IFileGroup<CodeFileCSharp, GroupItemDetails> fileGroup = null)
         {
             var typesToSkip = pluginSettings.TypesToSkip != null && pluginSettings.TypesToSkip.Length > 0
                 ? new HashSet<string>(pluginSettings.TypesToSkip)
