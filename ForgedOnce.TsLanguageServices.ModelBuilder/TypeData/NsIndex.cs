@@ -17,6 +17,20 @@ namespace ForgedOnce.TsLanguageServices.ModelBuilder.TypeData
             this.separator = separator;
         }
 
+        public NsIndex<T> Clone()
+        {
+            var clonedSubIndexes = new Dictionary<string, NsIndex<T>>();
+            foreach(var item in this.subIndexes)
+            {
+                clonedSubIndexes.Add(item.Key, item.Value.Clone());
+            }
+
+            return new NsIndex<T>(this.separator)
+            {
+                subIndexes = clonedSubIndexes
+            };
+        }
+
         public T Get(string ns)
         {
             return this.Get(ns.Split(this.separator), 0);

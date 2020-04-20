@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.Model.TypeData
@@ -42,6 +43,16 @@ namespace ForgedOnce.TsLanguageServices.Model.TypeData
             }
 
             return result;
+        }
+
+        public override TypeReference Clone()
+        {
+            return new TypeReferenceUnion()
+            {
+                Id = this.Id,
+                Kind = this.Kind,
+                Types = this.Types == null ? null : this.Types.Select(t => t.Clone()).ToArray()
+            };
         }
     }
 }

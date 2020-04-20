@@ -21,5 +21,7 @@ namespace ForgedOnce.TsLanguageServices.ModelBuilder.Interfaces
         string RegisterTypeReferenceInlineIndexer(string keyName, string valueTypeId);
 
         TypeDefinitionUpdateResult UpdateTypeDefinitionFile(string typeDefinitionId, string file);
+
+        ILtsTypeRepository Clone();
     }
 }

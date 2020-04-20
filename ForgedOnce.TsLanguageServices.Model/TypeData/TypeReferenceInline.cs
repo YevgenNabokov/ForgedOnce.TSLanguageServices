@@ -18,5 +18,15 @@ namespace ForgedOnce.TsLanguageServices.Model.TypeData
             this.Id = $"{{{this.Kind}|I:{this.Indexer?.GetIdPart(recursive)}}}";
             return this.Id;
         }
+
+        public override TypeReference Clone()
+        {
+            return new TypeReferenceInline()
+            {
+                Id = this.Id,
+                Kind = this.Kind,
+                Indexer = this.Indexer?.Clone()
+            };
+        }
     }
 }

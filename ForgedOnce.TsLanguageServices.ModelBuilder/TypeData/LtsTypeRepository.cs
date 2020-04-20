@@ -35,6 +35,48 @@ namespace ForgedOnce.TsLanguageServices.ModelBuilder.TypeData
             }
         }
 
+
+        public ILtsTypeRepository Clone()
+        {
+            var nsTypeDefinitionIndexCloned = new Dictionary<string, NsIndex<Dictionary<string, TypeDefinition>>>();
+            foreach (var item in this.nsTypeDefinitionIndex)
+            {
+                nsTypeDefinitionIndexCloned.Add(item.Key, item.Value.Clone());
+            }
+
+            var typeDefinitionIndexCloned = new Dictionary<string, TypeDefinition>();
+            foreach (var item in this.typeDefinitionIndex)
+            {
+                typeDefinitionIndexCloned.Add(item.Key, item.Value.Clone());
+            }
+
+            var typeReferenceIndexCloned = new Dictionary<string, TypeReference>();
+            foreach (var item in this.typeReferenceIndex)
+            {
+                typeReferenceIndexCloned.Add(item.Key, item.Value.Clone());
+            }
+
+            var typeReferenceUsageCloned = new Dictionary<TypeReference, HashSet<TypeReference>>();
+            foreach (var item in this.typeReferenceUsage)
+            {
+                var refs = new HashSet<TypeReference>();
+                foreach (var r in item.Value)
+                {
+                    refs.Add(r.Clone());
+                }
+
+                typeReferenceUsageCloned.Add(item.Key, refs);
+            }
+
+            return new LtsTypeRepository()
+            {
+                nsTypeDefinitionIndex = nsTypeDefinitionIndexCloned,
+                typeDefinitionIndex = typeDefinitionIndexCloned,
+                typeReferenceIndex = typeReferenceIndexCloned,
+                typeReferenceUsage = typeReferenceUsageCloned
+            };
+        }
+
         public TypeCache GetTypeCache()
         {
             TypeCache result = new TypeCache()

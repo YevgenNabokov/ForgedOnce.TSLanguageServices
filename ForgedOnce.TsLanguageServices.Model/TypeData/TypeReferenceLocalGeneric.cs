@@ -20,5 +20,16 @@ namespace ForgedOnce.TsLanguageServices.Model.TypeData
             this.Id = $"{{{this.Kind}|A:{this.ArgumentName}}}";
             return this.Id;
         }
+
+        public override TypeReference Clone()
+        {
+            return new TypeReferenceLocalGeneric()
+            {
+                Id = this.Id,
+                Kind = this.Kind,
+                ArgumentName = this.ArgumentName,
+                ReferenceTypeId = this.ReferenceTypeId
+            };
+        }
     }
 }

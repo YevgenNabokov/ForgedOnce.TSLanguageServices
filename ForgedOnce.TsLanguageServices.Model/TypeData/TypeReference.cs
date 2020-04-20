@@ -37,5 +37,7 @@ namespace ForgedOnce.TsLanguageServices.Model.TypeData
 
             return result;
         }
+
+        public abstract TypeReference Clone();
     }
 }

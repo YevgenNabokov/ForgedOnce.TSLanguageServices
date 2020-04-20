@@ -19,5 +19,14 @@ namespace ForgedOnce.TsLanguageServices.Model.TypeData
 
             return $"{{K:{this.KeyName}|V:{this.ValueType?.Id}}}";
         }
+
+        public TypeReferenceInlineIndexer Clone()
+        {
+            return new TypeReferenceInlineIndexer()
+            {
+                KeyName = this.KeyName,
+                ValueType = this.ValueType?.Clone()
+            };
+        }
     }
 }
