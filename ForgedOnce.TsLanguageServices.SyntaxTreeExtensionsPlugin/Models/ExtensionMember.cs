@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
+namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin.Models
 {
     public class ExtensionMember
     {
@@ -18,5 +18,13 @@ namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
         public bool ItemTypeInheritsRequiredBaseType;
 
         public INamedTypeSymbol ContainerSymbol;
+
+        public string PreprocessedItemName;
+
+        public bool Unfold = false;
+
+        public List<UnfoldedProperty> UnfoldedProperties = new List<UnfoldedProperty>();
+
+        public bool Include = true;
     }
 }
