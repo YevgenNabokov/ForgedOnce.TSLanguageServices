@@ -108,7 +108,7 @@ namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
                 {
                     IsCollection = isCollection,
                     ItemType = itemType,
-                    ItemTypeInheritsRequiredBaseType = itemType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(requiredBaseType),
+                    ItemTypeInheritsRequiredBaseType = requiredBaseType != null && itemType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(requiredBaseType),
                     Name = p.Name,
                     SourcePropertySymbol = p,
                     ContainerSymbol = declaredSymbol,
