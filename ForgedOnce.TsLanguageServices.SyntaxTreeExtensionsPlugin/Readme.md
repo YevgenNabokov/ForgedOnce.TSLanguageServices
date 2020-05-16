@@ -1,6 +1,7 @@
 ﻿# Syntax Tree Extensions Plugin
 This is a [ForgedOnce](https://github.com/YevgenNabokov/ForgedOnce) code generation pipeline plugin that allows to
 generate C# extensions for fluent modification for a set of input classes.
+Works with standard *ForgedOnce.CSharp.CodeFileEnvironmentHandlerCSharp* environment handler.
 Originally was created to extend syntax tree definitions.
 
 For example for a given class
@@ -56,6 +57,11 @@ Example configuration:
             "unpluralizeVariables": "true"
           }
 ```
+
+## Input and Output
+Plugin takes C# code files as inputs.
+
+Output is a single C# code stream named **PassThrough** which will contain all output extension classes each placed in own code file.
 
 ## Parameters and Settings
 Plugin parameters and settings to use with custom preprocessor are represented by **ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin.Parameters** and
