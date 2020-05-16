@@ -142,7 +142,7 @@ namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
             }
             else
             {
-                if (item.ItemTypeInheritsRequiredBaseType && !item.ItemType.IsAbstract)
+                if (item.GenerateFuncParameterInExtensionMethod)
                 {
                     itemParameterName = $"{NameHelper.FirstCharToLower(preparedItemName)}Builder";
                     itemParameters.Add(Parameter(List<AttributeListSyntax>(),

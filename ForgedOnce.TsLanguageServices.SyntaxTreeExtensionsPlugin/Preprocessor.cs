@@ -104,11 +104,15 @@ namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
                     isCollection = true;                    
                 }
 
+                var hasRequiredBaseType = requiredBaseType != null && itemType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(requiredBaseType);
+                var namedItemType = itemType as INamedTypeSymbol;
+                var hasPublicParameterlessConstructor = namedItemType != null && namedItemType.Constructors.Any(m => !m.IsStatic && m.Parameters.Length == 0 && m.DeclaredAccessibility == Accessibility.Public);
                 var member = new ExtensionMember()
                 {
                     IsCollection = isCollection,
                     ItemType = itemType,
-                    ItemTypeInheritsRequiredBaseType = requiredBaseType != null && itemType.InheritsFromOrImplementsOrEqualsIgnoringConstruction(requiredBaseType),
+                    ItemTypeInheritsRequiredBaseType = hasRequiredBaseType,
+                    GenerateFuncParameterInExtensionMethod = hasRequiredBaseType && !itemType.IsAbstract && hasPublicParameterlessConstructor,
                     Name = p.Name,
                     SourcePropertySymbol = p,
                     ContainerSymbol = declaredSymbol,
