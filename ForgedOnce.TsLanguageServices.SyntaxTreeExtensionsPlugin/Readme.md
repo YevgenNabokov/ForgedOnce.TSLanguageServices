@@ -49,12 +49,12 @@ In a pipeline this plugin can be configured with the following parameters:
 Example configuration:
 ```json
 "config": {
-                "outputNamespace": "ForgedOnce.TsLanguageServices.ModelBuilder.ExtensionMethods",
-                "requiredClassBaseType": "ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.Node",
-                "typesToUnfold": "ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.Identifier;ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.TypeReferenceId",
-                "ignorePropertyNames": "Parent",
-                "unpluralizeVariables": "true"
-              }
+            "outputNamespace": "ForgedOnce.TsLanguageServices.ModelBuilder.ExtensionMethods",
+            "requiredClassBaseType": "ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.Node",
+            "typesToUnfold": "ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.Identifier;ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree.TypeReferenceId",
+            "ignorePropertyNames": "Parent",
+            "unpluralizeVariables": "true"
+          }
 ```
 
 ## Parameters and Settings
