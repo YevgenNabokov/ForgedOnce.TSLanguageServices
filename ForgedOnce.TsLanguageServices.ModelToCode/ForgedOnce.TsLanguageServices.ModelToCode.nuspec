@@ -1,18 +1,21 @@
 ﻿<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>ForgedOnce.TsLanguageServices.ModelToCode</id>
-    <version>0.1.1</version>
+    <version>0.1.5</version>
     <authors>Yevgen Nabokov</authors>
     <owners>Yevgen Nabokov</owners>
-    <licenseUrl>https://github.com/yevgennabokov/forgedonce.tslanguageservices/blob/master/license</licenseUrl>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/yevgennabokov/forgedonce.tslanguageservices</projectUrl>
-    <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>Translates ForgedOnce.TsLanguageServices.Model to TypeScript files.</description>
-    <dependencies>      
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>.NET library for printing a subset model of TypeScript language syntax tree</description>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="12.0.2" />
+      <dependency id="Node.js.redist" version="13.1.0" />
     </dependencies>
     <tags>forgedonce code generation tool typescript translator</tags>
   </metadata>
   <files>
+    <file src="..\ThirdPartyNotice.txt" target="" />
     <file src="$publishdir$\netstandard2.0\**\*" target="lib/netstandard2.0/" />
   </files>
 </package>
