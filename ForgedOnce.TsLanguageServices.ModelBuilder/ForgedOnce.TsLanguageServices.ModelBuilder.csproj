@@ -2,26 +2,28 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
+
+
   <PropertyGroup>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
-    <NuspecFile>ForgedOnce.TsLanguageServices.ModelBuilder.nuspec</NuspecFile>
-    <IntermediatePackDir>$(MSBuildProjectDirectory)/bin/$(Configuration)/publish/</IntermediatePackDir>
-    <PublishDir>$(IntermediatePackDir)$(TargetFramework)/</PublishDir>
-    <NuspecProperties>publishDir=$([MSBuild]::NormalizeDirectory($(IntermediatePackDir)))</NuspecProperties>
     <PackageOutputPath>$(SolutionDir)/NugetOutputs</PackageOutputPath>
     <ApplicationIcon />
     <StartupObject />
+    <Version>0.1.9</Version>
+    <PackageId>ForgedOnce.TsLanguageServices.ModelBuilder</PackageId>
+    <Authors>Yevgen Nabokov</Authors>
+    <Product>ForgedOnce.TsLanguageServices</Product>
+    <Description>.NET library for manipulation on a subset model of TypeScript language syntax tree</Description>
+    <Copyright>Yevgen Nabokov</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/yevgennabokov/forgedonce.tslanguageservices</PackageProjectUrl>
   </PropertyGroup>
+  
+  
   <ItemGroup>
     <Folder Include="DefinitionTree\Generated\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ForgedOnce.TsLanguageServices.Model\ForgedOnce.TsLanguageServices.Model.csproj" />
   </ItemGroup>
-  <Target Name="PublishAll" BeforeTargets="GenerateNuspec">
-    <ItemGroup>
-      <_TargetFramework Include="$(TargetFrameworks)" />
-    </ItemGroup>
-    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" Properties="TargetFramework=%(_TargetFramework.Identity)" />
-  </Target>
+  
 </Project>

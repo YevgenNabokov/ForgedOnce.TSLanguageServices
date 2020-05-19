@@ -2,19 +2,22 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <PropertyGroup>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
-    <NuspecFile>ForgedOnce.TsLanguageServices.ModelToCode.nuspec</NuspecFile>
-    <IntermediatePackDir>$(MSBuildProjectDirectory)/bin/$(Configuration)/publish/</IntermediatePackDir>
-    <PublishDir>$(IntermediatePackDir)$(TargetFramework)/</PublishDir>
-    <NuspecProperties>publishDir=$([MSBuild]::NormalizeDirectory($(IntermediatePackDir)))</NuspecProperties>
     <PackageOutputPath>$(SolutionDir)/NugetOutputs</PackageOutputPath>
     <ApplicationIcon />
     <StartupObject />
+    <Version>0.1.9</Version>
+    <PackageId>ForgedOnce.TsLanguageServices.ModelToCode</PackageId>
+    <Authors>Yevgen Nabokov</Authors>
+    <Product>ForgedOnce.TsLanguageServices</Product>
+    <Description>.NET library for printing a subset model of TypeScript language syntax tree</Description>
+    <Copyright>Yevgen Nabokov</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/yevgennabokov/forgedonce.tslanguageservices</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,22 +27,40 @@
   <ItemGroup>
     <None Include="$(Pkgnode_js_redist)\tools\win-x64\node.exe" Link="NodeRedist\win-x64\node.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath>lib\$(TargetFramework)\NodeRedist\win-x64\</PackagePath>
     </None>
     <None Include="$(Pkgnode_js_redist)\tools\win-x86\node.exe" Link="NodeRedist\win-x86\node.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath>lib\$(TargetFramework)\NodeRedist\win-x86\</PackagePath>
     </None>
     <None Include="$(Pkgnode_js_redist)\tools\osx-x64\node" Link="NodeRedist\osx-x64\node">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath>lib\$(TargetFramework)\NodeRedist\osx-x64\</PackagePath>
     </None>
     <None Include="$(Pkgnode_js_redist)\tools\linux-x64\node" Link="NodeRedist\linux-x64\node">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath>lib\$(TargetFramework)\NodeRedist\linux-x64\</PackagePath>
     </None>
   </ItemGroup>
   
   <ItemGroup>
     <Content Include="$(SolutionDir)\GeneratorAppOutput\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInPackage>true</IncludeInPackage>
+      <CopyToOutput>true</CopyToOutput>
       <Link>CodeGeneratorJs\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Pack>true</Pack>
+      <PackagePath>lib\$(TargetFramework)\CodeGeneratorJs\</PackagePath>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="..\ThirdPartyNotice.txt" Link="ThirdPartyNotice.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   
@@ -47,6 +68,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="Node.js.redist" Version="13.1.0">
       <GeneratePathProperty>true</GeneratePathProperty>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
   
@@ -59,12 +81,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <Target Name="PublishAll" BeforeTargets="GenerateNuspec">
-    <ItemGroup>
-      <_TargetFramework Include="$(TargetFrameworks)" />
-    </ItemGroup>
-    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" Properties="TargetFramework=%(_TargetFramework.Identity)" />
-  </Target>
 
 </Project>
