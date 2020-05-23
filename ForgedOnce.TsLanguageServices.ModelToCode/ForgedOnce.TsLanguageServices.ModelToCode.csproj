@@ -10,7 +10,7 @@
     <PackageOutputPath>$(SolutionDir)/NugetOutputs</PackageOutputPath>
     <ApplicationIcon />
     <StartupObject />
-    <Version>0.1.9</Version>
+    <Version>0.1.12</Version>
     <PackageId>ForgedOnce.TsLanguageServices.ModelToCode</PackageId>
     <Authors>Yevgen Nabokov</Authors>
     <Product>ForgedOnce.TsLanguageServices</Product>
@@ -25,26 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(Pkgnode_js_redist)\tools\win-x64\node.exe" Link="NodeRedist\win-x64\node.exe">
+    <Content Include="$(Pkgnode_js_redist)\tools\**\*.*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>NodeRedist\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Pack>true</Pack>
-      <PackagePath>lib\$(TargetFramework)\NodeRedist\win-x64\</PackagePath>
-    </None>
-    <None Include="$(Pkgnode_js_redist)\tools\win-x86\node.exe" Link="NodeRedist\win-x86\node.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <Pack>true</Pack>
-      <PackagePath>lib\$(TargetFramework)\NodeRedist\win-x86\</PackagePath>
-    </None>
-    <None Include="$(Pkgnode_js_redist)\tools\osx-x64\node" Link="NodeRedist\osx-x64\node">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <Pack>true</Pack>
-      <PackagePath>lib\$(TargetFramework)\NodeRedist\osx-x64\</PackagePath>
-    </None>
-    <None Include="$(Pkgnode_js_redist)\tools\linux-x64\node" Link="NodeRedist\linux-x64\node">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <Pack>true</Pack>
-      <PackagePath>lib\$(TargetFramework)\NodeRedist\linux-x64\</PackagePath>
-    </None>
+      <PackagePath>lib\$(TargetFramework)\NodeRedist\</PackagePath>
+    </Content>
   </ItemGroup>
   
   <ItemGroup>
@@ -59,9 +45,11 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Content Include="..\ThirdPartyNotice.txt" Link="ThirdPartyNotice.txt">
+    <None Include="..\ThirdPartyNotice.txt" Link="ThirdPartyNotice.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <Pack>true</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
   
   <ItemGroup>
