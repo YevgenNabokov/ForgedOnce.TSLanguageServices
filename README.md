@@ -1,6 +1,9 @@
 # ForgedOnce TypeScript Language Services
 Allows to manipulate TypeScript syntax tree from C# using intermediate syntax model.
 This library provides intermediate model manipulation tools, converts that model into TypeScript syntax tree and prints it using [TypeScript language services](https://github.com/microsoft/TypeScript/wiki/Using-the-Language-Service-API)
+## Prerequisites
+* netstandard2.0
+* Node.js must be installed and available via global alias (like node.exe for windows)
 ## Getting Started
 This project is developed as part of [ForgedOnce](https://github.com/YevgenNabokov/ForgedOnce/blob/master/README.md), I recommend to start here.
 ## Contributing
