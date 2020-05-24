@@ -2,18 +2,21 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.ModelToCode
 {
     public class GenerateCodeTask
     {
-        private readonly string NodeRedistFolder = "NodeRedist";
-
-        private readonly string PlatformNameFolder = "win-x64";
-
-        private readonly string NodeFileName = "Node.exe";
+        protected readonly Dictionary<OSPlatform, string> NodeExecutableNames = new Dictionary<OSPlatform, string>()
+        {
+            { OSPlatform.Windows, "node.exe" },
+            { OSPlatform.OSX, "node" },
+            { OSPlatform.Linux, "node" },
+        };
 
         private readonly string TaskJsFileName = "generationLauncher.js";
 
@@ -36,7 +39,15 @@ namespace ForgedOnce.TsLanguageServices.ModelToCode
         {
             get
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), NodeRedistFolder, PlatformNameFolder, NodeFileName);
+                foreach (var os in this.NodeExecutableNames)
+                {
+                    if (RuntimeInformation.IsOSPlatform(os.Key))
+                    {
+                        return os.Value;
+                    }
+                }
+
+                throw new InvalidOperationException($"OS platform was not recognized as one of: {nameof(OSPlatform.Windows)}, {nameof(OSPlatform.OSX)}, {nameof(OSPlatform.Linux)}");
             }
         }
 

@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ForgedOnce.Launcher.MSBuild.Default" Version="0.5.16">
+    <PackageReference Include="ForgedOnce.Launcher.MSBuild.Default" Version="0.6.19">
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
   </ItemGroup>

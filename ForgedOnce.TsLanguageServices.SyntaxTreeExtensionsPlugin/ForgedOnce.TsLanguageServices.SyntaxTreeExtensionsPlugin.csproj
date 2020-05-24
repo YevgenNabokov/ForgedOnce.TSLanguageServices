@@ -15,13 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ForgedOnce.CSharp" Version="0.4.8" />
+    <PackageReference Include="ForgedOnce.CSharp" Version="0.4.9" />
     <PackageReference Include="ForgedOnce.CSharp.Helpers" Version="0.1.7" />
   </ItemGroup>
 
   <PropertyGroup>
     <PackageOutputPath>$(SolutionDir)NugetOutputs</PackageOutputPath>
-    <Version>0.3.5</Version>
+    <Version>0.4.5</Version>
     <PackageId>ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin</PackageId>
     <Authors>Yevgen Nabokov</Authors>
     <Company />
