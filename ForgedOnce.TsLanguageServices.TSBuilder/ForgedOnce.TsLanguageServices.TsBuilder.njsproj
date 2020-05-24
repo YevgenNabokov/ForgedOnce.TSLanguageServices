@@ -41,7 +41,7 @@
     <TypeScriptCompile Include="generationLauncher.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="IntermadiateModel.ts" />
+    <TypeScriptCompile Include="IntermediateModel.ts" />
     <TypeScriptCompile Include="generationManager.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>

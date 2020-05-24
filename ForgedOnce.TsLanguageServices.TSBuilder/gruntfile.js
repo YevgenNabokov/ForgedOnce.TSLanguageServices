@@ -16,7 +16,7 @@
                         expand: true, src: [
                             'generationLauncher.js',
                             'generationManager.js',
-                            'IntermadiateModel.js',
+                            'IntermediateModel.js',
                             'tsCodeGenerator.js'], dest: '<%= destinationFolder %>/'
                     },
 

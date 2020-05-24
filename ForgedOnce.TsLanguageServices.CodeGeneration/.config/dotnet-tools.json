@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "forgedonce.launcher.msbuild.default.clitool": {
-      "version": "0.6.19",
+      "version": "0.6.20",
       "commands": [
         "forgedonce-cg-msbuild"
       ]

@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="ForgedOnce.CSharp" Version="0.4.9" />
     <PackageReference Include="ForgedOnce.CSharp.Helpers" Version="0.1.7" />
-    <PackageReference Include="ForgedOnce.TypeScript" Version="0.5.12" />
+    <PackageReference Include="ForgedOnce.TypeScript" Version="0.5.13" />
   </ItemGroup>
 
 </Project>

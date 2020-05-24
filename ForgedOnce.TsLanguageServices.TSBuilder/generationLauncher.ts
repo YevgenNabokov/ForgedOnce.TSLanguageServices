@@ -1,6 +1,6 @@
 ﻿import * as fs from "fs"
 
-import * as im from "./IntermadiateModel"
+import * as im from "./IntermediateModel"
 
 import * as man from "./generationManager"
 

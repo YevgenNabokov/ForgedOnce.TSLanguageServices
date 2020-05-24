@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript"
 
-import * as im from "./IntermadiateModel"
+import * as im from "./IntermediateModel"
 
 import * as path from "path"
 

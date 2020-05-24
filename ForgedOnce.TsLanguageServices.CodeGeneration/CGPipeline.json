@@ -21,7 +21,7 @@
               "type": "ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin.PluginFactory, ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin",
               "config": {
                 "modelBaseNamespace": "ForgedOnce.TsLanguageServices.Model",
-                "outputFileName": "IntermadiateModel.ts"
+                "outputFileName": "IntermediateModel.ts"
               }
             }
           },

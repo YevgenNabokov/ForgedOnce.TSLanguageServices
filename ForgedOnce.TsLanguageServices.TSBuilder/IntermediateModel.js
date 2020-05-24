@@ -47,4 +47,4 @@ var TypeReferenceKind;
     TypeReferenceKind[TypeReferenceKind["Inline"] = 4] = "Inline";
     TypeReferenceKind[TypeReferenceKind["Union"] = 5] = "Union";
 })(TypeReferenceKind = exports.TypeReferenceKind || (exports.TypeReferenceKind = {}));
-//# sourceMappingURL=IntermadiateModel.js.map
+//# sourceMappingURL=IntermediateModel.js.map

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ts = require("typescript");
-const im = require("./IntermadiateModel");
+const im = require("./IntermediateModel");
 const path = require("path");
 class GeneratorSettings {
     constructor() {
