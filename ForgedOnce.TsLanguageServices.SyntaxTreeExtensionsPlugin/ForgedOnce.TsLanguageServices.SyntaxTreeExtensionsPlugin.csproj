@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ForgedOnce.CSharp" Version="0.4.9" />
+    <PackageReference Include="ForgedOnce.CSharp" Version="0.5.0" />
     <PackageReference Include="ForgedOnce.CSharp.Helpers" Version="0.1.7" />
   </ItemGroup>
 
@@ -19,7 +19,7 @@
 
   <PropertyGroup>
     <PackageOutputPath>$(SolutionDir)NugetOutputs</PackageOutputPath>
-    <Version>0.4.6</Version>
+    <Version>0.5.0</Version>
     <PackageId>ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin</PackageId>
     <Authors>Yevgen Nabokov</Authors>
     <Company />
