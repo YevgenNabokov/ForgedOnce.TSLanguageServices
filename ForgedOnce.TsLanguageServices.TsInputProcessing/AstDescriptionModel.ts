@@ -18,14 +18,41 @@ export interface Root {
     TypeAliases: Array<TypeAliasDescription>;
 }
 export interface TypeAliasDescription extends TypeDescription {
+    Parameters: Array<TypeParameter>;
+    Type: TypeReference | null;
 }
 export interface TypeDescription {
     Name: string | null;
 }
+export interface TypeElement {
+    Property: TypeElementPropertySignature | null;
+}
+export interface TypeElementPropertySignature {
+    Name: string | null;
+    IsOptional: boolean;
+    Type: TypeReference | null;
+}
+export interface TypeParameter {
+    Name: string | null;
+    Constraint: TypeReference | null;
+    Default: TypeReference | null;
+}
 export interface TypeReference {
-    Named: TypeReferenceNamed;
+    Named: TypeReferenceNamed | null;
+    Intersection: TypeReferenceIntersection | null;
+    Union: TypeReferenceUnion | null;
+    Literal: TypeReferenceLiteral | null;
+}
+export interface TypeReferenceIntersection {
+    Types: Array<TypeReference>;
+}
+export interface TypeReferenceLiteral {
+    Elements: Array<TypeElement>;
 }
 export interface TypeReferenceNamed {
     Name: string | null;
     Parameters: Array<TypeReference>;
+}
+export interface TypeReferenceUnion {
+    Types: Array<TypeReference>;
 }

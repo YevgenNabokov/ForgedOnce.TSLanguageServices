@@ -7,5 +7,11 @@ namespace ForgedOnce.TsLanguageServices.AstDescription.Model
     public class TypeReference
     {
         public TypeReferenceNamed Named;
+
+        public TypeReferenceIntersection Intersection;
+
+        public TypeReferenceUnion Union;
+
+        public TypeReferenceLiteral Literal;
     }
 }

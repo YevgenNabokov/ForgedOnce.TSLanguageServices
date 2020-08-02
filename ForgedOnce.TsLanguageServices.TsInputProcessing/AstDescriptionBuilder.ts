@@ -8,7 +8,7 @@ export class AstDescriptionBuilder {
     public enumsToSkip: { [key: string]: null } = { 'InternalSymbolName': null };
 
     public build(fileContent: string, baseNodeClassName: string): adm.Root {
-        let sourceFile = ts.createSourceFile("Subject.d.ts", fileContent, ts.ScriptTarget.ES2015);
+        let sourceFile = ts.createSourceFile("Subject.d.ts", fileContent, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
 
         let declarations = this.findTypeDeclarationStatements(sourceFile.statements, []);
 
@@ -129,7 +129,30 @@ export class AstDescriptionBuilder {
     }
 
     private describeTypeAliasDeclaration(declaration: ts.TypeAliasDeclaration, namespace: string): adm.TypeAliasDescription {
-        return { Name: declaration.name.text };
+        let typeParameters: adm.TypeParameter[] = [];
+
+        if (declaration.typeParameters && declaration.typeParameters.length > 0) {
+            for (let p of declaration.typeParameters) {
+                typeParameters.push(this.describeTypeParameter(p));
+            }
+        }
+
+        return { Name: declaration.name.text, Type: tparser.TypeParser.parseTypeReference(declaration.type), Parameters: typeParameters };
+    }
+
+    private describeTypeParameter(parameter: ts.TypeParameterDeclaration): adm.TypeParameter {
+        let constraint: adm.TypeReference | null = null;
+        let defaultType: adm.TypeReference | null = null;
+
+        if (parameter.constraint) {
+            constraint = tparser.TypeParser.parseTypeReference(parameter.constraint);
+        }
+
+        if (parameter.default) {
+            defaultType = tparser.TypeParser.parseTypeReference(parameter.default);
+        }
+
+        return { Name: parameter.name.text, Constraint: constraint, Default: defaultType };
     }
 
     private decribeEnumMember(member: ts.EnumMember): adm.EnumMemberDescription {
@@ -176,9 +199,9 @@ export class AstDescriptionBuilder {
             return (name as ts.NumericLiteral).text;
         }
 
-        if (name.kind == ts.SyntaxKind.PrivateIdentifier) {
-            return (name as ts.PrivateIdentifier).text;
-        }
+        ////if (name.kind == ts.SyntaxKind.PrivateIdentifier) {
+        ////    return (name as ts.PrivateIdentifier).text;
+        ////}
 
         throw new Error(`Cannot parse PropertyName with kind=${name.kind}`);
     }

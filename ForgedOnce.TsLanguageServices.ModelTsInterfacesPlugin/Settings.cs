@@ -14,6 +14,8 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
 
         public const string NullableStringsKey = "nullableStrings";
 
+        public const string NullableNodesKey = "nullableNodes";
+
         public string ModelBaseNamespace;
 
         public bool SkipUnmappedTypeReferences;
@@ -21,5 +23,7 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
         public string OutputFileName;
 
         public bool NullableStrings;
+
+        public bool NullableNodes;
     }
 }

@@ -4,8 +4,12 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 {
-    public class InterfaceDescription : TypeDescription
+    public class TypeElementPropertySignature
     {
-        public List<TypeReference> Extends;
+        public string Name;
+
+        public bool IsOptional;
+
+        public TypeReference Type;
     }
 }

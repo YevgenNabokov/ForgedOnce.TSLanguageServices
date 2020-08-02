@@ -8,7 +8,7 @@ class AstDescriptionBuilder {
         this.enumsToSkip = { 'InternalSymbolName': null };
     }
     build(fileContent, baseNodeClassName) {
-        let sourceFile = ts.createSourceFile("Subject.d.ts", fileContent, ts.ScriptTarget.ES2015);
+        let sourceFile = ts.createSourceFile("Subject.d.ts", fileContent, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
         let declarations = this.findTypeDeclarationStatements(sourceFile.statements, []);
         let enumDescriptions = [];
         let classDescriptions = [];
@@ -103,7 +103,24 @@ class AstDescriptionBuilder {
         return { Name: declaration.name.text, Extends: extendedTypes };
     }
     describeTypeAliasDeclaration(declaration, namespace) {
-        return { Name: declaration.name.text };
+        let typeParameters = [];
+        if (declaration.typeParameters && declaration.typeParameters.length > 0) {
+            for (let p of declaration.typeParameters) {
+                typeParameters.push(this.describeTypeParameter(p));
+            }
+        }
+        return { Name: declaration.name.text, Type: tparser.TypeParser.parseTypeReference(declaration.type), Parameters: typeParameters };
+    }
+    describeTypeParameter(parameter) {
+        let constraint = null;
+        let defaultType = null;
+        if (parameter.constraint) {
+            constraint = tparser.TypeParser.parseTypeReference(parameter.constraint);
+        }
+        if (parameter.default) {
+            defaultType = tparser.TypeParser.parseTypeReference(parameter.default);
+        }
+        return { Name: parameter.name.text, Constraint: constraint, Default: defaultType };
     }
     decribeEnumMember(member) {
         if (member.initializer) {
@@ -137,9 +154,9 @@ class AstDescriptionBuilder {
         if (name.kind == ts.SyntaxKind.NumericLiteral) {
             return name.text;
         }
-        if (name.kind == ts.SyntaxKind.PrivateIdentifier) {
-            return name.text;
-        }
+        ////if (name.kind == ts.SyntaxKind.PrivateIdentifier) {
+        ////    return (name as ts.PrivateIdentifier).text;
+        ////}
         throw new Error(`Cannot parse PropertyName with kind=${name.kind}`);
     }
 }

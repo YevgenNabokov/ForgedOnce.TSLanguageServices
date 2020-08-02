@@ -130,14 +130,14 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
                 interfaceDefinition.Fields.Add(new FieldDeclaration()
                 {
                     Name = new Identifier() { Name = member.Name },
-                    TypeReference = new TypeReferenceId() { ReferenceKey = this.MapTypeReference(member.Type, typeMappings) }
+                    TypeReference = new TypeReferenceId() { ReferenceKey = this.MapTypeReference(member.Type, typeMappings, true) }
                 });
             }
 
             this.OutputFile.Model.Items.Add(interfaceDefinition);
         }
 
-        protected string MapTypeReference(ITypeSymbol typeSymbol, TypeMappings typeMappings)
+        protected string MapTypeReference(ITypeSymbol typeSymbol, TypeMappings typeMappings, bool forField = false)
         {
             var arraySymbol = typeSymbol as IArrayTypeSymbol;
             if (arraySymbol != null)
@@ -180,7 +180,15 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
             if (this.HasBaseModelNamespace(typeSymbol))
             {
                 var definedId = this.OutputFile.TypeRepository.RegisterTypeDefinition(typeSymbol.Name, string.Empty, this.OutputFile.Name, Array.Empty<TypeParameter>());
-                return this.OutputFile.TypeRepository.RegisterTypeReferenceDefined(definedId);
+                var definedRef = this.OutputFile.TypeRepository.RegisterTypeReferenceDefined(definedId);
+                if (this.Settings.NullableNodes && forField)
+                {
+                    return this.OutputFile.TypeRepository.RegisterTypeReferenceUnion(new[] { definedRef, this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin("null") });
+                }
+                else
+                {
+                    return definedRef;
+                }
             }
 
             if (this.Settings.SkipUnmappedTypeReferences)
