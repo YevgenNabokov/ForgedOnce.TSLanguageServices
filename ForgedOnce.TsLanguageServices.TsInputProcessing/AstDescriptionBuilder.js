@@ -2,7 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AstDescriptionBuilder = void 0;
 const ts = require("typescript");
+const tparser = require("./AstDescriptionBuilderTypeParser");
 class AstDescriptionBuilder {
+    constructor() {
+        this.enumsToSkip = { 'InternalSymbolName': null };
+    }
     build(fileContent, baseNodeClassName) {
         let sourceFile = ts.createSourceFile("Subject.d.ts", fileContent, ts.ScriptTarget.ES2015);
         let declarations = this.findTypeDeclarationStatements(sourceFile.statements, []);
@@ -13,7 +17,10 @@ class AstDescriptionBuilder {
         for (let namespace in declarations) {
             for (let declaration of declarations[namespace]) {
                 if (declaration.kind == ts.SyntaxKind.EnumDeclaration) {
-                    enumDescriptions.push(this.describeEnumDeclaration(declaration, namespace));
+                    var enumDescription = this.describeEnumDeclaration(declaration, namespace);
+                    if (enumDescription) {
+                        enumDescriptions.push(enumDescription);
+                    }
                     continue;
                 }
                 if (declaration.kind == ts.SyntaxKind.ClassDeclaration) {
@@ -64,6 +71,9 @@ class AstDescriptionBuilder {
     }
     describeEnumDeclaration(declaration, namespace) {
         let members = [];
+        if (this.enumsToSkip.hasOwnProperty(declaration.name.text)) {
+            return null;
+        }
         if (declaration.members) {
             for (let member of declaration.members) {
                 members.push(this.decribeEnumMember(member));
@@ -72,16 +82,50 @@ class AstDescriptionBuilder {
         return { Members: members, Name: declaration.name.text };
     }
     describeClassDeclaration(declaration, namespace) {
-        return { Name: declaration.name.text };
+        let name = '';
+        if (declaration.name) {
+            name = declaration.name.text;
+        }
+        return { Name: name };
     }
     describeInterfaceDeclaration(declaration, namespace) {
-        return { Name: declaration.name.text };
+        let extendedTypes = [];
+        if (declaration.heritageClauses) {
+            for (let heritageClause of declaration.heritageClauses) {
+                if (heritageClause.token === ts.SyntaxKind.ExtendsKeyword) {
+                    extendedTypes = [];
+                    for (let extendedType of heritageClause.types) {
+                        extendedTypes.push(tparser.TypeParser.parseTypeReference(extendedType));
+                    }
+                }
+            }
+        }
+        return { Name: declaration.name.text, Extends: extendedTypes };
     }
     describeTypeAliasDeclaration(declaration, namespace) {
         return { Name: declaration.name.text };
     }
     decribeEnumMember(member) {
-        return { Name: this.parsePropertyName(member.name) };
+        if (member.initializer) {
+            if (member.initializer.kind === ts.SyntaxKind.NumericLiteral) {
+                return { Name: this.parsePropertyName(member.name), NumericValue: parseInt(member.initializer.text), StringValue: null };
+            }
+            if (member.initializer.kind === ts.SyntaxKind.PrefixUnaryExpression) {
+                let unaryExpression = member.initializer;
+                if (unaryExpression.operator != ts.SyntaxKind.MinusToken) {
+                    throw new Error(`Unexpected eum value initializer unary operator ${ts.SyntaxKind[unaryExpression.operator]}`);
+                }
+                if (unaryExpression.operand.kind != ts.SyntaxKind.NumericLiteral) {
+                    throw new Error(`Unexpected eum value initializer unary operand ${ts.SyntaxKind[unaryExpression.operand.kind]}`);
+                }
+                return { Name: this.parsePropertyName(member.name), NumericValue: -parseInt(unaryExpression.operand.text), StringValue: null };
+            }
+            if (member.initializer.kind === ts.SyntaxKind.StringLiteral) {
+                return { Name: this.parsePropertyName(member.name), NumericValue: null, StringValue: member.initializer.text };
+            }
+            throw new Error(`Unexpected enum value initializer ${ts.SyntaxKind[member.initializer.kind]}.`);
+        }
+        return { Name: this.parsePropertyName(member.name), NumericValue: null, StringValue: null };
     }
     parsePropertyName(name) {
         if (name.kind == ts.SyntaxKind.Identifier) {

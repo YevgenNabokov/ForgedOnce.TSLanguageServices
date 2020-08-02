@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServic
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ForgedOnce.TsLanguageServices.TsInputProcessing", "ForgedOnce.TsLanguageServices.TsInputProcessing\ForgedOnce.TsLanguageServices.TsInputProcessing.njsproj", "{7881637A-67E5-4BF6-A124-4DACA55FCE67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForgedOnce.TsLanguageServices.AstGeneratorPlugin", "ForgedOnce.TsLanguageServices.AstGeneratorPlugin\ForgedOnce.TsLanguageServices.AstGeneratorPlugin.csproj", "{15ADCB2E-8991-48F6-85AB-823C9A4C35C3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForgedOnce.TsLanguageServices.FullSyntaxTree", "ForgedOnce.TsLanguageServices.FullSyntaxTree\ForgedOnce.TsLanguageServices.FullSyntaxTree.csproj", "{B1F018FE-0DDE-4624-A146-40F15700D850}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,14 +21,6 @@ Global
 		{7881637A-67E5-4BF6-A124-4DACA55FCE67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7881637A-67E5-4BF6-A124-4DACA55FCE67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7881637A-67E5-4BF6-A124-4DACA55FCE67}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15ADCB2E-8991-48F6-85AB-823C9A4C35C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15ADCB2E-8991-48F6-85AB-823C9A4C35C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15ADCB2E-8991-48F6-85AB-823C9A4C35C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15ADCB2E-8991-48F6-85AB-823C9A4C35C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1F018FE-0DDE-4624-A146-40F15700D850}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1F018FE-0DDE-4624-A146-40F15700D850}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1F018FE-0DDE-4624-A146-40F15700D850}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1F018FE-0DDE-4624-A146-40F15700D850}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

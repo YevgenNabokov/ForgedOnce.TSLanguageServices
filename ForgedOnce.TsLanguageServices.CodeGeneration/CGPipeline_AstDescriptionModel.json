@@ -17,7 +17,8 @@
               "type": "ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin.PluginFactory, ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin",
               "config": {
                 "modelBaseNamespace": "ForgedOnce.TsLanguageServices.AstDescription.Model",
-                "outputFileName": "AstDescriptionModel.ts"
+                "outputFileName": "AstDescriptionModel.ts",
+                "nullableStrings":  true
               }
             }
           },

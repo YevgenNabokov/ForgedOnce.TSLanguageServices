@@ -4,12 +4,10 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 {
-    public class EnumMemberDescription
+    public class TypeReferenceNamed
     {
         public string Name;
 
-        public int? NumericValue;
-
-        public string StringValue;
+        public List<TypeReference> Parameters;
     }
 }

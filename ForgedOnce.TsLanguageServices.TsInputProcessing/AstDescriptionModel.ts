@@ -4,9 +4,12 @@ export interface EnumDescription extends TypeDescription {
     Members: Array<EnumMemberDescription>;
 }
 export interface EnumMemberDescription {
-    Name: string;
+    Name: string | null;
+    NumericValue: number | null;
+    StringValue: string | null;
 }
 export interface InterfaceDescription extends TypeDescription {
+    Extends: Array<TypeReference>;
 }
 export interface Root {
     Enums: Array<EnumDescription>;
@@ -17,5 +20,12 @@ export interface Root {
 export interface TypeAliasDescription extends TypeDescription {
 }
 export interface TypeDescription {
-    Name: string;
+    Name: string | null;
+}
+export interface TypeReference {
+    Named: TypeReferenceNamed;
+}
+export interface TypeReferenceNamed {
+    Name: string | null;
+    Parameters: Array<TypeReference>;
 }
