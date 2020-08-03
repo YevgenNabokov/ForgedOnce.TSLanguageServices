@@ -13,5 +13,11 @@ namespace ForgedOnce.TsLanguageServices.AstDescription.Model
         public TypeReferenceUnion Union;
 
         public TypeReferenceLiteral Literal;
+
+        public TypeReferenceParenthesized Parenthesized;
+
+        public TypeReferenceArray Array;
+
+        public bool? NotSupported;
     }
 }

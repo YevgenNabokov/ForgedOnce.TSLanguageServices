@@ -42,6 +42,12 @@ export interface TypeReference {
     Intersection: TypeReferenceIntersection | null;
     Union: TypeReferenceUnion | null;
     Literal: TypeReferenceLiteral | null;
+    Parenthesized: TypeReferenceParenthesized | null;
+    Array: TypeReferenceArray | null;
+    NotSupported: boolean | null;
+}
+export interface TypeReferenceArray {
+    ElementType: TypeReference | null;
 }
 export interface TypeReferenceIntersection {
     Types: Array<TypeReference>;
@@ -52,6 +58,9 @@ export interface TypeReferenceLiteral {
 export interface TypeReferenceNamed {
     Name: string | null;
     Parameters: Array<TypeReference>;
+}
+export interface TypeReferenceParenthesized {
+    Type: TypeReference | null;
 }
 export interface TypeReferenceUnion {
     Types: Array<TypeReference>;

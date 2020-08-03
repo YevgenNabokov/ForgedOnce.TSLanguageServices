@@ -34,6 +34,7 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
             {
                 { typeof(int?), (r) => r.RegisterTypeReferenceUnion(new[] { r.RegisterTypeReferenceBuiltin("number"), r.RegisterTypeReferenceBuiltin("null") }) },
                 { typeof(float?), (r) => r.RegisterTypeReferenceUnion(new[] { r.RegisterTypeReferenceBuiltin("number"), r.RegisterTypeReferenceBuiltin("null") }) },
+                { typeof(bool?), (r) => r.RegisterTypeReferenceUnion(new[] { r.RegisterTypeReferenceBuiltin("boolean"), r.RegisterTypeReferenceBuiltin("null") }) },
             }
         };
 

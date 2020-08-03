@@ -5,15 +5,39 @@ import * as adm from './AstDescriptionModel';
 export class TypeParser {
     public static parseTypeReference(typeExpression: ts.TypeNode): adm.TypeReference {
         if (typeExpression.kind == ts.SyntaxKind.StringKeyword) {
-            return { Named: { Name: "string", Parameters: [] }, Union: null, Intersection: null, Literal: null };
+            return this.createTypeReference((t) => t.Named = { Name: "string", Parameters: [] });
+        }
+
+        if (typeExpression.kind == ts.SyntaxKind.NumberKeyword) {
+            return this.createTypeReference((t) => t.Named = { Name: "number", Parameters: [] });
+        }
+
+        if (typeExpression.kind == ts.SyntaxKind.BooleanKeyword) {
+            return this.createTypeReference((t) => t.Named = { Name: "boolean", Parameters: [] });
         }
 
         if (typeExpression.kind == ts.SyntaxKind.AnyKeyword) {
-            return { Named: { Name: "any", Parameters: [] }, Union: null, Intersection: null, Literal: null };
+            return this.createTypeReference((t) => t.Named = { Name: "any", Parameters: [] });
         }
 
         if (typeExpression.kind == ts.SyntaxKind.NeverKeyword) {
-            return { Named: { Name: "never", Parameters: [] }, Union: null, Intersection: null, Literal: null };
+            return this.createTypeReference((t) => t.Named = { Name: "never", Parameters: [] });
+        }
+
+        if (typeExpression.kind == ts.SyntaxKind.VoidKeyword) {
+            return this.createTypeReference((t) => t.Named = { Name: "void", Parameters: [] });
+        }
+
+        if (typeExpression.kind == ts.SyntaxKind.NullKeyword) {
+            return this.createTypeReference((t) => t.Named = { Name: "null", Parameters: [] });
+        }
+
+        if (typeExpression.kind == ts.SyntaxKind.UndefinedKeyword) {
+            return this.createTypeReference((t) => t.Named = { Name: "undefined", Parameters: [] });
+        }
+
+        if (typeExpression.kind == ts.SyntaxKind.UnknownKeyword) {
+            return this.createTypeReference((t) => t.Named = { Name: "unknown", Parameters: [] });
         }
 
         if (typeExpression.kind == ts.SyntaxKind.ExpressionWithTypeArguments) {
@@ -25,13 +49,13 @@ export class TypeParser {
                 throw new Error(`Unexpected type expression kind ${ts.SyntaxKind[typeWithArguments.expression.kind]}`);
             }
 
-            return { Named: { Name: name, Parameters: this.parseTypeArguments(typeWithArguments.typeArguments) }, Union: null, Intersection: null, Literal: null };
+            return this.createTypeReference((t) => t.Named = { Name: name, Parameters: this.parseTypeArguments(typeWithArguments.typeArguments) });
         }
 
         if (typeExpression.kind == ts.SyntaxKind.TypeReference) {
             let typeReference = typeExpression as ts.TypeReferenceNode;
 
-            return { Named: { Name: this.parseEntityName(typeReference.typeName), Parameters: this.parseTypeArguments(typeReference.typeArguments) }, Union: null, Intersection: null, Literal: null  };
+            return this.createTypeReference((t) => t.Named = { Name: this.parseEntityName(typeReference.typeName), Parameters: this.parseTypeArguments(typeReference.typeArguments) });
         }
 
         if (typeExpression.kind == ts.SyntaxKind.UnionType) {
@@ -41,7 +65,7 @@ export class TypeParser {
                 types.push(this.parseTypeReference(part));
             }
 
-            return { Union: { Types: types }, Named: null, Intersection: null, Literal: null };
+            return this.createTypeReference((t) => t.Union = { Types: types });
         }
 
         if (typeExpression.kind == ts.SyntaxKind.IntersectionType) {
@@ -51,7 +75,7 @@ export class TypeParser {
                 types.push(this.parseTypeReference(part));
             }
 
-            return { Intersection: { Types: types }, Named: null, Union: null, Literal: null };
+            return this.createTypeReference((t) => t.Intersection = { Types: types });
         }
 
         if (typeExpression.kind == ts.SyntaxKind.TypeLiteral) {
@@ -62,10 +86,31 @@ export class TypeParser {
                 elements.push(this.parseTypeElement(member));
             }
 
-            return { Literal: { Elements: elements }, Named: null, Union: null, Intersection: null };
+            return this.createTypeReference((t) => t.Literal = { Elements: elements });
+        }
+
+        if (typeExpression.kind == ts.SyntaxKind.FunctionType
+            || typeExpression.kind == ts.SyntaxKind.LiteralType) {
+            return this.createTypeReference((t) => t.NotSupported = true);
+        }
+
+        if (typeExpression.kind == ts.SyntaxKind.ParenthesizedType) {
+            let parenthesizedType = typeExpression as ts.ParenthesizedTypeNode;
+            return this.createTypeReference((t) => t.Parenthesized = { Type: this.parseTypeReference(parenthesizedType.type) });
+        }
+
+        if (typeExpression.kind == ts.SyntaxKind.ArrayType) {
+            let arrayType = typeExpression as ts.ArrayTypeNode;
+            return this.createTypeReference((t) => t.Array = { ElementType: this.parseTypeReference(arrayType.elementType) });
         }
 
         throw new Error(`Unsupported type node kind ${ts.SyntaxKind[typeExpression.kind]}`);
+    }
+
+    private static createTypeReference(initializer: (t: adm.TypeReference) => void): adm.TypeReference {
+        let result: adm.TypeReference = { Array: null, Parenthesized: null, Literal: null, Named: null, Union: null, Intersection: null, NotSupported: null };
+        initializer(result);
+        return result;
     }
 
     private static parseTypeElement(element: ts.TypeElement): adm.TypeElement {
