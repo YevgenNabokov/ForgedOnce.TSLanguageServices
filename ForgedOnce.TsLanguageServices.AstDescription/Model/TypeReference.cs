@@ -18,6 +18,12 @@ namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 
         public TypeReferenceArray Array;
 
+        public TypeReferenceTuple Tuple;
+
+        public TypeReferenceLiteralType LiteralType;
+
+        public TypeReferenceIndexedAccess IndexedAccess;
+
         public bool? NotSupported;
     }
 }

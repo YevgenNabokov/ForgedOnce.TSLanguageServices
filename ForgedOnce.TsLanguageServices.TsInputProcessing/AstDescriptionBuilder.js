@@ -100,27 +100,28 @@ class AstDescriptionBuilder {
                 }
             }
         }
-        return { Name: declaration.name.text, Extends: extendedTypes };
+        let typeParameters = [];
+        if (declaration.typeParameters) {
+            for (let p of declaration.typeParameters) {
+                typeParameters.push(tparser.TypeParser.describeTypeParameter(p));
+            }
+        }
+        let typeElements = [];
+        if (declaration.members) {
+            for (let m of declaration.members) {
+                typeElements.push(tparser.TypeParser.parseTypeElement(m));
+            }
+        }
+        return { Name: declaration.name.text, Extends: extendedTypes, Parameters: typeParameters, Members: typeElements };
     }
     describeTypeAliasDeclaration(declaration, namespace) {
         let typeParameters = [];
         if (declaration.typeParameters && declaration.typeParameters.length > 0) {
             for (let p of declaration.typeParameters) {
-                typeParameters.push(this.describeTypeParameter(p));
+                typeParameters.push(tparser.TypeParser.describeTypeParameter(p));
             }
         }
         return { Name: declaration.name.text, Type: tparser.TypeParser.parseTypeReference(declaration.type), Parameters: typeParameters };
-    }
-    describeTypeParameter(parameter) {
-        let constraint = null;
-        let defaultType = null;
-        if (parameter.constraint) {
-            constraint = tparser.TypeParser.parseTypeReference(parameter.constraint);
-        }
-        if (parameter.default) {
-            defaultType = tparser.TypeParser.parseTypeReference(parameter.default);
-        }
-        return { Name: parameter.name.text, Constraint: constraint, Default: defaultType };
     }
     decribeEnumMember(member) {
         if (member.initializer) {

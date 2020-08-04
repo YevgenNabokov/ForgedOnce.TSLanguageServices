@@ -31,6 +31,9 @@ class TypeParser {
         if (typeExpression.kind == ts.SyntaxKind.UnknownKeyword) {
             return this.createTypeReference((t) => t.Named = { Name: "unknown", Parameters: [] });
         }
+        if (typeExpression.kind == ts.SyntaxKind.ThisType) {
+            return this.createTypeReference((t) => t.Named = { Name: "this", Parameters: [] });
+        }
         if (typeExpression.kind == ts.SyntaxKind.ExpressionWithTypeArguments) {
             let typeWithArguments = typeExpression;
             let name = '';
@@ -70,8 +73,29 @@ class TypeParser {
             }
             return this.createTypeReference((t) => t.Literal = { Elements: elements });
         }
-        if (typeExpression.kind == ts.SyntaxKind.FunctionType
-            || typeExpression.kind == ts.SyntaxKind.LiteralType) {
+        if (typeExpression.kind == ts.SyntaxKind.LiteralType) {
+            let literalType = typeExpression;
+            let literalValue = null;
+            if (literalType.literal.kind == ts.SyntaxKind.StringLiteral) {
+                literalValue = literalType.literal.text;
+            }
+            else {
+                if (literalType.literal.kind == ts.SyntaxKind.FalseKeyword) {
+                    literalValue = "false";
+                }
+                else {
+                    if (literalType.literal.kind == ts.SyntaxKind.TrueKeyword) {
+                        literalValue = "true";
+                    }
+                    else {
+                        return this.createTypeReference((t) => t.NotSupported = true);
+                        ////throw new Error(`Not supported literal type value kind ${ts.SyntaxKind[literalType.literal.kind]}`);
+                    }
+                }
+            }
+            return this.createTypeReference((t) => t.LiteralType = { Value: literalValue });
+        }
+        if (typeExpression.kind == ts.SyntaxKind.FunctionType) {
             return this.createTypeReference((t) => t.NotSupported = true);
         }
         if (typeExpression.kind == ts.SyntaxKind.ParenthesizedType) {
@@ -82,10 +106,22 @@ class TypeParser {
             let arrayType = typeExpression;
             return this.createTypeReference((t) => t.Array = { ElementType: this.parseTypeReference(arrayType.elementType) });
         }
+        if (typeExpression.kind == ts.SyntaxKind.TupleType) {
+            let tupleType = typeExpression;
+            let types = [];
+            for (let part of tupleType.elementTypes) {
+                types.push(this.parseTypeReference(part));
+            }
+            return this.createTypeReference((t) => t.Tuple = { Types: types });
+        }
+        if (typeExpression.kind == ts.SyntaxKind.IndexedAccessType) {
+            let indexedAccess = typeExpression;
+            return this.createTypeReference((t) => t.IndexedAccess = { ObjectType: this.parseTypeReference(indexedAccess.objectType), IndexType: this.parseTypeReference(indexedAccess.indexType) });
+        }
         throw new Error(`Unsupported type node kind ${ts.SyntaxKind[typeExpression.kind]}`);
     }
     static createTypeReference(initializer) {
-        let result = { Array: null, Parenthesized: null, Literal: null, Named: null, Union: null, Intersection: null, NotSupported: null };
+        let result = { Array: null, Parenthesized: null, Literal: null, Named: null, Union: null, Intersection: null, NotSupported: null, Tuple: null, LiteralType: null, IndexedAccess: null };
         initializer(result);
         return result;
     }
@@ -99,12 +135,72 @@ class TypeParser {
             if (propertySignature.initializer) {
                 throw new Error('Property initializer parsing is not implemented yet.');
             }
-            return { Property: { Name: this.parsePropertyName(propertySignature.name), Type: type, IsOptional: propertySignature.questionToken !== undefined, } };
+            return { Property: { Name: this.parsePropertyName(propertySignature.name), Type: type, IsOptional: propertySignature.questionToken !== undefined }, IndexSignature: null, MethodSignature: null };
+        }
+        if (element.kind == ts.SyntaxKind.IndexSignature) {
+            let indexSignature = element;
+            return { IndexSignature: this.parseSignatureBase(indexSignature), Property: null, MethodSignature: null };
+        }
+        if (element.kind == ts.SyntaxKind.MethodSignature) {
+            let methodSignature = element;
+            return { MethodSignature: this.parseSignatureBase(methodSignature), Property: null, IndexSignature: null };
         }
         throw new Error(`Unexpected type element kind ${ts.SyntaxKind[element.kind]}`);
     }
+    static parseSignatureBase(signature) {
+        let name = null;
+        if (signature.name) {
+            name = this.parsePropertyName(signature.name);
+        }
+        let typeParameters = [];
+        if (signature.typeParameters) {
+            for (let tp of signature.typeParameters) {
+                typeParameters.push(this.describeTypeParameter(tp));
+            }
+        }
+        let type = null;
+        if (signature.type) {
+            type = this.parseTypeReference(signature.type);
+        }
+        let parameters = [];
+        if (signature.parameters) {
+            for (let p of signature.parameters) {
+                parameters.push(this.parseParameter(p));
+            }
+        }
+        return { Name: name, TypeParameters: typeParameters, Type: type, Parameters: parameters };
+    }
+    static parseParameter(parameterDeclaration) {
+        let isOptional = parameterDeclaration.questionToken ? true : false;
+        let restOf = parameterDeclaration.dotDotDotToken ? true : false;
+        let type = null;
+        if (parameterDeclaration.type) {
+            type = this.parseTypeReference(parameterDeclaration.type);
+        }
+        return { Name: this.parseBindingName(parameterDeclaration.name), IsOptional: isOptional, RestOf: restOf, Type: type };
+    }
+    static describeTypeParameter(parameter) {
+        let constraint = null;
+        let defaultType = null;
+        if (parameter.constraint) {
+            constraint = this.parseTypeReference(parameter.constraint);
+        }
+        if (parameter.default) {
+            defaultType = this.parseTypeReference(parameter.default);
+        }
+        return { Name: parameter.name.text, Constraint: constraint, Default: defaultType };
+    }
+    static parseBindingName(bindingName) {
+        if (bindingName.kind == ts.SyntaxKind.Identifier) {
+            return bindingName.text;
+        }
+        throw new Error(`Unexpected binding name kind ${ts.SyntaxKind[bindingName.kind]}`);
+    }
     static parsePropertyName(propertyName) {
         if (propertyName.kind == ts.SyntaxKind.Identifier) {
+            return propertyName.text;
+        }
+        if (propertyName.kind == ts.SyntaxKind.StringLiteral) {
             return propertyName.text;
         }
         throw new Error(`Unexpected property name kind ${ts.SyntaxKind[propertyName.kind]}`);

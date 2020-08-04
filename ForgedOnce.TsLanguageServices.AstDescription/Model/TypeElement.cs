@@ -7,5 +7,9 @@ namespace ForgedOnce.TsLanguageServices.AstDescription.Model
     public class TypeElement
     {
         public TypeElementPropertySignature Property;
+
+        public SignatureDeclaration IndexSignature;
+
+        public SignatureDeclaration MethodSignature;
     }
 }

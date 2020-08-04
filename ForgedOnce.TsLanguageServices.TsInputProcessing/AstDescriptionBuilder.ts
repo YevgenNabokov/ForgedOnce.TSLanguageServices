@@ -125,7 +125,21 @@ export class AstDescriptionBuilder {
             }
         }
 
-        return { Name: declaration.name.text, Extends: extendedTypes };
+        let typeParameters: adm.TypeParameter[] = [];
+        if (declaration.typeParameters) {
+            for (let p of declaration.typeParameters) {
+                typeParameters.push(tparser.TypeParser.describeTypeParameter(p));
+            }
+        }
+
+        let typeElements: adm.TypeElement[] = [];
+        if (declaration.members) {
+            for (let m of declaration.members) {
+                typeElements.push(tparser.TypeParser.parseTypeElement(m));
+            }
+        }
+
+        return { Name: declaration.name.text, Extends: extendedTypes, Parameters: typeParameters, Members: typeElements };
     }
 
     private describeTypeAliasDeclaration(declaration: ts.TypeAliasDeclaration, namespace: string): adm.TypeAliasDescription {
@@ -133,26 +147,11 @@ export class AstDescriptionBuilder {
 
         if (declaration.typeParameters && declaration.typeParameters.length > 0) {
             for (let p of declaration.typeParameters) {
-                typeParameters.push(this.describeTypeParameter(p));
+                typeParameters.push(tparser.TypeParser.describeTypeParameter(p));
             }
         }
 
         return { Name: declaration.name.text, Type: tparser.TypeParser.parseTypeReference(declaration.type), Parameters: typeParameters };
-    }
-
-    private describeTypeParameter(parameter: ts.TypeParameterDeclaration): adm.TypeParameter {
-        let constraint: adm.TypeReference | null = null;
-        let defaultType: adm.TypeReference | null = null;
-
-        if (parameter.constraint) {
-            constraint = tparser.TypeParser.parseTypeReference(parameter.constraint);
-        }
-
-        if (parameter.default) {
-            defaultType = tparser.TypeParser.parseTypeReference(parameter.default);
-        }
-
-        return { Name: parameter.name.text, Constraint: constraint, Default: defaultType };
     }
 
     private decribeEnumMember(member: ts.EnumMember): adm.EnumMemberDescription {
