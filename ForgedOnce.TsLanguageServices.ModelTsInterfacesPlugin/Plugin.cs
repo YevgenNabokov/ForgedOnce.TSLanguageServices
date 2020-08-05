@@ -182,9 +182,21 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
             {
                 var definedId = this.OutputFile.TypeRepository.RegisterTypeDefinition(typeSymbol.Name, string.Empty, this.OutputFile.Name, Array.Empty<TypeParameter>());
                 var definedRef = this.OutputFile.TypeRepository.RegisterTypeReferenceDefined(definedId);
-                if (this.Settings.NullableNodes && forField)
+                if ((this.Settings.NullableNodes || this.Settings.OptionalNodes) && forField)
                 {
-                    return this.OutputFile.TypeRepository.RegisterTypeReferenceUnion(new[] { definedRef, this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin("null") });
+                    List<string> typeKeys = new List<string>();
+                    typeKeys.Add(definedRef);
+                    if (this.Settings.NullableNodes)
+                    {
+                        typeKeys.Add(this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin("null"));
+                    }
+
+                    if (this.Settings.OptionalNodes)
+                    {
+                        typeKeys.Add(this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin("undefined"));
+                    }
+
+                    return this.OutputFile.TypeRepository.RegisterTypeReferenceUnion(typeKeys);
                 }
                 else
                 {

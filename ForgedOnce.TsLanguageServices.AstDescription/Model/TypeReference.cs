@@ -24,6 +24,10 @@ namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 
         public TypeReferenceIndexedAccess IndexedAccess;
 
+        public TypeReferencePredicate Predicate;
+
         public bool? NotSupported;
+
+        public bool Readonly;
     }
 }

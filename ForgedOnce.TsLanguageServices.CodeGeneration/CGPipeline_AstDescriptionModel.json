@@ -19,7 +19,8 @@
                 "modelBaseNamespace": "ForgedOnce.TsLanguageServices.AstDescription.Model",
                 "outputFileName": "AstDescriptionModel.ts",
                 "nullableStrings": true,
-                "nullableNodes": true
+                "nullableNodes": false,
+                "optionalNodes": true
               }
             }
           },

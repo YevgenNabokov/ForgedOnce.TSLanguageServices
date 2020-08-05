@@ -18,6 +18,7 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
             this.SetFromConfiguration((v) => settings.OutputFileName = v, configuration, Settings.OutputFileNameKey);
             this.SetFromConfiguration((v) => bool.TryParse(v, out settings.NullableStrings), configuration, Settings.NullableStringsKey);
             this.SetFromConfiguration((v) => bool.TryParse(v, out settings.NullableNodes), configuration, Settings.NullableNodesKey);
+            this.SetFromConfiguration((v) => bool.TryParse(v, out settings.OptionalNodes), configuration, Settings.OptionalNodesKey);
 
             return new Plugin()
             {
