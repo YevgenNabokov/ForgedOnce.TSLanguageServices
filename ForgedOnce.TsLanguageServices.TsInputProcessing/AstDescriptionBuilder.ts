@@ -6,6 +6,7 @@ import * as tparser from './AstDescriptionBuilderTypeParser';
 
 export class AstDescriptionBuilder {
     public enumsToSkip: { [key: string]: null } = { 'InternalSymbolName': null };
+    public functionsToSkip: { [key: string]: null } = { 'createIncrementalProgram': null };
 
     public build(fileContent: string, baseNodeClassName: string): adm.Root {
         let sourceFile = ts.createSourceFile("Subject.d.ts", fileContent, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
@@ -16,11 +17,12 @@ export class AstDescriptionBuilder {
         let classDescriptions: adm.ClassDescription[] = [];
         let interfaceDescriptions: adm.InterfaceDescription[] = [];
         let typeAliasDescriptions: adm.TypeAliasDescription[] = [];
+        let functionDeclarations: adm.FunctionDescription[] = [];
 
         for (let namespace in declarations) {
             for (let declaration of declarations[namespace]) {
                 if (declaration.kind == ts.SyntaxKind.EnumDeclaration) {
-                    var enumDescription = this.describeEnumDeclaration(declaration as ts.EnumDeclaration, namespace);
+                    let enumDescription = this.describeEnumDeclaration(declaration as ts.EnumDeclaration, namespace);
                     if (enumDescription) {
                         enumDescriptions.push(enumDescription);
                     }
@@ -43,7 +45,16 @@ export class AstDescriptionBuilder {
                     continue;
                 }
 
-                throw new Error("Not supported declaration statement kind=" + declaration.kind);
+                if (declaration.kind == ts.SyntaxKind.FunctionDeclaration) {
+                    let functionDescription = this.describeFunctionDeclaration(declaration as ts.FunctionDeclaration, namespace);
+                    if (functionDescription) {
+                        functionDeclarations.push(functionDescription);
+                    }
+                    
+                    continue;
+                }
+
+                throw new Error(`Not supported declaration statement kind=${ts.SyntaxKind[declaration.kind]}`);
             }
         }
 
@@ -51,7 +62,8 @@ export class AstDescriptionBuilder {
             Enums: enumDescriptions,
             Classes: classDescriptions,
             Interfaces: interfaceDescriptions,
-            TypeAliases: typeAliasDescriptions
+            TypeAliases: typeAliasDescriptions,
+            Functions: functionDeclarations
         };
     }
 
@@ -63,7 +75,8 @@ export class AstDescriptionBuilder {
             if (statement.kind == ts.SyntaxKind.EnumDeclaration
                 || statement.kind == ts.SyntaxKind.ClassDeclaration
                 || statement.kind == ts.SyntaxKind.InterfaceDeclaration
-                || statement.kind == ts.SyntaxKind.TypeAliasDeclaration) {
+                || statement.kind == ts.SyntaxKind.TypeAliasDeclaration
+                || statement.kind == ts.SyntaxKind.FunctionDeclaration) {
                 if (!result.hasOwnProperty(nsString)) {
                     result[nsString] = [];
                 }
@@ -85,6 +98,14 @@ export class AstDescriptionBuilder {
         return result;
     }
 
+    private describeFunctionDeclaration(declaration: ts.FunctionDeclaration, namespace: string): adm.FunctionDescription | null {
+        if (declaration.name && this.functionsToSkip.hasOwnProperty((declaration.name as ts.Identifier).text)) {
+            return null;
+        }
+
+        return { Signature: tparser.TypeParser.parseSignatureBase(declaration) };
+    }
+
     private describeEnumDeclaration(declaration: ts.EnumDeclaration, namespace: string): adm.EnumDescription | null {
         let members: adm.EnumMemberDescription[] = [];
 
@@ -98,7 +119,7 @@ export class AstDescriptionBuilder {
             }
         }
 
-        return { Members: members, Name: declaration.name.text };
+        return { Members: members, Name: declaration.name.text, Namespace: namespace };
     }
 
     private describeClassDeclaration(declaration: ts.ClassDeclaration, namespace: string): adm.ClassDescription {
@@ -108,7 +129,7 @@ export class AstDescriptionBuilder {
             name = declaration.name.text;
         }
 
-        return { Name: name };
+        return { Name: name, Namespace: namespace };
     }
 
     private describeInterfaceDeclaration(declaration: ts.InterfaceDeclaration, namespace: string): adm.InterfaceDescription {
@@ -139,7 +160,7 @@ export class AstDescriptionBuilder {
             }
         }
 
-        return { Name: declaration.name.text, Extends: extendedTypes, Parameters: typeParameters, Members: typeElements };
+        return { Name: declaration.name.text, Extends: extendedTypes, Parameters: typeParameters, Members: typeElements, Namespace: namespace };
     }
 
     private describeTypeAliasDeclaration(declaration: ts.TypeAliasDeclaration, namespace: string): adm.TypeAliasDescription {
@@ -151,7 +172,7 @@ export class AstDescriptionBuilder {
             }
         }
 
-        return { Name: declaration.name.text, Type: tparser.TypeParser.parseTypeReference(declaration.type), Parameters: typeParameters };
+        return { Name: declaration.name.text, Type: tparser.TypeParser.parseTypeReference(declaration.type), Parameters: typeParameters, Namespace: namespace };
     }
 
     private decribeEnumMember(member: ts.EnumMember): adm.EnumMemberDescription {

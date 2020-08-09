@@ -2,6 +2,7 @@
 using ForgedOnce.Core.Plugins;
 using ForgedOnce.CSharp;
 using ForgedOnce.TsLanguageServices.AstDescription.Model;
+using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
             var description = JsonConvert.DeserializeObject<Root>(File.ReadAllText(path));
 
-            return new Parameters();
+            var fixer = new InstanceReferenceFixer();
+
+            description = (Root)fixer.FixInstanceReferences(description);
+
+            var analyzer = new DescriptionAnalyzer(pluginSettings);
+
+            return analyzer.CreateParameters(description);
         }
     }
 }

@@ -118,7 +118,8 @@ export class TypeParser {
             return this.createTypeReference((t) => t.LiteralType = { Value: literalValue });
         }
 
-        if (typeExpression.kind == ts.SyntaxKind.FunctionType) {
+        if (typeExpression.kind == ts.SyntaxKind.FunctionType
+            || typeExpression.kind == ts.SyntaxKind.TypeQuery) {
             return this.createTypeReference((t) => t.NotSupported = true);
         }
 
@@ -221,7 +222,7 @@ export class TypeParser {
         throw new Error(`Unexpected type element kind ${ts.SyntaxKind[element.kind]}`);
     }
 
-    private static parseSignatureBase(signature: ts.SignatureDeclarationBase): adm.SignatureDeclaration {
+    public static parseSignatureBase(signature: ts.SignatureDeclarationBase): adm.SignatureDeclaration {
         let name: string | null = null;
         if (signature.name) {
             name = this.parsePropertyName(signature.name);

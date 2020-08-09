@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 {
-    public class ClassDescription : TypeDescription
+    public class ClassDescription : NamedDeclaration
     {
     }
 }

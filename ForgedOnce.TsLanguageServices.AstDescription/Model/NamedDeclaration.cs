@@ -1,15 +1,13 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 {
-    [JsonObject(IsReference = true)]
-    public class TypeReferenceNamed
+    public abstract class NamedDeclaration
     {
         public string Name;
 
-        public List<TypeReference> Parameters;
+        public string Namespace;
     }
 }

@@ -15,4 +15,8 @@
     <ProjectReference Include="..\ForgedOnce.TsLanguageServices.AstDescription\ForgedOnce.TsLanguageServices.AstDescription.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ParametersModel\" />
+  </ItemGroup>
+
 </Project>

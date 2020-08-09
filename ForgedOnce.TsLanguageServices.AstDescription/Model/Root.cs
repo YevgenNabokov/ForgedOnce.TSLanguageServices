@@ -13,5 +13,7 @@ namespace ForgedOnce.TsLanguageServices.AstDescription.Model
         public List<InterfaceDescription> Interfaces;
 
         public List<TypeAliasDescription> TypeAliases;
+
+        public List<FunctionDescription> Functions;
     }
 }

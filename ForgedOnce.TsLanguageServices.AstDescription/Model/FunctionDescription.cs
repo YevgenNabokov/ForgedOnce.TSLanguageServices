@@ -4,8 +4,8 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 {
-    public abstract class TypeDescription
+    public class FunctionDescription
     {
-        public string Name;
+        public SignatureDeclaration Signature;
     }
 }

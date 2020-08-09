@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 {
-    public class TypeAliasDescription : TypeDescription
+    public class TypeAliasDescription : NamedDeclaration
     {
         public List<TypeParameter> Parameters;
 

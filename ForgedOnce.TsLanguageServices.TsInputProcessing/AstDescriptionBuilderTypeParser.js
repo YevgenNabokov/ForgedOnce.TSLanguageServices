@@ -95,7 +95,8 @@ class TypeParser {
             }
             return this.createTypeReference((t) => t.LiteralType = { Value: literalValue });
         }
-        if (typeExpression.kind == ts.SyntaxKind.FunctionType) {
+        if (typeExpression.kind == ts.SyntaxKind.FunctionType
+            || typeExpression.kind == ts.SyntaxKind.TypeQuery) {
             return this.createTypeReference((t) => t.NotSupported = true);
         }
         if (typeExpression.kind == ts.SyntaxKind.ParenthesizedType) {

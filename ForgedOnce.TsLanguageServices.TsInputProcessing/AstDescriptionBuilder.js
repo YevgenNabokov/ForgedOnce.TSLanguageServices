@@ -6,6 +6,7 @@ const tparser = require("./AstDescriptionBuilderTypeParser");
 class AstDescriptionBuilder {
     constructor() {
         this.enumsToSkip = { 'InternalSymbolName': null };
+        this.functionsToSkip = { 'createIncrementalProgram': null };
     }
     build(fileContent, baseNodeClassName) {
         let sourceFile = ts.createSourceFile("Subject.d.ts", fileContent, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
@@ -14,10 +15,11 @@ class AstDescriptionBuilder {
         let classDescriptions = [];
         let interfaceDescriptions = [];
         let typeAliasDescriptions = [];
+        let functionDeclarations = [];
         for (let namespace in declarations) {
             for (let declaration of declarations[namespace]) {
                 if (declaration.kind == ts.SyntaxKind.EnumDeclaration) {
-                    var enumDescription = this.describeEnumDeclaration(declaration, namespace);
+                    let enumDescription = this.describeEnumDeclaration(declaration, namespace);
                     if (enumDescription) {
                         enumDescriptions.push(enumDescription);
                     }
@@ -35,14 +37,22 @@ class AstDescriptionBuilder {
                     typeAliasDescriptions.push(this.describeTypeAliasDeclaration(declaration, namespace));
                     continue;
                 }
-                throw new Error("Not supported declaration statement kind=" + declaration.kind);
+                if (declaration.kind == ts.SyntaxKind.FunctionDeclaration) {
+                    let functionDescription = this.describeFunctionDeclaration(declaration, namespace);
+                    if (functionDescription) {
+                        functionDeclarations.push(functionDescription);
+                    }
+                    continue;
+                }
+                throw new Error(`Not supported declaration statement kind=${ts.SyntaxKind[declaration.kind]}`);
             }
         }
         return {
             Enums: enumDescriptions,
             Classes: classDescriptions,
             Interfaces: interfaceDescriptions,
-            TypeAliases: typeAliasDescriptions
+            TypeAliases: typeAliasDescriptions,
+            Functions: functionDeclarations
         };
     }
     findTypeDeclarationStatements(nodes, namespace, result) {
@@ -52,7 +62,8 @@ class AstDescriptionBuilder {
             if (statement.kind == ts.SyntaxKind.EnumDeclaration
                 || statement.kind == ts.SyntaxKind.ClassDeclaration
                 || statement.kind == ts.SyntaxKind.InterfaceDeclaration
-                || statement.kind == ts.SyntaxKind.TypeAliasDeclaration) {
+                || statement.kind == ts.SyntaxKind.TypeAliasDeclaration
+                || statement.kind == ts.SyntaxKind.FunctionDeclaration) {
                 if (!result.hasOwnProperty(nsString)) {
                     result[nsString] = [];
                 }
@@ -69,6 +80,12 @@ class AstDescriptionBuilder {
         }
         return result;
     }
+    describeFunctionDeclaration(declaration, namespace) {
+        if (declaration.name && this.functionsToSkip.hasOwnProperty(declaration.name.text)) {
+            return null;
+        }
+        return { Signature: tparser.TypeParser.parseSignatureBase(declaration) };
+    }
     describeEnumDeclaration(declaration, namespace) {
         let members = [];
         if (this.enumsToSkip.hasOwnProperty(declaration.name.text)) {
@@ -79,14 +96,14 @@ class AstDescriptionBuilder {
                 members.push(this.decribeEnumMember(member));
             }
         }
-        return { Members: members, Name: declaration.name.text };
+        return { Members: members, Name: declaration.name.text, Namespace: namespace };
     }
     describeClassDeclaration(declaration, namespace) {
         let name = '';
         if (declaration.name) {
             name = declaration.name.text;
         }
-        return { Name: name };
+        return { Name: name, Namespace: namespace };
     }
     describeInterfaceDeclaration(declaration, namespace) {
         let extendedTypes = [];
@@ -112,7 +129,7 @@ class AstDescriptionBuilder {
                 typeElements.push(tparser.TypeParser.parseTypeElement(m));
             }
         }
-        return { Name: declaration.name.text, Extends: extendedTypes, Parameters: typeParameters, Members: typeElements };
+        return { Name: declaration.name.text, Extends: extendedTypes, Parameters: typeParameters, Members: typeElements, Namespace: namespace };
     }
     describeTypeAliasDeclaration(declaration, namespace) {
         let typeParameters = [];
@@ -121,7 +138,7 @@ class AstDescriptionBuilder {
                 typeParameters.push(tparser.TypeParser.describeTypeParameter(p));
             }
         }
-        return { Name: declaration.name.text, Type: tparser.TypeParser.parseTypeReference(declaration.type), Parameters: typeParameters };
+        return { Name: declaration.name.text, Type: tparser.TypeParser.parseTypeReference(declaration.type), Parameters: typeParameters, Namespace: namespace };
     }
     decribeEnumMember(member) {
         if (member.initializer) {

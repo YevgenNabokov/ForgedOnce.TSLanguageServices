@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 {
-    public class InterfaceDescription : TypeDescription
+    public class InterfaceDescription : NamedDeclaration
     {
         public List<TypeReference> Extends;
 

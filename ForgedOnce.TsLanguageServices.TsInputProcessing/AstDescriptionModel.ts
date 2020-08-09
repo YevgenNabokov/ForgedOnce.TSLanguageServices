@@ -1,6 +1,6 @@
-export interface ClassDescription extends TypeDescription {
+export interface ClassDescription extends NamedDeclaration {
 }
-export interface EnumDescription extends TypeDescription {
+export interface EnumDescription extends NamedDeclaration {
     Members: Array<EnumMemberDescription>;
 }
 export interface EnumMemberDescription {
@@ -8,10 +8,17 @@ export interface EnumMemberDescription {
     NumericValue: number | null;
     StringValue: string | null;
 }
-export interface InterfaceDescription extends TypeDescription {
+export interface FunctionDescription {
+    Signature: SignatureDeclaration | undefined;
+}
+export interface InterfaceDescription extends NamedDeclaration {
     Extends: Array<TypeReference>;
     Parameters: Array<TypeParameter>;
     Members: Array<TypeElement>;
+}
+export interface NamedDeclaration {
+    Name: string | null;
+    Namespace: string | null;
 }
 export interface Parameter {
     Name: string | null;
@@ -24,6 +31,7 @@ export interface Root {
     Classes: Array<ClassDescription>;
     Interfaces: Array<InterfaceDescription>;
     TypeAliases: Array<TypeAliasDescription>;
+    Functions: Array<FunctionDescription>;
 }
 export interface SignatureDeclaration {
     Name: string | null;
@@ -31,12 +39,9 @@ export interface SignatureDeclaration {
     Type: TypeReference | undefined;
     Parameters: Array<Parameter>;
 }
-export interface TypeAliasDescription extends TypeDescription {
+export interface TypeAliasDescription extends NamedDeclaration {
     Parameters: Array<TypeParameter>;
     Type: TypeReference | undefined;
-}
-export interface TypeDescription {
-    Name: string | null;
 }
 export interface TypeElement {
     Property: TypeElementPropertySignature | undefined;
