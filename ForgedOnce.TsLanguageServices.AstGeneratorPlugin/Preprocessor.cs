@@ -27,7 +27,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
                 path = Path.Combine(pluginSettings.BasePath, pluginSettings.AstDescriptionJsonFilePath);
             }
 
-            var description = JsonConvert.DeserializeObject<Root>(File.ReadAllText(path));
+            var payload = File.ReadAllText(path);
+
+            var description = JsonConvert.DeserializeObject<Root>(payload);
 
             var fixer = new InstanceReferenceFixer();
 

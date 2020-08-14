@@ -5,7 +5,6 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 {
-    [JsonObject(IsReference = true)]
     public class TypeReferenceNamed
     {
         public string Name;
