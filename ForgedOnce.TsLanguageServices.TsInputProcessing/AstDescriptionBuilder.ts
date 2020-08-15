@@ -103,7 +103,9 @@ export class AstDescriptionBuilder {
             return null;
         }
 
-        return { Signature: tparser.TypeParser.parseSignatureBase(declaration) };
+        let signature = tparser.TypeParser.parseSignatureBase(declaration);
+
+        return { Signature: signature, Name: signature.Name, Namespace: namespace };
     }
 
     private describeEnumDeclaration(declaration: ts.EnumDeclaration, namespace: string): adm.EnumDescription | null {

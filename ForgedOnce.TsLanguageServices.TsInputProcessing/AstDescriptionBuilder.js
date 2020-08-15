@@ -84,7 +84,8 @@ class AstDescriptionBuilder {
         if (declaration.name && this.functionsToSkip.hasOwnProperty(declaration.name.text)) {
             return null;
         }
-        return { Signature: tparser.TypeParser.parseSignatureBase(declaration) };
+        let signature = tparser.TypeParser.parseSignatureBase(declaration);
+        return { Signature: signature, Name: signature.Name, Namespace: namespace };
     }
     describeEnumDeclaration(declaration, namespace) {
         let members = [];

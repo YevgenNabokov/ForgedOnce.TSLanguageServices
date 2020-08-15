@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstDescription.Model
 {
-    public class FunctionDescription
+    public class FunctionDescription : NamedDeclaration
     {
         public SignatureDeclaration Signature;
     }

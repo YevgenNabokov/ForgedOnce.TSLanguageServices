@@ -8,7 +8,7 @@ export interface EnumMemberDescription {
     NumericValue: number | null;
     StringValue: string | null;
 }
-export interface FunctionDescription {
+export interface FunctionDescription extends NamedDeclaration {
     Signature: SignatureDeclaration | undefined;
 }
 export interface InterfaceDescription extends NamedDeclaration {
