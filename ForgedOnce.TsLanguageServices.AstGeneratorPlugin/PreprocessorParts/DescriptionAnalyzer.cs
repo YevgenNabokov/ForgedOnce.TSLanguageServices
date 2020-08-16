@@ -18,134 +18,160 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
 
         public Parameters CreateParameters(Root description)
         {
-            var declarationGraph = this.BuildDeclarationGraph(description);
+            var declarationGraph = DeclarationDependencyGraphBuilder.BuildDeclarationGraph(description);
+
+            var astDeclarations = this.GetAstDeclarations(declarationGraph);
 
             return new Parameters();
         }
 
-        protected Dictionary<string, List<Declaration>> BuildDeclarationGraph(Root description)
+        private Dictionary<string, List<Declaration>> GetAstDeclarations(Dictionary<string, List<Declaration>> declarationGraph)
         {
+            if (!declarationGraph.ContainsKey(this.pluginSettings.AstNodeBaseTypeQualified))
+            {
+                throw new InvalidOperationException($"No declaration found for node base type '{this.pluginSettings.AstNodeBaseTypeQualified}'.");
+            }
+
+            var baseTypeDeclarations = declarationGraph[this.pluginSettings.AstNodeBaseTypeQualified];
+
+            var searchIterationResults = new Dictionary<string, List<Declaration>>();
             var result = new Dictionary<string, List<Declaration>>();
-
-            var declarationAnalyzer = new Action<IEnumerable<NamedDeclaration>>(declarations =>
+            var searchSet = new Dictionary<string, List<Declaration>>();
+            foreach (var group in declarationGraph)
             {
-                foreach (var declaration in declarations)
+                if (group.Key != this.pluginSettings.AstNodeBaseTypeQualified)
                 {
-                    var d = this.AnalyzeDeclaration(declaration);
-
-                    if (!result.ContainsKey(d.GetFullName()))
-                    {
-                        result.Add(d.GetFullName(), new List<Declaration>());
-                    }
-
-                    result[d.GetFullName()].Add(d);
+                    searchSet.Add(group.Key, new List<Declaration>(group.Value));
                 }
-            });
-
-            declarationAnalyzer(description.Enums);
-            declarationAnalyzer(description.Classes);
-            declarationAnalyzer(description.Functions);
-            declarationAnalyzer(description.Interfaces);
-            declarationAnalyzer(description.TypeAliases);            
-
-            return result;
-        }
-
-        protected Declaration AnalyzeDeclaration(NamedDeclaration declaration)
-        {
-            var result = new Declaration(declaration);
-
-            result.TypeReferences.AddRange(this.GatherNonParameterTypeReferences(declaration));
-
-            return result;
-        }
-
-        protected HashSet<TypeReference> GatherNonParameterTypeReferences(object subject, HashSet<string> typeParametersInScope = null)
-        {
-            var result = new HashSet<TypeReference>();
-
-            var subjectType = subject.GetType();
-
-            var declaredParams = this.GetDeclaredTypeParameters(subject);
-            if (declaredParams != null)
-            {
-                typeParametersInScope = typeParametersInScope != null ? new HashSet<string>(typeParametersInScope.Concat(declaredParams)) : new HashSet<string>(declaredParams);
             }
 
-            if (subject is TypeReference typeReference && typeReference.Named != null)
-            {
-                if (typeParametersInScope == null || !typeParametersInScope.Contains(typeReference.Named.Name))
-                {
-                    result.Add(typeReference);
-                }
+            result.Add(this.pluginSettings.AstNodeBaseTypeQualified, new List<Declaration>(baseTypeDeclarations));
 
-                if (typeReference.Named.Parameters != null)
+            searchIterationResults.Add(this.pluginSettings.AstNodeBaseTypeQualified, baseTypeDeclarations);
+
+            while (searchIterationResults.Count > 0)
+            {
+                searchIterationResults = this.GatherInheritingDeclarations(result, searchSet, searchIterationResults);
+            }
+
+            return result;
+        }
+
+        private Dictionary<string, List<Declaration>> GatherInheritingDeclarations(
+            Dictionary<string, List<Declaration>> includedDeclarations,
+            Dictionary<string, List<Declaration>> otherDeclarations,
+            Dictionary<string, List<Declaration>> currentTreeLeafs)
+        {
+            Dictionary<string, List<Declaration>> result = new Dictionary<string, List<Declaration>>();
+
+            HashSet<string> refNames = new HashSet<string>();
+
+            foreach (var otherGroup in otherDeclarations)
+            {
+                foreach (var other in otherGroup.Value)
                 {
-                    foreach (var p in typeReference.Named.Parameters)
+                    refNames.Clear();
+                    bool matched = false;
+
+                    foreach (var inheritedRef in other.InheritedTypes)
                     {
-                        foreach (var r in this.GatherNonParameterTypeReferences(p, typeParametersInScope))
+                        if (matched)
                         {
-                            result.Add(r);
+                            break;
                         }
-                    }
-                }
-            }
-            else
-            {
-                foreach (var field in subjectType.GetFields(BindingFlags.Public | BindingFlags.Instance))
-                {
-                    if ((field.FieldType.IsGenericType && field.FieldType.GetGenericArguments().All(a => a.Namespace != typeof(Root).Namespace)) 
-                        || (!field.FieldType.IsGenericType && field.FieldType.Namespace != typeof(Root).Namespace))
-                    {
-                        continue;
-                    }
 
-                    var fieldValue = field.GetValue(subject);
-
-                    if (fieldValue == null)
-                    {
-                        continue;
-                    }
-
-                    if (field.FieldType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>)))
-                    {                        
-                        foreach (var o in fieldValue as IEnumerable<object>)
+                        foreach (var referencePart in this.GetInheritanceCompositionParts(inheritedRef))
                         {
-                            foreach (var r in this.GatherNonParameterTypeReferences(o, typeParametersInScope))
+                            if (matched)
                             {
-                                result.Add(r);
+                                break;
+                            }
+
+                            foreach (var referredName in this.GetReferredNameVariants(referencePart, other))
+                            {
+                                refNames.Add(referredName);
+                            }
+
+                            foreach (var referredName in refNames)
+                            {
+                                if (currentTreeLeafs.ContainsKey(referredName))
+                                {
+                                    if (!result.ContainsKey(otherGroup.Key))
+                                    {
+                                        result.Add(otherGroup.Key, new List<Declaration>());
+                                    }
+
+                                    var reusltCollection = result[otherGroup.Key];
+                                    reusltCollection.Add(other);
+                                    matched = true;
+                                    break;
+                                }
                             }
                         }
                     }
-                    else
-                    {
-                        foreach (var r in this.GatherNonParameterTypeReferences(fieldValue, typeParametersInScope))
-                        {
-                            result.Add(r);
-                        }
-                    }
+                }
+            }
+
+            foreach (var resultGroup in result)
+            {
+                if (!includedDeclarations.ContainsKey(resultGroup.Key))
+                {
+                    includedDeclarations.Add(resultGroup.Key, new List<Declaration>());
+                }
+
+                includedDeclarations[resultGroup.Key].AddRange(resultGroup.Value);
+
+                foreach (var resultItem in resultGroup.Value)
+                {
+                    otherDeclarations[resultGroup.Key].Remove(resultItem);
+                }
+
+                if (otherDeclarations[resultGroup.Key].Count == 0)
+                {
+                    otherDeclarations.Remove(resultGroup.Key);
                 }
             }
 
             return result;
         }
 
-        protected string[] GetDeclaredTypeParameters(object subject)
+        private List<string> GetReferredNameVariants(TypeReference typeReference, Declaration declarationContext)
         {
-            var subjectType = subject.GetType();
-            var parametersField = subjectType.GetFields(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault(f => f.FieldType == typeof(List<TypeParameter>));
+            var result = new List<string>();
 
-            if (parametersField != null)
+            if (typeReference.Named != null)
             {
-                var parameters = parametersField.GetValue(subject);
+                result.Add(typeReference.Named.Name);
 
-                if (parameters != null)
+                StringBuilder ns = new StringBuilder();
+                foreach (var nsPart in declarationContext.NamedDeclaration.Namespace.Split('.'))
                 {
-                    return ((List<TypeParameter>)parameters).Select(p => p.Name).ToArray();
+                    if (ns.Length != 0)
+                    {
+                        ns.Append(".");
+                    }
+
+                    ns.Append(nsPart);
+                    result.Add($"{ns}.{typeReference.Named.Name}");
                 }
             }
 
-            return null;
+            return result;
+        }
+
+        private TypeReference[] GetInheritanceCompositionParts(TypeReference reference)
+        {
+            if (reference.Named != null)
+            {
+                return new[] { reference };
+            }
+
+            if (reference.Union != null)
+            {
+                return reference.Union.Types.SelectMany(t => GetInheritanceCompositionParts(t)).ToArray();
+            }
+
+            return Array.Empty<TypeReference>();
         }
     }
 }

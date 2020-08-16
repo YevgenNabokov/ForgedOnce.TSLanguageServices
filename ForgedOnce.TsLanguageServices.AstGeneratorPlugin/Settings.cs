@@ -8,7 +8,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
     {
         public const string AstDescriptionJsonFilePathKey = "astDescriptionJsonFilePath";
 
+        public const string AstNodeBaseTypeQualifiedKey = "astNodeBaseTypeQualified";
+
         public string AstDescriptionJsonFilePath;
+
+        public string AstNodeBaseTypeQualified;
 
         public string BasePath;
     }

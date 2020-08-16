@@ -11,7 +11,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
 
         public Dictionary<string, Declaration> DeclarationReferences = new Dictionary<string, Declaration>();
 
-        public List<TypeReference> TypeReferences = new List<TypeReference>();
+        public HashSet<TypeReference> TypeReferences = new HashSet<TypeReference>();
+
+        public HashSet<TypeReference> InheritedTypes = new HashSet<TypeReference>();
 
         public Declaration(NamedDeclaration namedDeclaration)
         {
