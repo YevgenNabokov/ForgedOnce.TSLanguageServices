@@ -10,9 +10,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
         public const string AstNodeBaseTypeQualifiedKey = "astNodeBaseTypeQualified";
 
+        public const string ExcludedAstNodesKey = "excludedAstNodes";
+
         public string AstDescriptionJsonFilePath;
 
         public string AstNodeBaseTypeQualified;
+
+        public string ExcludedAstNodes = "ts.TransientIdentifier";
 
         public string BasePath;
     }

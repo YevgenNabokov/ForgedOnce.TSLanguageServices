@@ -11,9 +11,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
     {
         private readonly Settings pluginSettings;
 
+        private readonly HashSet<string> excludedAstNodes;
+
         public DescriptionAnalyzer(Settings pluginSettings)
         {
             this.pluginSettings = pluginSettings;
+            this.excludedAstNodes = new HashSet<string>(pluginSettings.ExcludedAstNodes.Split(','));
         }
 
         public Parameters CreateParameters(Root description)
@@ -22,7 +25,85 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
 
             var astDeclarations = this.GetAstDeclarations(declarationGraph);
 
+            var referredDeclarations = this.GetRelatedDeclarations(astDeclarations, declarationGraph, out Dictionary<string, Dictionary<TypeReference, string>> references);
+
+            var unresolvedReferences = new Dictionary<string, HashSet<TypeReference>>();
+
+            foreach (var ns in references)
+            {
+                HashSet<TypeReference> unresolved = new HashSet<TypeReference>(ns.Value.Where(r => r.Value == null).Select(r => r.Key));
+                if (unresolved.Count > 0)
+                {
+                    unresolvedReferences.Add(ns.Key, unresolved);
+                }
+            }
+
+            var referredNonEnumDeclarations = referredDeclarations.SelectMany(d => d.Value).Where(d => !(d.NamedDeclaration is EnumDescription)).ToList();
+
             return new Parameters();
+        }
+
+        private Dictionary<string, List<Declaration>> GetRelatedDeclarations(
+            Dictionary<string, List<Declaration>> astDeclarations,
+            Dictionary<string, List<Declaration>> declarationGraph,
+            out Dictionary<string, Dictionary<TypeReference, string>> processedReferences)
+        {
+            var referredDeclarations = new Dictionary<string, List<Declaration>>();
+            var references = new Dictionary<string, Dictionary<TypeReference, string>>();
+
+            var astDeclarationsByNamespace = astDeclarations.Values.SelectMany(g => g).GroupBy(g => g.NamedDeclaration.Namespace).ToDictionary(g => g.Key, g => g.ToList());
+
+            foreach (var ns in astDeclarationsByNamespace)
+            {
+                var checkedReferences = new HashSet<TypeReference>();
+
+                foreach (var declaration in ns.Value)
+                {
+                    foreach (var r in declaration.TypeReferences)
+                    {
+                        if (!checkedReferences.Contains(r))
+                        {
+                            checkedReferences.Add(r);
+                            string matchedName = null;
+
+                            foreach (var referredName in this.GetReferredNameVariants(r, declaration))
+                            {
+                                if (astDeclarations.ContainsKey(referredName))
+                                {
+                                    matchedName = referredName;
+                                    break;
+                                }
+                                else
+                                {
+                                    if (declarationGraph.ContainsKey(referredName))
+                                    {
+                                        matchedName = referredName;
+                                        if (!referredDeclarations.ContainsKey(referredName))
+                                        {
+                                            referredDeclarations.Add(referredName, new List<Declaration>(declarationGraph[referredName]));
+                                        }
+
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!references.ContainsKey(ns.Key))
+                            {
+                                references.Add(ns.Key, new Dictionary<TypeReference, string>());
+                            }
+
+                            if (!references[ns.Key].ContainsKey(r))
+                            {
+                                references[ns.Key].Add(r, matchedName);
+                            }
+                        }
+                    }
+                }
+            }
+
+            processedReferences = references;
+            return referredDeclarations;
         }
 
         private Dictionary<string, List<Declaration>> GetAstDeclarations(Dictionary<string, List<Declaration>> declarationGraph)
@@ -68,43 +149,46 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
 
             foreach (var otherGroup in otherDeclarations)
             {
-                foreach (var other in otherGroup.Value)
+                if (!this.excludedAstNodes.Contains(otherGroup.Key))
                 {
-                    refNames.Clear();
-                    bool matched = false;
-
-                    foreach (var inheritedRef in other.InheritedTypes)
+                    foreach (var other in otherGroup.Value)
                     {
-                        if (matched)
-                        {
-                            break;
-                        }
+                        refNames.Clear();
+                        bool matched = false;
 
-                        foreach (var referencePart in this.GetInheritanceCompositionParts(inheritedRef))
+                        foreach (var inheritedRef in other.InheritedTypes)
                         {
                             if (matched)
                             {
                                 break;
                             }
 
-                            foreach (var referredName in this.GetReferredNameVariants(referencePart, other))
+                            foreach (var referencePart in this.GetInheritanceCompositionParts(inheritedRef))
                             {
-                                refNames.Add(referredName);
-                            }
-
-                            foreach (var referredName in refNames)
-                            {
-                                if (currentTreeLeafs.ContainsKey(referredName))
+                                if (matched)
                                 {
-                                    if (!result.ContainsKey(otherGroup.Key))
-                                    {
-                                        result.Add(otherGroup.Key, new List<Declaration>());
-                                    }
-
-                                    var reusltCollection = result[otherGroup.Key];
-                                    reusltCollection.Add(other);
-                                    matched = true;
                                     break;
+                                }
+
+                                foreach (var referredName in this.GetReferredNameVariants(referencePart, other))
+                                {
+                                    refNames.Add(referredName);
+                                }
+
+                                foreach (var referredName in refNames)
+                                {
+                                    if (currentTreeLeafs.ContainsKey(referredName))
+                                    {
+                                        if (!result.ContainsKey(otherGroup.Key))
+                                        {
+                                            result.Add(otherGroup.Key, new List<Declaration>());
+                                        }
+
+                                        var reusltCollection = result[otherGroup.Key];
+                                        reusltCollection.Add(other);
+                                        matched = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -139,9 +223,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
         {
             var result = new List<string>();
 
+            var name = typeReference.Named.Name.Split('.').First();
+
             if (typeReference.Named != null)
             {
-                result.Add(typeReference.Named.Name);
+                result.Add(name);
 
                 StringBuilder ns = new StringBuilder();
                 foreach (var nsPart in declarationContext.NamedDeclaration.Namespace.Split('.'))
@@ -152,7 +238,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
                     }
 
                     ns.Append(nsPart);
-                    result.Add($"{ns}.{typeReference.Named.Name}");
+                    result.Add($"{ns}.{name}");
                 }
             }
 
