@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
+namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Analysis
 {
     public class DescriptionAnalyzer
     {
@@ -19,7 +19,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
             this.excludedAstNodes = new HashSet<string>(pluginSettings.ExcludedAstNodes.Split(','));
         }
 
-        public Parameters CreateParameters(Root description)
+        public AstDescription Analyze(Root description)
         {
             var declarationGraph = DeclarationDependencyGraphBuilder.BuildDeclarationGraph(description);
 
@@ -38,9 +38,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
                 }
             }
 
-            var referredNonEnumDeclarations = referredDeclarations.SelectMany(d => d.Value).Where(d => !(d.NamedDeclaration is EnumDescription)).ToList();
-
-            return new Parameters();
+            return new AstDescription()
+            {
+                AstDeclarations = astDeclarations,
+                ReferredDeclarations = referredDeclarations,
+                UnresolvedReferences = unresolvedReferences
+            };
         }
 
         private Dictionary<string, List<Declaration>> GetRelatedDeclarations(

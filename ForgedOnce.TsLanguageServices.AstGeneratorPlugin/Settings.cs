@@ -16,7 +16,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
         public string AstNodeBaseTypeQualified;
 
-        public string ExcludedAstNodes = "ts.TransientIdentifier";
+        public string ExcludedAstNodes = "ts.TransientIdentifier,ts.SyntaxList,ts.PropertyLikeDeclaration,ts.SuperCall,ts.ImportCall,ts.JsonObjectExpressionStatement,ts.ObjectDestructuringAssignment,ts.ArrayDestructuringAssignment,ts.PropertyAccessChain,ts.SuperPropertyAccessExpression,ts.SuperElementAccessExpression,ts.TsConfigSourceFile,ts.NonNullChain,ts.ElementAccessChain,ts.AssignmentExpression,ts.CallChain,ts.JsonSourceFile";
 
         public string BasePath;
     }

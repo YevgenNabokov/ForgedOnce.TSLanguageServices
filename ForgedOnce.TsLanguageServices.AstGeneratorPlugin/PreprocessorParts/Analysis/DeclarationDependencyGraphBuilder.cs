@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
+namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Analysis
 {
     public class DeclarationDependencyGraphBuilder
     {

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Model\Generated\" />
+    <Folder Include="TransportModel\Generated\" />
   </ItemGroup>
 
 </Project>

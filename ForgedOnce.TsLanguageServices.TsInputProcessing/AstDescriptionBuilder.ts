@@ -4,6 +4,8 @@ import * as adm from './AstDescriptionModel';
 
 import * as tparser from './AstDescriptionBuilderTypeParser';
 
+import * as fs from "fs";
+
 export class AstDescriptionBuilder {
     public enumsToSkip: { [key: string]: null } = { 'InternalSymbolName': null };
     public functionsToSkip: { [key: string]: null } = { 'createIncrementalProgram': null };

@@ -3,6 +3,8 @@ using ForgedOnce.Core.Plugins;
 using ForgedOnce.CSharp;
 using ForgedOnce.TsLanguageServices.AstDescription.Model;
 using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts;
+using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Analysis;
+using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.ParametersCreation;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -32,12 +34,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             var description = JsonConvert.DeserializeObject<Root>(payload);
 
             var fixer = new InstanceReferenceFixer();
-
             description = (Root)fixer.FixInstanceReferences(description);
 
             var analyzer = new DescriptionAnalyzer(pluginSettings);
+            var astDescription = analyzer.Analyze(description);
 
-            return analyzer.CreateParameters(description);
+            var parametersBuilder = new ParametersBuilder(pluginSettings);
+            return parametersBuilder.CreateParameters(astDescription);
         }
     }
 }
