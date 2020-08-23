@@ -16,6 +16,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             this.SetFromConfiguration((v) => settings.AstDescriptionJsonFilePath = v, configuration, Settings.AstDescriptionJsonFilePathKey);
             this.SetFromConfiguration((v) => settings.AstNodeBaseTypeQualified = v, configuration, Settings.AstNodeBaseTypeQualifiedKey);
             this.SetFromConfiguration((v) => settings.ExcludedAstNodes = v, configuration, Settings.ExcludedAstNodesKey);
+            this.SetFromConfiguration((v) => settings.OtherExcludedTypes = v, configuration, Settings.OtherExcludedTypesKey);
 
             settings.BasePath = context.BasePath;
 

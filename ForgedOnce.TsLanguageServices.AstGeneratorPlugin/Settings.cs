@@ -12,11 +12,15 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
         public const string ExcludedAstNodesKey = "excludedAstNodes";
 
+        public const string OtherExcludedTypesKey = "otherExcludedTypes";
+
         public string AstDescriptionJsonFilePath;
 
         public string AstNodeBaseTypeQualified;
 
-        public string ExcludedAstNodes = "ts.TransientIdentifier,ts.SyntaxList,ts.PropertyLikeDeclaration,ts.SuperCall,ts.ImportCall,ts.JsonObjectExpressionStatement,ts.ObjectDestructuringAssignment,ts.ArrayDestructuringAssignment,ts.PropertyAccessChain,ts.SuperPropertyAccessExpression,ts.SuperElementAccessExpression,ts.TsConfigSourceFile,ts.NonNullChain,ts.ElementAccessChain,ts.AssignmentExpression,ts.CallChain,ts.JsonSourceFile";
+        public string ExcludedAstNodes = "ts.TransientIdentifier,ts.SyntaxList,ts.PropertyLikeDeclaration,ts.SuperCall,ts.ImportCall,ts.JsonObjectExpressionStatement,ts.ObjectDestructuringAssignment,ts.ArrayDestructuringAssignment,ts.PropertyAccessChain,ts.SuperPropertyAccessExpression,ts.SuperElementAccessExpression,ts.TsConfigSourceFile,ts.NonNullChain,ts.ElementAccessChain,ts.AssignmentExpression,ts.CallChain,ts.JsonSourceFile,ts.BindingOrAssignmentElement";
+
+        public string OtherExcludedTypes = "ts.UnscopedEmitHelper";
 
         public string BasePath;
     }

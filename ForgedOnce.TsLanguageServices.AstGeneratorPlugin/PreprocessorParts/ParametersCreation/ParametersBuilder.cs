@@ -33,7 +33,21 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 .Select(nk => nk.Name)
                 .ToArray();
 
-            return new Parameters();
+            var referredNonEnums = astDescription
+                .ReferredDeclarations
+                .SelectMany(g => g.Value)
+                .Select(d => d.NamedDeclaration)
+                .Where(d => !(d is EnumDescription))
+                .Select(nk => nk.Name)
+                .ToArray();
+
+            var result = new Parameters();
+
+            var transportModelParametersBuilder = new TransportModelParametersBuilder(this.pluginSettings);
+
+            result.TransportModel = transportModelParametersBuilder.Create(astDescription);
+
+            return result;
         }
     }
 }
