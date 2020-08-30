@@ -43,10 +43,49 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Ana
 
             return new AstDescription()
             {
-                AstDeclarations = astDeclarations,
-                ReferredDeclarations = referredDeclarations,
+                AstDeclarations = astDeclarations.ToDictionary(d => d.Key, d => this.Filter(d.Value)),
+                ReferredDeclarations = referredDeclarations.ToDictionary(d => d.Key, d => this.Filter(d.Value)),
                 UnresolvedReferences = unresolvedReferences
             };
+        }
+
+        private Declaration Filter(List<Declaration> declarations)
+        {
+            if (declarations.Count == 0)
+            {
+                return null;
+            }
+
+            if (declarations.Count == 1)
+            {
+                return declarations[0];
+            }
+
+            Declaration result = null;
+
+            foreach (var declaration in declarations)
+            {
+                if (declaration.NamedDeclaration is InterfaceDescription interfaceDescription)
+                {
+                    if (interfaceDescription.Members.Any(m => m.GetName() == "kind")
+                        || (interfaceDescription.Members.All(m => m.Property != null) && interfaceDescription.Extends.Count == 0))
+                    {
+                        if (result != null)
+                        {
+                            throw new InvalidOperationException($"Ambiguous primary declaration {interfaceDescription.Name}.");
+                        }
+
+                        result = declaration;
+                    }
+                }
+            }
+
+            if (result == null)
+            {
+                throw new InvalidOperationException($"Failed to find primary declaration.");
+            }
+
+            return result;
         }
 
         private Dictionary<string, List<Declaration>> GetRelatedDeclarations(
@@ -65,7 +104,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Ana
 
                 foreach (var declaration in ns.Value)
                 {
-                    foreach (var r in declaration.TypeReferences)
+                    foreach (var r in declaration.NamedTypeReferences)
                     {
                         if (!checkedReferences.Contains(r))
                         {

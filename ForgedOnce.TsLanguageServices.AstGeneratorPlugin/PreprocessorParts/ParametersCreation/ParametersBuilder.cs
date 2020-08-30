@@ -19,7 +19,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         {
             var nonKindSpecifiedInterfaces = astDescription
                 .AstDeclarations
-                .SelectMany(g => g.Value)
+                .Select(g => g.Value)
                 .Select(d => d.NamedDeclaration)
                 .OfType<InterfaceDescription>()
                 .Where(d => !d.Members.Any(m => m.Property != null && m.Property.Name == "kind"))
@@ -28,14 +28,14 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             var nonInheritednonKindSpecifiedInterfaces = nonKindSpecifiedInterfaces
                 .Where(nk => !astDescription
                     .AstDeclarations
-                    .SelectMany(g => g.Value)
+                    .Select(g => g.Value)
                     .Any(d => d.InheritedTypes.Any(r => r.Named != null && r.Named.Name == nk.Name)))
                 .Select(nk => nk.Name)
                 .ToArray();
 
             var referredNonEnums = astDescription
                 .ReferredDeclarations
-                .SelectMany(g => g.Value)
+                .Select(g => g.Value)
                 .Select(d => d.NamedDeclaration)
                 .Where(d => !(d is EnumDescription))
                 .Select(nk => nk.Name)
@@ -43,7 +43,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             var result = new Parameters();
 
-            var transportModelParametersBuilder = new TransportModelParametersBuilder(this.pluginSettings);
+            var transportModelParametersBuilder = new TransportModelParametersBuilder(new ModelSettings(this.pluginSettings));
 
             result.TransportModel = transportModelParametersBuilder.Create(astDescription);
 

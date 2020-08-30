@@ -4,10 +4,8 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 {
-    public class TransportModelEntity
+    public class TransportModelEntity : TransportModelItem
     {
-        public string Name;
-
         public TransportModelEntity BaseEntity;
 
         public Dictionary<string, TransportModelEntityMember> Members = new Dictionary<string, TransportModelEntityMember>();

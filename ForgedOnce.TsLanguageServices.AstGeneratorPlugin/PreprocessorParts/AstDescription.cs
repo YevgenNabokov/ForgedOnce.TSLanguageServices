@@ -7,9 +7,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
 {
     public class AstDescription
     {
-        public Dictionary<string, List<Declaration>> AstDeclarations;
+        public Dictionary<string, Declaration> AstDeclarations;
 
-        public Dictionary<string, List<Declaration>> ReferredDeclarations;
+        public Dictionary<string, Declaration> ReferredDeclarations;
 
         public Dictionary<string, HashSet<TypeReference>> UnresolvedReferences;
     }

@@ -9,7 +9,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
     {
         public NamedDeclaration NamedDeclaration;
 
-        public HashSet<TypeReference> TypeReferences = new HashSet<TypeReference>();
+        public HashSet<TypeReference> NamedTypeReferences = new HashSet<TypeReference>();
 
         public HashSet<TypeReference> InheritedTypes = new HashSet<TypeReference>();
 

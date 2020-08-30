@@ -10,32 +10,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 {
     public class TransportModelParametersBuilder
     {
-        private readonly Dictionary<string, string> interfacesMappedToPrimitiveTypes = new Dictionary<string, string>()
+        private readonly ModelSettings settings;
+
+        public TransportModelParametersBuilder(ModelSettings settings)
         {
-            { "__String", typeof(string).FullName }
-        };
-
-        private readonly HashSet<string> interfacesMappedAsCollection = new HashSet<string>()
-        {
-            "NodeArray"
-        };
-
-        private readonly Dictionary<string, string> primitiveTypesMappings = new Dictionary<string, string>()
-        {
-            { "string", typeof(string).FullName },
-            { "number", typeof(int).FullName },
-            { "boolean", typeof(bool).FullName },
-            { "any", typeof(object).FullName },
-        };
-
-        private readonly HashSet<string> otherExcludedTypes;
-
-        private readonly HashSet<string> excludedAstNodes;
-
-        public TransportModelParametersBuilder(Settings settings)
-        {
-            this.otherExcludedTypes = new HashSet<string>(settings.OtherExcludedTypes.Split(','));
-            this.excludedAstNodes = new HashSet<string>(settings.ExcludedAstNodes.Split(','));
+            this.settings = settings;
         }
 
         public TransportModel Create(AstDescription astDescription)
@@ -43,6 +22,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             var result = new TransportModel();
 
             result.TransportModelEnums = this.CreateEnums(astDescription);
+
+            var transportInheritanceResolver = new TransportModelInheritanceResolver(this.settings);
+            var inheritanceModel = transportInheritanceResolver.ResolveInheritance(astDescription);
 
             var context = new EntitiesBuilderContext();
             result.TransportModelEntities = this.CreateEntities(astDescription, result.TransportModelEnums, context);
@@ -54,7 +36,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         {
             var result = new Dictionary<string, TransportModelEnum>();
 
-            foreach (var enumDeclaration in astDescription.ReferredDeclarations.SelectMany(g => g.Value).Where(d => d.NamedDeclaration is EnumDescription))
+            foreach (var enumDeclaration in astDescription.ReferredDeclarations.Select(g => g.Value).Where(d => d.NamedDeclaration is EnumDescription))
             {
                 var enumDescription = enumDeclaration.NamedDeclaration as EnumDescription;
 
@@ -89,27 +71,27 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         {
             var result = new Dictionary<string, TransportModelEntity>();
 
-            foreach (var declaration in astDescription.ReferredDeclarations.SelectMany(g => g.Value).Where(d => d.NamedDeclaration is ClassDescription))
+            foreach (var declaration in astDescription.ReferredDeclarations.Select(g => g.Value).Where(d => d.NamedDeclaration is ClassDescription))
             {
                 throw new NotImplementedException("Class declarations are not implemented yet.");
             }
 
-            foreach (var declarationGroup in astDescription.ReferredDeclarations.Where(g => g.Value.All(d => d.NamedDeclaration is InterfaceDescription)))
-            {
-                this.CreateEntityFromInterfaceDeclarationGroup(declarationGroup.Value, astDescription, enums, result, context);
-            }
+            ////foreach (var declarationGroup in astDescription.ReferredDeclarations.Where(g => g.Value.All(d => d.NamedDeclaration is InterfaceDescription)))
+            ////{
+            ////    this.CreateEntityFromInterfaceDeclarationGroup(declarationGroup.Value, astDescription, enums, result, context);
+            ////}
 
-            foreach (var declarationGroup in astDescription.AstDeclarations.Where(g => g.Value.All(d => d.NamedDeclaration is InterfaceDescription)))
-            {                
-                this.CreateEntityFromInterfaceDeclarationGroup(declarationGroup.Value, astDescription, enums, result, context);
-            }
+            ////foreach (var declarationGroup in astDescription.AstDeclarations.Where(g => g.Value.All(d => d.NamedDeclaration is InterfaceDescription)))
+            ////{                
+            ////    this.CreateEntityFromInterfaceDeclarationGroup(declarationGroup.Value, astDescription, enums, result, context);
+            ////}
 
             return result;
         }
 
-        private bool interfaceShouldNotGenerateEntity(InterfaceDescription description)
+        private bool InterfaceShouldNotGenerateEntity(InterfaceDescription description)
         {
-            return this.interfacesMappedToPrimitiveTypes.ContainsKey(description.Name) || this.interfacesMappedAsCollection.Contains(description.Name);
+            return this.settings.InterfacesMappedToPrimitiveTypes.ContainsKey(description.Name) || this.settings.InterfacesMappedAsCollection.Contains(description.Name);
         }
 
         private void CreateEntityFromInterfaceDeclarationGroup(
@@ -148,7 +130,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
                 var mergedDeclaration = new Declaration(mergedNamedDeclaration);
                 mergedDeclaration.InheritedTypes = new HashSet<DescriptionModel.TypeReference>(declarations.SelectMany(d => d.InheritedTypes));
-                mergedDeclaration.TypeReferences = new HashSet<DescriptionModel.TypeReference>(declarations.SelectMany(d => d.TypeReferences));
+                mergedDeclaration.NamedTypeReferences = new HashSet<DescriptionModel.TypeReference>(declarations.SelectMany(d => d.NamedTypeReferences));
 
                 this.CreateEntityFromInterface(
                     mergedDeclaration,
@@ -178,7 +160,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             Dictionary<string, TransportModelEntity> output,
             EntitiesBuilderContext context)
         {
-            if (this.interfaceShouldNotGenerateEntity(description))
+            if (this.InterfaceShouldNotGenerateEntity(description))
             {
                 return;
             }
@@ -195,62 +177,62 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             context.EntitiesInProgress.Add(result.Name, result);
 
-            result.BaseEntity = this.InferInheritedEntity(
-                declaration,
-                description,
-                astDescription,
-                enums,
-                output,
-                out Dictionary<TypeElement, InterfaceDescription> additionalMembers,
-                context);
+            ////result.BaseEntity = this.InferInheritedEntity(
+            ////    declaration,
+            ////    description,
+            ////    astDescription,
+            ////    enums,
+            ////    output,
+            ////    out Dictionary<TypeElement, InterfaceDescription> additionalMembers,
+            ////    context);
 
             context.EntitiesInProgress.Remove(result.Name);
             output.Add(result.Name, result);
         }
 
-        private TransportModelEntity InferInheritedEntity(
-            Declaration declaration,
-            InterfaceDescription description,
-            AstDescription astDescription,
-            Dictionary<string, TransportModelEnum> enums,
-            Dictionary<string, TransportModelEntity> output,
-            out Dictionary<TypeElement, InterfaceDescription> additionalMembers,
-            EntitiesBuilderContext context)
-        {
-            additionalMembers = new Dictionary<TypeElement, InterfaceDescription>();
+        ////private TransportModelEntity InferInheritedEntity(
+        ////    Declaration declaration,
+        ////    InterfaceDescription description,
+        ////    AstDescription astDescription,
+        ////    Dictionary<string, TransportModelEnum> enums,
+        ////    Dictionary<string, TransportModelEntity> output,
+        ////    out Dictionary<TypeElement, InterfaceDescription> additionalMembers,
+        ////    EntitiesBuilderContext context)
+        ////{
+        ////    additionalMembers = new Dictionary<TypeElement, InterfaceDescription>();
 
-            if (description.Extends == null || description.Extends.Count == 0)
-            {
-                return null;
-            }
+        ////    if (description.Extends == null || description.Extends.Count == 0)
+        ////    {
+        ////        return null;
+        ////    }
 
-            if (description.Extends.Any(e => e.Named == null))
-            {
-                throw new InvalidOperationException("Only explicitly named types are supported in inheritance.");
-            }
+        ////    if (description.Extends.Any(e => e.Named == null))
+        ////    {
+        ////        throw new InvalidOperationException("Only explicitly named types are supported in inheritance.");
+        ////    }
 
-            var filtered = description.Extends.Where(e => !this.ReferencePointsToExcludedType(e, declaration.NamedDeclaration.Namespace)).ToArray();
+        ////    var filtered = description.Extends.Where(e => !this.ReferencePointsToExcludedType(e, declaration.NamedDeclaration.Namespace)).ToArray();
 
-            if (filtered.Length == 1)
-            {
-                var reference = this.GetTypeReference(filtered[0], declaration.NamedDeclaration.Namespace, astDescription, enums, output, context, out _);
+        ////    if (filtered.Length == 1)
+        ////    {
+        ////        var reference = this.GetTypeReference(filtered[0], declaration.NamedDeclaration.Namespace, astDescription, enums, output, context, out _);
 
-                if (reference is TypeReferenceTransportModelEntity entityReference)
-                {
-                    return entityReference.Entity;
-                }
-                else
-                {
-                    throw new InvalidOperationException("Singular inheritance only from other entity is supported.");
-                }
-            }
-            else
-            {
+        ////        if (reference is TypeReferenceTransportModelEntity entityReference)
+        ////        {
+        ////            return entityReference.Entity;
+        ////        }
+        ////        else
+        ////        {
+        ////            throw new InvalidOperationException("Singular inheritance only from other entity is supported.");
+        ////        }
+        ////    }
+        ////    else
+        ////    {
 
-            }
+        ////    }
 
-            throw new InvalidOperationException("Cannot infer inherited entity.");
-        }
+        ////    throw new InvalidOperationException("Cannot infer inherited entity.");
+        ////}
 
         private bool ReferencePointsToExcludedType(
             DescriptionModel.TypeReference typeReference,
@@ -260,93 +242,93 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             {
                 var fullName = $"{contextNamespace}.{typeReference.Named.Name}";
 
-                return this.otherExcludedTypes.Contains(fullName) || this.excludedAstNodes.Contains(fullName);
+                return this.settings.OtherExcludedTypes.Contains(fullName) || this.settings.ExcludedAstNodes.Contains(fullName);
             }
 
             return false;
         }
 
-        private ParametersModel.TypeReference GetTypeReference(
-            DescriptionModel.TypeReference typeReference,
-            string contextNamespace,
-            AstDescription astDescription,
-            Dictionary<string, TransportModelEnum> enums,
-            Dictionary<string, TransportModelEntity> output,
-            EntitiesBuilderContext context,
-            out string exactEnumValue)
-        {
-            exactEnumValue = null;
+        ////private ParametersModel.TypeReference GetTypeReference(
+        ////    DescriptionModel.TypeReference typeReference,
+        ////    string contextNamespace,
+        ////    AstDescription astDescription,
+        ////    Dictionary<string, TransportModelEnum> enums,
+        ////    Dictionary<string, TransportModelEntity> output,
+        ////    EntitiesBuilderContext context,
+        ////    out string exactEnumValue)
+        ////{
+        ////    exactEnumValue = null;
 
-            if (typeReference.Named != null)
-            {
-                var parts = typeReference.Named.Name.Split('.');
+        ////    if (typeReference.Named != null)
+        ////    {
+        ////        var parts = typeReference.Named.Name.Split('.');
 
-                if (enums.ContainsKey(parts[0]))
-                {
-                    var outputEnum = enums[parts[0]];
+        ////        if (enums.ContainsKey(parts[0]))
+        ////        {
+        ////            var outputEnum = enums[parts[0]];
 
-                    if (parts.Length > 1)
-                    {
-                        if (!outputEnum.Members.ContainsKey(parts[1]))
-                        {
-                            throw new InvalidOperationException($"Reference {typeReference.Named.Name} refers to non existent enum member.");
-                        }
+        ////            if (parts.Length > 1)
+        ////            {
+        ////                if (!outputEnum.Members.ContainsKey(parts[1]))
+        ////                {
+        ////                    throw new InvalidOperationException($"Reference {typeReference.Named.Name} refers to non existent enum member.");
+        ////                }
 
-                        exactEnumValue = parts[1];
-                    }
+        ////                exactEnumValue = parts[1];
+        ////            }
 
-                    return new TypeReferenceTransportModelEnum()
-                    {
-                        Enum = outputEnum
-                    };
-                }
+        ////            return new TypeReferenceTransportModelEnum()
+        ////            {
+        ////                Enum = outputEnum
+        ////            };
+        ////        }
 
-                if (parts.Length > 1)
-                {
-                    throw new InvalidOperationException($"Reference {typeReference.Named.Name} refers to a member of non-enum type.");
-                }
+        ////        if (parts.Length > 1)
+        ////        {
+        ////            throw new InvalidOperationException($"Reference {typeReference.Named.Name} refers to a member of non-enum type.");
+        ////        }
 
-                if (this.primitiveTypesMappings.ContainsKey(typeReference.Named.Name))
-                {
-                    return new TypeReferencePrimitive()
-                    {
-                        FullyQualifiedName = this.primitiveTypesMappings[typeReference.Named.Name]
-                    };
-                }
+        ////        if (this.primitiveTypesMappings.ContainsKey(typeReference.Named.Name))
+        ////        {
+        ////            return new TypeReferencePrimitive()
+        ////            {
+        ////                FullyQualifiedName = this.primitiveTypesMappings[typeReference.Named.Name]
+        ////            };
+        ////        }
 
-                if (context.EntitiesInProgress.ContainsKey(typeReference.Named.Name))
-                {
-                    return new TypeReferenceTransportModelEntity()
-                    {
-                        Entity = context.EntitiesInProgress[parts[0]]
-                    };
-                }
+        ////        if (context.EntitiesInProgress.ContainsKey(typeReference.Named.Name))
+        ////        {
+        ////            return new TypeReferenceTransportModelEntity()
+        ////            {
+        ////                Entity = context.EntitiesInProgress[parts[0]]
+        ////            };
+        ////        }
 
-                var fullName = $"{contextNamespace}.{typeReference.Named.Name}";
+        ////        var fullName = $"{contextNamespace}.{typeReference.Named.Name}";
 
-                if (astDescription.AstDeclarations.ContainsKey(fullName) && !output.ContainsKey(typeReference.Named.Name))
-                {
-                    var declarations = astDescription.AstDeclarations[fullName];
-                    this.CreateEntityFromInterfaceDeclarationGroup(declarations, astDescription, enums, output, context);
-                }
+        ////        if (astDescription.AstDeclarations.ContainsKey(fullName) && !output.ContainsKey(typeReference.Named.Name))
+        ////        {
+        ////            var declarations = astDescription.AstDeclarations[fullName];
+        ////            this.CreateEntityFromInterfaceDeclarationGroup(declarations, astDescription, enums, output, context);
+        ////        }
 
-                if (astDescription.ReferredDeclarations.ContainsKey(fullName) && !output.ContainsKey(typeReference.Named.Name))
-                {
-                    var declarations = astDescription.ReferredDeclarations[fullName];
-                    this.CreateEntityFromInterfaceDeclarationGroup(declarations, astDescription, enums, output, context);
-                }
+        ////        if (astDescription.ReferredDeclarations.ContainsKey(fullName) && !output.ContainsKey(typeReference.Named.Name))
+        ////        {
+        ////            var declarations = astDescription.ReferredDeclarations[fullName];
+        ////            this.CreateEntityFromInterfaceDeclarationGroup(declarations, astDescription, enums, output, context);
+        ////        }
 
-                if (output.ContainsKey(typeReference.Named.Name))
-                {
-                    return new TypeReferenceTransportModelEntity()
-                    {
-                        Entity = output[typeReference.Named.Name]
-                    };
-                }
-            }
+        ////        if (output.ContainsKey(typeReference.Named.Name))
+        ////        {
+        ////            return new TypeReferenceTransportModelEntity()
+        ////            {
+        ////                Entity = output[typeReference.Named.Name]
+        ////            };
+        ////        }
+        ////    }
 
-            throw new InvalidOperationException("Type reference cannot be mapped.");
-        }
+        ////    throw new InvalidOperationException("Type reference cannot be mapped.");
+        ////}
 
         protected class EntitiesBuilderContext
         {

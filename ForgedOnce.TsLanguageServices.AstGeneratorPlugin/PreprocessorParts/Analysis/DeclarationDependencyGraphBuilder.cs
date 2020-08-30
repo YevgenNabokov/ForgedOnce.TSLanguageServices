@@ -43,7 +43,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Ana
 
             foreach (var r in GatherNonParameterTypeReferences(declaration))
             {
-                result.TypeReferences.Add(r);
+                result.NamedTypeReferences.Add(r);
             }
 
             foreach (var r in GetInheritanceReferences(declaration))
