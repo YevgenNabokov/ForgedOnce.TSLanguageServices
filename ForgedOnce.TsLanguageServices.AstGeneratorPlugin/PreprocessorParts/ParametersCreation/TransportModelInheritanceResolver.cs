@@ -42,26 +42,91 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 rawInheritanceLists.Add(declaration, list);
             }
 
+            Dictionary<Declaration, HashSet<Declaration>> rawInheritanceListsReversed = new Dictionary<Declaration, HashSet<Declaration>>();
+            foreach (var d1 in rawInheritanceLists)
+            {
+                foreach (var d2 in d1.Value)
+                {
+                    if (!rawInheritanceListsReversed.ContainsKey(d2))
+                    {
+                        rawInheritanceListsReversed.Add(d2, new HashSet<Declaration>());
+                    }
+
+                    rawInheritanceListsReversed[d2].Add(d1.Key);
+                }
+            }
+
             var pureInterfaces = interfaceDeclarations
                 .Where(d => this.CanCollapseToEmptyInterface(d.Value, rawInheritanceLists))
                 .ToDictionary(d => d.Key, d => d.Value);
             foreach (var i in pureInterfaces)
             {
                 result.CollapsedToEmptyInterface.Add(i.Value);
-                interfaceDeclarations.Remove(i.Key);
+                ////interfaceDeclarations.Remove(i.Key);
             }
 
-            var complex = interfaceDeclarations
+            var complex = new HashSet<Declaration>(interfaceDeclarations
                 .Values
-                .Where(d => rawInheritanceLists[d].Count > 1)
-                .ToArray();
+                .Where(d => rawInheritanceLists[d].Count > 1));
 
             foreach (var declaration in complex)
             {
-                this.ResolveForInterface(declaration, result, referenceUsages, rawInheritanceLists, astDescription);
+                this.ResolveForInterface(declaration, result, referenceUsages, rawInheritanceLists, rawInheritanceListsReversed, astDescription);
             }
 
+            foreach (var declaration in interfaceDeclarations.Values.Where(i => !complex.Contains(i)))
+            {
+                this.ResolveForInterface(declaration, result, referenceUsages, rawInheritanceLists, rawInheritanceListsReversed, astDescription);
+            }
+
+            this.FixInterfaceImplementations(result);
+
             return result;
+        }
+
+        private void FixInterfaceImplementations(InheritanceModel inheritanceModel)
+        {
+            foreach (var pureInterface in inheritanceModel.CollapsedToInterface)
+            {
+                if (inheritanceModel.Declarations.ContainsKey(pureInterface.GetFullName()))
+                {
+                    inheritanceModel.Declarations[pureInterface.GetFullName()].CollapsedToInterface = true;
+                }
+            }
+
+            foreach (var emptyInterface in inheritanceModel.CollapsedToEmptyInterface)
+            {
+                if (inheritanceModel.Declarations.ContainsKey(emptyInterface.GetFullName()))
+                {
+                    inheritanceModel.Declarations[emptyInterface.GetFullName()].CollapsedToEmptyInterface = true;
+                }
+            }
+
+            foreach (var i in inheritanceModel.RepresentedAsInterface)
+            {
+                if (inheritanceModel.Declarations.ContainsKey(i.GetFullName()))
+                {
+                    inheritanceModel.Declarations[i.GetFullName()].RepresentedAsInterface = true;
+                }
+            }
+
+            foreach (var item in inheritanceModel.Declarations)
+            {
+                if (item.Value.BaseDeclaration != null)
+                {
+                    while (item.Value.BaseDeclaration != null && 
+                        (inheritanceModel.CollapsedToInterface.Contains(item.Value.BaseDeclaration) 
+                        || inheritanceModel.CollapsedToEmptyInterface.Contains(item.Value.BaseDeclaration)))
+                    {
+                        if (!inheritanceModel.Declarations.ContainsKey(item.Value.BaseDeclaration.GetFullName()))
+                        {
+                            throw new InvalidOperationException("Entity cannot inherit from interface.");
+                        }
+
+                        item.Value.BaseDeclaration = inheritanceModel.Declarations[item.Value.BaseDeclaration.GetFullName()].BaseDeclaration;
+                    }
+                }
+            }
         }
 
         private bool CanCollapseToEmptyInterface(
@@ -80,186 +145,153 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             return false;
         }
 
+        private bool CanCollapseToInterface(
+            Declaration declaration,
+            Dictionary<Declaration, HashSet<Declaration>> rawInheritanceLists)
+        {
+            if (declaration.NamedDeclaration is DescriptionModel.InterfaceDescription interfaceDescription)
+            {
+                return interfaceDescription.Members.All(m => m.Property != null && m.Property.Name != "kind");
+            }
+
+            return false;
+        }
+
         private void ResolveForInterface(
             Declaration declaration,
             InheritanceModel result,
             Dictionary<DescriptionModel.TypeReference, HashSet<Declaration>> usages,
             Dictionary<Declaration, HashSet<Declaration>> rawInheritanceLists,
+            Dictionary<Declaration, HashSet<Declaration>> rawInheritanceListsReversed,
             AstDescription astDescription)
         {
-            var list = rawInheritanceLists[declaration];
-
-            if (list.Count == 0)
+            if (settings.TypesRepresentedAsInterface.Contains(declaration.GetFullName()))
             {
-                result.Declarations.Add(declaration.GetFullName(), new InheritanceModelDeclaration()
-                {
-                    OriginalDeclaration = declaration
-                });
-
-                return;
+                result.RepresentedAsInterface.Add(declaration);
             }
 
-            if (list.Count == 1)
+            var list = new HashSet<Declaration>(rawInheritanceLists[declaration]);
+            bool shouldContinue = true;
+
+            var item = new InheritanceModelDeclaration()
             {
-                result.Declarations.Add(declaration.GetFullName(), new InheritanceModelDeclaration()
+                OriginalDeclaration = declaration
+            };
+
+            while (shouldContinue)
+            {
+                shouldContinue = false;
+                var entities = list.Where(i => !result.CollapsedToEmptyInterface.Contains(i) && !result.CollapsedToInterface.Contains(i)).ToArray();
+                var emptyInterfaces = list.Where(i => result.CollapsedToEmptyInterface.Contains(i)).ToArray();
+                var pureInterfaces = list.Where(i => result.CollapsedToInterface.Contains(i)).ToArray();
+
+                list.Clear();
+
+                if (emptyInterfaces.Length == 0 && pureInterfaces.Length == 0)
                 {
-                    OriginalDeclaration = declaration,
-                    BaseDeclaration = list.First()
-                });
-
-                return;
-            }
-
-            if (this.ResolveForRepeatedInheritance(declaration, result, usages, rawInheritanceLists, astDescription))
-            {
-                return;
-            }
-
-            if (this.ResolveForEmptyInterfaces(declaration, result, usages, rawInheritanceLists, astDescription))
-            {
-                return;
-            }
-
-            throw new InvalidOperationException("Unable to resolve inheritance list.");
-        }
-
-        private bool ResolveForRepeatedInheritance(
-            Declaration declaration,
-            InheritanceModel result,
-            Dictionary<DescriptionModel.TypeReference, HashSet<Declaration>> usages,
-            Dictionary<Declaration, HashSet<Declaration>> rawInheritanceLists,
-            AstDescription astDescription)
-        {
-            var list = new List<Declaration>(rawInheritanceLists[declaration]);
-            bool go = true;
-            while (go)
-            {
-                if (list.Count <= 1)
-                {
-                    go = false;
-                }
-                else
-                {
-                    if (this.FirstInheritsSecond(list[0], list[1], rawInheritanceLists))
+                    if (entities.Length <= 1)
                     {
-                        list.RemoveAt(1);
+                        if (entities.Length == 1)
+                        {
+                            item.BaseDeclaration = entities[0];
+                        }
                     }
                     else
                     {
-                        if (this.FirstInheritsSecond(list[1], list[0], rawInheritanceLists))
+                        var filteredEntities = entities.Where(e => !entities.Any(e1 => e != e1 && this.FirstInheritsSecond(e1, e, rawInheritanceLists))).ToArray();
+                        if (filteredEntities.Length < entities.Length)
                         {
-                            list.RemoveAt(0);
+                            shouldContinue = true;
+                            foreach (var e in filteredEntities)
+                            {
+                                list.Add(e);
+                            }
                         }
                         else
                         {
-                            go = false;
+                            var collapsibleToEmpty = entities.Where(e => this.CanCollapseToEmptyInterface(e, rawInheritanceLists)).ToArray();
+                            if (collapsibleToEmpty.Length > 0)
+                            {
+                                foreach (var e in collapsibleToEmpty)
+                                {
+                                    result.CollapsedToEmptyInterface.Add(e);
+                                }
+
+                                shouldContinue = true;
+                            }
+                            else
+                            {
+                                var collapsible = entities
+                                    .Where(e => this.CanCollapseToInterface(e, rawInheritanceLists))
+                                    .OrderBy(c => rawInheritanceListsReversed.ContainsKey(c) ? rawInheritanceListsReversed[c].Count : 0)
+                                    .ToArray();
+
+                                if (collapsible.Length > 0)
+                                {
+                                    for (var i = 0; i < Math.Min(entities.Length - 1, collapsible.Length); i++)
+                                    {
+                                        result.CollapsedToInterface.Add(collapsible[i]);
+                                    }
+
+                                    shouldContinue = true;
+                                }
+                            }
+
+                            foreach (var e in entities)
+                            {
+                                list.Add(e);
+                            }
+                        }
+
+                        if (!shouldContinue)
+                        {
+                            throw new InvalidOperationException("Unable to resolve inheritance list.");
                         }
                     }
-                }
-            }
-
-            if (list.Count <= 1)
-            {
-                result.Declarations.Add(declaration.GetFullName(), new InheritanceModelDeclaration()
-                {
-                    OriginalDeclaration = declaration,
-                    BaseDeclaration = list.FirstOrDefault()
-                });
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool ResolveForEmptyInterfaces(
-            Declaration declaration,
-            InheritanceModel result,
-            Dictionary<DescriptionModel.TypeReference, HashSet<Declaration>> usages,
-            Dictionary<Declaration, HashSet<Declaration>> rawInheritanceLists,
-            AstDescription astDescription)
-        {
-            var list = new List<Declaration>(rawInheritanceLists[declaration]);
-            var interfaces = list.Where(i => result.CollapsedToEmptyInterface.Contains(i)).ToArray();
-
-            if (interfaces.Length > 0)
-            {
-                var nonEmpty = new HashSet<Declaration>();
-                foreach (var i in interfaces)
-                {
-                    foreach (var ne in this.GetInheritedNonEmptyInterfaces(i, result, rawInheritanceLists))
-                    {
-                        nonEmpty.Add(ne);
-                    }
-                }
-
-                Declaration baseDeclaration = null;
-
-                if (list.Count == interfaces.Length)
-                {
-                    if (nonEmpty.Count > 1)
-                    {
-                        throw new InvalidOperationException($"Some interfaces implemented by {declaration.GetFullName()} does not inherit from single common non-empty interface.");
-                    }
-
-                    baseDeclaration = nonEmpty.FirstOrDefault();
                 }
                 else
                 {
-                    if (list.Count == interfaces.Length + 1)
+                    foreach (var e in entities)
                     {
-                        baseDeclaration = list.First(l => !interfaces.Contains(l));
+                        list.Add(e);
+                    }
 
-                        if (!nonEmpty.All(ne => this.FirstInheritsSecond(baseDeclaration, ne, rawInheritanceLists)))
+                    foreach (var empty in emptyInterfaces)
+                    {
+                        var baseItems = rawInheritanceLists[empty];
+                        if (!item.ImplementedInterfaces.Any(i => this.FirstInheritsSecond(i, empty, rawInheritanceLists)))
                         {
-                            throw new InvalidOperationException($"Some interfaces implemented by {declaration.GetFullName()} have base interface not implemented by {baseDeclaration.GetFullName()}.");
+                            item.ImplementedInterfaces.Add(empty);
                         }
+
+                        foreach (var baseItem in baseItems)
+                        {
+                            list.Add(baseItem);
+                        }
+
+                        shouldContinue = true;
                     }
-                    else
+
+                    foreach (var pure in pureInterfaces)
                     {
-                        throw new InvalidOperationException("Cannot resolve for interfaces.");
+                        var baseItems = rawInheritanceLists[pure];
+                        if (!item.ImplementedInterfaces.Any(i => this.FirstInheritsSecond(i, pure, rawInheritanceLists)))
+                        {
+                            item.ImplementedInterfaces.Add(pure);
+                            item.MergedDeclarations.Add(pure);
+                        }
+
+                        foreach (var baseItem in baseItems)
+                        {
+                            list.Add(baseItem);
+                        }
+
+                        shouldContinue = true;
                     }
                 }
-
-                result.Declarations.Add(declaration.GetFullName(), new InheritanceModelDeclaration()
-                {
-                    OriginalDeclaration = declaration,
-                    BaseDeclaration = baseDeclaration,
-                    ImplementedInterfaces = interfaces.ToList()
-                });
-
-                return true;
             }
 
-            return false;
-        }
-
-        private HashSet<Declaration> GetInheritedNonEmptyInterfaces(
-            Declaration declaration,
-            InheritanceModel model,
-            Dictionary<Declaration, HashSet<Declaration>> rawInheritanceLists)
-        {
-            if (this.settings.TypesRepresentedAsInterface.Contains(declaration.GetFullName()))
-            {
-                return new HashSet<Declaration>() { declaration };
-            }
-
-            if (!model.CollapsedToEmptyInterface.Contains(declaration))
-            {
-                throw new InvalidOperationException($"{declaration.GetFullName()} is not collapsed to empty interface.");
-            }
-
-            var result = new HashSet<Declaration>();
-            var list = rawInheritanceLists[declaration];
-            foreach (var i in list)
-            {
-                foreach (var r in this.GetInheritedNonEmptyInterfaces(i, model, rawInheritanceLists))
-                {
-                    result.Add(r);
-                }
-            }
-
-            return result;
+            result.Declarations.Add(declaration.GetFullName(), item);
         }
 
         private bool FirstInheritsSecond(Declaration first, Declaration second, Dictionary<Declaration, HashSet<Declaration>> rawInheritanceLists)
@@ -280,7 +312,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             if (typeReference.Named != null)
             {
-                var declaration = this.GetReferredDeclaration(typeReference.Named.Name, contextNamespace, astDescription);
+                var declaration = astDescription.GetReferredDeclaration(typeReference.Named.Name, contextNamespace);
 
                 if (declaration == null)
                 {
@@ -333,23 +365,6 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             }
 
             return result;
-        }
-
-        private Declaration GetReferredDeclaration(string name, string contextNamespace, AstDescription astDescription)
-        {
-            var fullName = $"{contextNamespace}.{name}";
-
-            if (astDescription.AstDeclarations.ContainsKey(fullName))
-            {
-                return astDescription.AstDeclarations[fullName];
-            }
-
-            if (astDescription.ReferredDeclarations.ContainsKey(fullName))
-            {
-                return astDescription.ReferredDeclarations[fullName];
-            }
-
-            return null;
         }
 
         private bool ReferencePointsToExcludedType(

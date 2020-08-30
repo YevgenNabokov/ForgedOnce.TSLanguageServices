@@ -13,8 +13,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
         public List<Declaration> ImplementedInterfaces = new List<Declaration>();
 
-        public List<TypeElement> AdditionalElements = new List<TypeElement>();
+        public List<Declaration> MergedDeclarations = new List<Declaration>();
 
         public bool RepresentedAsInterface;
+
+        public bool CollapsedToInterface;
+
+        public bool CollapsedToEmptyInterface;
     }
 }

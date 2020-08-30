@@ -8,9 +8,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
     {
         public Dictionary<string, InheritanceModelDeclaration> Declarations = new Dictionary<string, InheritanceModelDeclaration>();
 
-        public HashSet<Declaration> CollapsedDeclarations = new HashSet<Declaration>();
-
         public HashSet<Declaration> CollapsedToEmptyInterface = new HashSet<Declaration>();
+
+        public HashSet<Declaration> CollapsedToInterface = new HashSet<Declaration>();
 
         public HashSet<Declaration> RepresentedAsInterface = new HashSet<Declaration>();
     }
