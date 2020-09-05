@@ -4,8 +4,8 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 {
-    public class TypeReferenceTransportModelEnum : TypeReference
+    public class TransportModelTypeReferenceGenericParameter : TransportModelTypeReference
     {
-        public TransportModelEnum Enum;
+        public string Name;
     }
 }

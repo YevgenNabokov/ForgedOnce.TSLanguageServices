@@ -88,25 +88,25 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         {
             foreach (var pureInterface in inheritanceModel.CollapsedToInterface)
             {
-                if (inheritanceModel.Declarations.ContainsKey(pureInterface.GetFullName()))
+                if (inheritanceModel.Declarations.ContainsKey(pureInterface.GetName()))
                 {
-                    inheritanceModel.Declarations[pureInterface.GetFullName()].CollapsedToInterface = true;
+                    inheritanceModel.Declarations[pureInterface.GetName()].CollapsedToInterface = true;
                 }
             }
 
             foreach (var emptyInterface in inheritanceModel.CollapsedToEmptyInterface)
             {
-                if (inheritanceModel.Declarations.ContainsKey(emptyInterface.GetFullName()))
+                if (inheritanceModel.Declarations.ContainsKey(emptyInterface.GetName()))
                 {
-                    inheritanceModel.Declarations[emptyInterface.GetFullName()].CollapsedToEmptyInterface = true;
+                    inheritanceModel.Declarations[emptyInterface.GetName()].CollapsedToEmptyInterface = true;
                 }
             }
 
             foreach (var i in inheritanceModel.RepresentedAsInterface)
             {
-                if (inheritanceModel.Declarations.ContainsKey(i.GetFullName()))
+                if (inheritanceModel.Declarations.ContainsKey(i.GetName()))
                 {
-                    inheritanceModel.Declarations[i.GetFullName()].RepresentedAsInterface = true;
+                    inheritanceModel.Declarations[i.GetName()].RepresentedAsInterface = true;
                 }
             }
 
@@ -118,12 +118,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                         (inheritanceModel.CollapsedToInterface.Contains(item.Value.BaseDeclaration) 
                         || inheritanceModel.CollapsedToEmptyInterface.Contains(item.Value.BaseDeclaration)))
                     {
-                        if (!inheritanceModel.Declarations.ContainsKey(item.Value.BaseDeclaration.GetFullName()))
+                        if (!inheritanceModel.Declarations.ContainsKey(item.Value.BaseDeclaration.GetName()))
                         {
                             throw new InvalidOperationException("Entity cannot inherit from interface.");
                         }
 
-                        item.Value.BaseDeclaration = inheritanceModel.Declarations[item.Value.BaseDeclaration.GetFullName()].BaseDeclaration;
+                        item.Value.BaseDeclaration = inheritanceModel.Declarations[item.Value.BaseDeclaration.GetName()].BaseDeclaration;
                     }
                 }
             }
@@ -291,7 +291,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 }
             }
 
-            result.Declarations.Add(declaration.GetFullName(), item);
+            result.Declarations.Add(declaration.GetName(), item);
         }
 
         private bool FirstInheritsSecond(Declaration first, Declaration second, Dictionary<Declaration, HashSet<Declaration>> rawInheritanceLists)

@@ -4,8 +4,8 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 {
-    public abstract class TypeReference
+    public class TransportModelGenericParameterConstraintInterface : TransportModelGenericParameterConstraint
     {
-        public bool IsCollection;
+        public TransportModelInterface Interface;
     }
 }

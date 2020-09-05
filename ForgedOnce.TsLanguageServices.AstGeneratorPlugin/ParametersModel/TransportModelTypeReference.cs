@@ -4,8 +4,8 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 {
-    public class TypeReferencePrimitive : TypeReference
+    public abstract class TransportModelTypeReference
     {
-        public string FullyQualifiedName;
+        public bool IsCollection;
     }
 }

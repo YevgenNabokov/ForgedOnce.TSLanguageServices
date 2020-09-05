@@ -8,6 +8,6 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
     {
         public string Name;
 
-        public TypeReference Type;
+        public TransportModelTypeReference Type;
     }
 }

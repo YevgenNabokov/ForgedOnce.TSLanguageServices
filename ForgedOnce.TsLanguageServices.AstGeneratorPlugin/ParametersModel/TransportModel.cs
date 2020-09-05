@@ -8,6 +8,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
     {
         public Dictionary<string, TransportModelEntity> TransportModelEntities = new Dictionary<string, TransportModelEntity>();
 
+        public Dictionary<string, TransportModelInterface> TransportModelInterfaces = new Dictionary<string, TransportModelInterface>();
+
         public Dictionary<string, TransportModelEnum> TransportModelEnums = new Dictionary<string, TransportModelEnum>();
     }
 }

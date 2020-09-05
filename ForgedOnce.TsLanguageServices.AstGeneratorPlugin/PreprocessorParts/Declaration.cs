@@ -27,5 +27,10 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
 
             return this.NamedDeclaration.Name;
         }
+
+        public string GetName()
+        {
+            return this.NamedDeclaration.Name;
+        }
     }
 }
