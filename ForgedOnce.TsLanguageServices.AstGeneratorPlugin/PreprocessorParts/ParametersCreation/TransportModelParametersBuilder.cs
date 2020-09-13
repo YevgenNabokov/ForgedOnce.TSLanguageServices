@@ -31,7 +31,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             return result;
         }
 
-        private Dictionary<string, TransportModelEnum> CreateEnums(AstDescription astDescription)
+        private Dictionary<string, TransportModelEnum> CreateEnums(AstDescription astDescription) 
         {
             var result = new Dictionary<string, TransportModelEnum>();
 
@@ -92,7 +92,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             }
         }
 
-        private void CreateEntity(KeyValuePair<string, InheritanceModelDeclaration> declaration, InheritanceModel inheritanceModel, AstDescription astDescription, TransportModel result, Context context)
+        private TransportModelEntity CreateEntity(KeyValuePair<string, InheritanceModelDeclaration> declaration, InheritanceModel inheritanceModel, AstDescription astDescription, TransportModel result, Context context)
         {
             var interfaceDescription = declaration.Value.OriginalDeclaration.NamedDeclaration as InterfaceDescription;
             var resultItem = new TransportModelEntity()
@@ -110,11 +110,51 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 context,
                 out Dictionary<string, TransportModelTypeReference> replacedGenericArguments);            
 
+            if (declaration.Value.BaseDeclaration != null)
+            {
+                var modelItem = this.GetModelItemByName(declaration.Value.BaseDeclaration.NamedDeclaration.Name, result, context, true, false);
+                if (modelItem != null)
+                {
+                    resultItem.BaseEntity = (TransportModelEntity)modelItem;
+                }
+                else
+                {
+                    resultItem.BaseEntity = this.CreateEntity(new KeyValuePair<string, InheritanceModelDeclaration>(
+                            declaration.Value.BaseDeclaration.NamedDeclaration.Name,
+                            inheritanceModel.Declarations[declaration.Value.BaseDeclaration.NamedDeclaration.Name]),
+                            inheritanceModel,
+                            astDescription,
+                            result,
+                            context);
+                }
+            }
+
+            if (declaration.Value.ImplementedInterfaces != null)
+            {
+                foreach (var implementedInterface in declaration.Value.ImplementedInterfaces)
+                {
+                    var modelItem = this.GetModelItemByName(implementedInterface.NamedDeclaration.Name, result, context, false, true);
+                    if (modelItem == null)
+                    {
+                        modelItem = this.CreateInterface(new KeyValuePair<string, InheritanceModelDeclaration>(
+                            implementedInterface.NamedDeclaration.Name,
+                            inheritanceModel.Declarations[implementedInterface.NamedDeclaration.Name]),
+                            inheritanceModel,
+                            astDescription,
+                            result,
+                            context);
+                    }
+
+                    resultItem.Interfaces.Add((TransportModelInterface)modelItem);
+                }
+            }
+
             context.EntitiesInProgress.Remove(declaration.Key);
             result.TransportModelEntities.Add(declaration.Key, resultItem);
+            return resultItem;
         }
 
-        private void CreateInterface(KeyValuePair<string, InheritanceModelDeclaration> declaration, InheritanceModel inheritanceModel, AstDescription astDescription, TransportModel result, Context context)
+        private TransportModelInterface CreateInterface(KeyValuePair<string, InheritanceModelDeclaration> declaration, InheritanceModel inheritanceModel, AstDescription astDescription, TransportModel result, Context context)
         {
             var interfaceDescription = declaration.Value.OriginalDeclaration.NamedDeclaration as InterfaceDescription;
             var resultItem = new TransportModelInterface()
@@ -132,11 +172,36 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 context,
                 out Dictionary<string, TransportModelTypeReference> replacedGenericArguments);
 
+            if (declaration.Value.ImplementedInterfaces != null)
+            {
+                foreach (var implementedInterface in declaration.Value.ImplementedInterfaces)
+                {
+                    var modelItem = this.GetModelItemByName(implementedInterface.NamedDeclaration.Name, result, context, false, true);
+                    if (modelItem == null)
+                    {
+                        modelItem = this.CreateInterface(new KeyValuePair<string, InheritanceModelDeclaration>(
+                            implementedInterface.NamedDeclaration.Name,
+                            inheritanceModel.Declarations[implementedInterface.NamedDeclaration.Name]),
+                            inheritanceModel,
+                            astDescription,
+                            result,
+                            context);
+                    }
+
+                    resultItem.Interfaces.Add((TransportModelInterface)modelItem);
+                }
+            }
+
             context.InterfacesInProgress.Remove(declaration.Key);
             result.TransportModelInterfaces.Add(declaration.Key, resultItem);
+
+            return resultItem;
         }
 
+        ////private TransportModelEntityMember CreateMember()
+        ////{
 
+        ////}
 
         private Dictionary<string, TransportModelGenericParameterConstraint> CreateGenericParameters(
             List<TypeParameter> parameters,
@@ -289,24 +354,26 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         private TransportModelItem GetModelItemByName(
             string name,
             TransportModel result,
-            Context context)
+            Context context,
+            bool searchEntity = true,
+            bool searchInterface = true)
         {
-            if (context.EntitiesInProgress.ContainsKey(name))
-            {
-                return context.EntitiesInProgress[name];
-            }
-
-            if (context.InterfacesInProgress.ContainsKey(name))
+            if (searchInterface && context.InterfacesInProgress.ContainsKey(name))
             {
                 return context.InterfacesInProgress[name];
             }
 
-            if (result.TransportModelInterfaces.ContainsKey(name))
+            if (searchInterface && result.TransportModelInterfaces.ContainsKey(name))
             {
                 return result.TransportModelInterfaces[name];
             }
 
-            if (result.TransportModelEntities.ContainsKey(name))
+            if (searchEntity && context.EntitiesInProgress.ContainsKey(name))
+            {
+                return context.EntitiesInProgress[name];
+            }
+
+            if (searchEntity && result.TransportModelEntities.ContainsKey(name))
             {
                 return result.TransportModelEntities[name];
             }

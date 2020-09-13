@@ -151,7 +151,14 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         {
             if (declaration.NamedDeclaration is DescriptionModel.InterfaceDescription interfaceDescription)
             {
-                return interfaceDescription.Members.All(m => m.Property != null && m.Property.Name != "kind");
+                if (interfaceDescription.Members.All(m => m.Property != null && m.Property.Name != "kind"))
+                {
+                    var list = rawInheritanceLists[declaration];
+                    return list.Count == 0 || list.All(d =>
+                    this.settings.TypesRepresentedAsInterface.Contains(d.GetFullName())
+                    || this.CanCollapseToEmptyInterface(d, rawInheritanceLists)
+                    || this.CanCollapseToInterface(d, rawInheritanceLists));
+                }
             }
 
             return false;
@@ -214,7 +221,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                             {
                                 foreach (var e in collapsibleToEmpty)
                                 {
-                                    result.CollapsedToEmptyInterface.Add(e);
+                                    this.CollapseToEmptyInterface(e, result, rawInheritanceLists);
                                 }
 
                                 shouldContinue = true;
@@ -230,7 +237,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                                 {
                                     for (var i = 0; i < Math.Min(entities.Length - 1, collapsible.Length); i++)
                                     {
-                                        result.CollapsedToInterface.Add(collapsible[i]);
+                                        this.CollapseToInterface(collapsible[i], result, rawInheritanceLists);
                                     }
 
                                     shouldContinue = true;
@@ -292,6 +299,43 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             }
 
             result.Declarations.Add(declaration.GetName(), item);
+        }
+
+        private void CollapseToEmptyInterface(Declaration declaration, InheritanceModel result, Dictionary<Declaration, HashSet<Declaration>> rawInheritanceLists)
+        {
+            var list = rawInheritanceLists[declaration];
+            foreach (var inherited in list)
+            {
+                if (!this.settings.TypesRepresentedAsInterface.Contains(inherited.GetFullName()) && !result.CollapsedToEmptyInterface.Contains(inherited))
+                {
+                    this.CollapseToEmptyInterface(inherited, result, rawInheritanceLists);
+                }
+            }
+
+            result.CollapsedToEmptyInterface.Add(declaration);
+        }
+
+        private void CollapseToInterface(Declaration declaration, InheritanceModel result, Dictionary<Declaration, HashSet<Declaration>> rawInheritanceLists)
+        {
+            var list = rawInheritanceLists[declaration];
+            foreach (var inherited in list)
+            {
+                if (!this.settings.TypesRepresentedAsInterface.Contains(inherited.GetFullName()) 
+                    && !result.CollapsedToEmptyInterface.Contains(inherited)
+                    && !result.CollapsedToInterface.Contains(inherited))
+                {
+                    if (this.CanCollapseToEmptyInterface(inherited, rawInheritanceLists))
+                    {
+                        this.CollapseToEmptyInterface(inherited, result, rawInheritanceLists);
+                    }
+                    else
+                    {
+                        this.CollapseToInterface(inherited, result, rawInheritanceLists);
+                    }
+                }
+            }
+
+            result.CollapsedToInterface.Add(declaration);
         }
 
         private bool FirstInheritsSecond(Declaration first, Declaration second, Dictionary<Declaration, HashSet<Declaration>> rawInheritanceLists)
