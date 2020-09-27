@@ -18,6 +18,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             this.SetFromConfiguration((v) => settings.ExcludedAstNodes = v, configuration, Settings.ExcludedAstNodesKey);
             this.SetFromConfiguration((v) => settings.OtherExcludedTypes = v, configuration, Settings.OtherExcludedTypesKey);
             this.SetFromConfiguration((v) => settings.TypesRepresentedAsInterface = v, configuration, Settings.TypesRepresentedAsInterfaceKey);
+            this.SetFromConfiguration((v) => settings.ExcludedProperties = v, configuration, Settings.ExcludedPropertiesKey);
 
             settings.BasePath = context.BasePath;
 
