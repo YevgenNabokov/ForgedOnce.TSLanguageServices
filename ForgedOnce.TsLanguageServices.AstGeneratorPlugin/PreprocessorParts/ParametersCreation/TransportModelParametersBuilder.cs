@@ -31,7 +31,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             return result;
         }
 
-        private Dictionary<string, TransportModelEnum> CreateEnums(AstDescription astDescription) 
+        private Dictionary<string, TransportModelEnum> CreateEnums(AstDescription astDescription)
         {
             var result = new Dictionary<string, TransportModelEnum>();
 
@@ -54,7 +54,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     }
 
                     modelEnum.Members.Add(member.Name, new TransportModelEnumMember()
-                    { 
+                    {
                         Name = member.Name,
                         Value = numericValue
                     });
@@ -73,7 +73,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         {
             Context context = new Context();
 
-            foreach (var emptyInterface in inheritanceModel.Declarations.Where(d => inheritanceModel.CollapsedToEmptyInterface.Contains(d.Value.OriginalDeclaration) 
+            foreach (var emptyInterface in inheritanceModel.Declarations.Where(d => inheritanceModel.CollapsedToEmptyInterface.Contains(d.Value.OriginalDeclaration)
             || inheritanceModel.CollapsedToInterface.Contains(d.Value.OriginalDeclaration)
             || d.Value.RepresentedAsInterface))
             {
@@ -118,6 +118,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         {
             string name = $"{genericArgument.Named.Name.Split('.').Last()}{underlyingEntity.Name}";
 
+            if (result.TransportModelEntities.ContainsKey(name))
+            {
+                return result.TransportModelEntities[name];
+            }
+
             var resultItem = new TransportModelEntity()
             {
                 Name = name
@@ -150,7 +155,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 astDescription,
                 result,
                 context,
-                out Dictionary<string, TransportModelTypeReference> replacedGenericArguments);            
+                out Dictionary<string, TransportModelTypeReference> replacedGenericArguments);
 
             if (declaration.Value.BaseDeclaration != null)
             {
@@ -304,7 +309,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             Dictionary<string, TransportModelEntityMember> members = new Dictionary<string, TransportModelEntityMember>();
             var interfaceDeclaration = declaration.OriginalDeclaration.NamedDeclaration as InterfaceDescription;
             MembersResolutionContext membersContext = new MembersResolutionContext();
-            
+
             foreach (var prop in this.ExtractProperties(declaration, inheritanceModel, membersContext))
             {
                 members.Add(prop.Key, this.CreateProperty(declaration, prop.Value, inheritanceModel, astDescription, result, context));
@@ -316,7 +321,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         private Dictionary<string, TypeElementPropertySignature> ExtractProperties(InheritanceModelDeclaration declaration, InheritanceModel inheritanceModel, MembersResolutionContext context)
         {
             Dictionary<string, TypeElementPropertySignature> result = new Dictionary<string, TypeElementPropertySignature>();
-            
+
             foreach (var merged in declaration.MergedDeclarations)
             {
                 var mergedInheritanceModelDeclaration = inheritanceModel.Declarations[merged.GetName()];
@@ -399,7 +404,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             if (parameters != null)
             {
-                genericArgumentsInScope = new HashSet<string>(genericArgumentsInScope != null 
+                genericArgumentsInScope = new HashSet<string>(genericArgumentsInScope != null
                     ? genericArgumentsInScope.Concat(parameters.Select(p => p.Name))
                     : parameters.Select(p => p.Name));
 
@@ -491,6 +496,47 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 var modelItem = this.GetModelItemByName(typeReference.Named.Name, result, context);
                 if (modelItem != null)
                 {
+                    if (typeReference.Named.Parameters.Count == 1)
+                    {
+                        if (this.CanUnwrapToUnionOfEnumMembers(typeReference.Named.Parameters[0], result, astDescription, context, out Dictionary<TransportModelEnum, List<string>> members)
+                            && members.Values.SelectMany(v => v).Count() > 1)
+                        {
+                            TypeReference replacedReference =
+                            new TypeReference()
+                            {
+                                Union = new TypeReferenceUnion()
+                                {
+                                    Types = 
+                                        members
+                                        .SelectMany(k => k.Value
+                                            .Select(v => new KeyValuePair<string, string>(k.Key.Name, v)))
+                                        .Select(r =>
+                                        new TypeReference()
+                                        {
+                                            Named = new TypeReferenceNamed()
+                                            {
+                                                Name = typeReference.Named.Name,
+                                                Parameters = new List<TypeReference>()
+                                                    {
+                                                        new TypeReference()
+                                                        {
+                                                            Named = new TypeReferenceNamed()
+                                                            {
+                                                                Name = $"{r.Key}.{r.Value}"
+                                                            }
+                                                        }
+
+                                                    }
+                                            }
+                                        })
+                                        .ToList()
+                                }
+                            };
+
+                            return this.CreateTypeReference(replacedReference, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments, enclosingName);
+                        }
+                    }
+
                     var genericArgs = this.CreateGenericArguments(typeReference.Named.Parameters, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments);
 
                     if (genericArgs.Any(a => a is TransportModelTypeReferenceTransportModelItem modelArg && modelArg.TransportModelItem is TransportModelEnum) && modelItem is TransportModelEntity modelEntity)
@@ -565,7 +611,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                             context);
                     }
 
-                    
+
                     modelItem = this.GetModelItemByName(typeReference.Named.Name, result, context);
                     return this.RegisterItemReference(
                        new TransportModelTypeReferenceTransportModelItem()
@@ -662,6 +708,70 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             }
 
             throw new InvalidOperationException($"Unable to create type reference.");
+        }
+
+        private bool CanUnwrapToUnionOfEnumMembers(TypeReference reference, TransportModel result, AstDescription astDescription, Context context, out Dictionary<TransportModelEnum, List<string>> members)
+        {
+            members = new Dictionary<TransportModelEnum, List<string>>();
+
+            if (reference.Union != null)
+            {
+                foreach (var unionPart in reference.Union.Types)
+                {
+                    if (this.CanUnwrapToUnionOfEnumMembers(unionPart, result, astDescription, context, out Dictionary<TransportModelEnum, List<string>> unionPartMembers))
+                    {
+                        foreach (var enumMembers in unionPartMembers)
+                        {
+                            if (members.ContainsKey(enumMembers.Key))
+                            {
+                                foreach (var member in enumMembers.Value)
+                                {
+                                    if (!members[enumMembers.Key].Contains(member))
+                                    {
+                                        members[enumMembers.Key].Add(member);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                members.Add(enumMembers.Key, enumMembers.Value);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            else
+            {
+                if (reference.Named != null)
+                {
+                    var parts = reference.Named.Name.Split('.');
+                    if (parts.Length == 2)
+                    {
+                        if (result.TransportModelEnums.ContainsKey(parts[0]))
+                        {
+                            members.Add(result.TransportModelEnums[parts[0]], new List<string>() { parts[1] });
+                            return true;
+                        }
+                    }
+
+                    var referredDeclaration = astDescription.GetReferredDeclaration(reference.Named.Name, context.CurrentNamespace);
+                    if (referredDeclaration != null)
+                    {
+                        if (referredDeclaration.NamedDeclaration is TypeAliasDescription typeAlias)
+                        {
+                            return this.CanUnwrapToUnionOfEnumMembers(typeAlias.Type, result, astDescription, context, out members);
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         private TransportModelTypeReference TryMapPredefined(TypeReference typeReference)
@@ -839,7 +949,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
         private class MembersResolutionContext
         {
-            
+
         }
     }
 }

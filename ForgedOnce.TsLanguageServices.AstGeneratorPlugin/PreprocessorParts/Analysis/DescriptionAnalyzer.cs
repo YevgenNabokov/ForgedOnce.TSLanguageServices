@@ -96,60 +96,71 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Ana
             var referredDeclarations = new Dictionary<string, List<Declaration>>();
             var references = new Dictionary<string, Dictionary<TypeReference, string>>();
 
-            var astDeclarationsByNamespace = astDeclarations.Values.SelectMany(g => g).GroupBy(g => g.NamedDeclaration.Namespace).ToDictionary(g => g.Key, g => g.ToList());
+            var declarations = new Dictionary<string, List<Declaration>>(astDeclarations);
 
-            foreach (var ns in astDeclarationsByNamespace)
+            var nextBatchDeclarations = new Dictionary<string, List<Declaration>>();
+
+            while (declarations.Count > 0)
             {
-                var checkedReferences = new HashSet<TypeReference>();
+                var astDeclarationsByNamespace = declarations.Values.SelectMany(g => g).GroupBy(g => g.NamedDeclaration.Namespace).ToDictionary(g => g.Key, g => g.ToList());
 
-                foreach (var declaration in ns.Value)
+                foreach (var ns in astDeclarationsByNamespace)
                 {
-                    foreach (var r in declaration.NamedTypeReferences)
+                    var checkedReferences = new HashSet<TypeReference>();
+
+                    foreach (var declaration in ns.Value)
                     {
-                        if (!checkedReferences.Contains(r))
+                        foreach (var r in declaration.NamedTypeReferences)
                         {
-                            checkedReferences.Add(r);
-                            string matchedName = null;
-
-                            foreach (var referredName in this.GetReferredNameVariants(r, declaration))
+                            if (!checkedReferences.Contains(r))
                             {
-                                if (astDeclarations.ContainsKey(referredName))
-                                {
-                                    matchedName = referredName;
-                                    break;
-                                }
-                                else
-                                {
-                                    if (this.otherExcludedTypes.Contains(referredName))
-                                    {
-                                        break;
-                                    }
+                                checkedReferences.Add(r);
+                                string matchedName = null;
 
-                                    if (declarationGraph.ContainsKey(referredName))
+                                foreach (var referredName in this.GetReferredNameVariants(r, declaration))
+                                {
+                                    if (astDeclarations.ContainsKey(referredName))
                                     {
                                         matchedName = referredName;
-                                        if (!referredDeclarations.ContainsKey(referredName))
-                                        {
-                                            referredDeclarations.Add(referredName, new List<Declaration>(declarationGraph[referredName]));
-                                        }
-
                                         break;
                                     }
+                                    else
+                                    {
+                                        if (this.otherExcludedTypes.Contains(referredName))
+                                        {
+                                            break;
+                                        }
+
+                                        if (declarationGraph.ContainsKey(referredName))
+                                        {
+                                            matchedName = referredName;
+                                            if (!referredDeclarations.ContainsKey(referredName))
+                                            {
+                                                referredDeclarations.Add(referredName, new List<Declaration>(declarationGraph[referredName]));
+                                                nextBatchDeclarations.Add(referredName, new List<Declaration>(declarationGraph[referredName]));
+                                            }
+
+                                            break;
+                                        }
+                                    }
                                 }
-                            }
 
-                            if (!references.ContainsKey(ns.Key))
-                            {
-                                references.Add(ns.Key, new Dictionary<TypeReference, string>());
-                            }
+                                if (!references.ContainsKey(ns.Key))
+                                {
+                                    references.Add(ns.Key, new Dictionary<TypeReference, string>());
+                                }
 
-                            if (!references[ns.Key].ContainsKey(r))
-                            {
-                                references[ns.Key].Add(r, matchedName);
+                                if (!references[ns.Key].ContainsKey(r))
+                                {
+                                    references[ns.Key].Add(r, matchedName);
+                                }
                             }
                         }
                     }
                 }
+
+                declarations = new Dictionary<string, List<Declaration>>(nextBatchDeclarations);
+                nextBatchDeclarations.Clear();
             }
 
             processedReferences = references;
