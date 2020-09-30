@@ -9,5 +9,15 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
         public string FullyQualifiedName;
 
         public List<TransportModelTypeReference> GenericArguments = new List<TransportModelTypeReference>();
+
+        public override TransportModelTypeReference Clone()
+        {
+            return new TransportModelTypeReferencePrimitive()
+            {
+                FullyQualifiedName = this.FullyQualifiedName,
+                GenericArguments = new List<TransportModelTypeReference>(this.GenericArguments),
+                IsCollection = this.IsCollection
+            };
+        }
     }
 }

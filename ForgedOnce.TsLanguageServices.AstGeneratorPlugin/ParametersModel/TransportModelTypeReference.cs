@@ -7,5 +7,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
     public abstract class TransportModelTypeReference
     {
         public bool IsCollection;
+
+        public abstract TransportModelTypeReference Clone();
     }
 }

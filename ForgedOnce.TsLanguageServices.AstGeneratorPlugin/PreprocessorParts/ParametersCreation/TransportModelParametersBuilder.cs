@@ -101,16 +101,22 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             TransportModel result,
             Context context)
         {
+            context.TransportModelEntitiesToPopulate = result.TransportModelEntities.Count;
+
             foreach (var entity in result.TransportModelEntities.ToArray())
             {
                 var declaration = inheritanceModel.Declarations[entity.Key];
                 entity.Value.Members = this.CreateMembers(declaration, inheritanceModel, astDescription, result, context);
+                context.TransportModelEntitiesToPopulate--;
             }
+
+            context.TransportModelInterfacesToPopulate = result.TransportModelInterfaces.Count;
 
             foreach (var modelInterface in result.TransportModelInterfaces.ToArray())
             {
                 var declaration = inheritanceModel.Declarations[modelInterface.Key];
                 modelInterface.Value.Members = this.CreateMembers(declaration, inheritanceModel, astDescription, result, context);
+                context.TransportModelInterfacesToPopulate--;
             }
         }
 
@@ -312,7 +318,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             foreach (var prop in this.ExtractProperties(declaration, inheritanceModel, membersContext))
             {
-                members.Add(prop.Key, this.CreateProperty(declaration, prop.Value, inheritanceModel, astDescription, result, context));
+                var modelProp = this.CreateProperty(declaration, prop.Value, inheritanceModel, astDescription, result, context);
+
+                if (modelProp != null)
+                {
+                    members.Add(prop.Key, modelProp);
+                }
             }
 
             return members;
@@ -327,12 +338,10 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 var mergedInheritanceModelDeclaration = inheritanceModel.Declarations[merged.GetName()];
                 foreach (var prop in this.ExtractProperties(mergedInheritanceModelDeclaration, inheritanceModel, context))
                 {
-                    if (result.ContainsKey(prop.Key))
+                    if (!result.ContainsKey(prop.Key))
                     {
-                        throw new InvalidOperationException($"Conflicting merged declarations property {prop.Key} in {declaration.OriginalDeclaration.GetFullName()}");
+                        result.Add(prop.Key, prop.Value);
                     }
-
-                    result.Add(prop.Key, prop.Value);
                 }
             }
 
@@ -383,10 +392,17 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     ? interfaceDescription.Parameters.Select(p => p.Name)
                     : Array.Empty<string>());
 
+            var type = this.CreateTypeReference(propertySignature.Type, inheritanceModel, astDescription, result, context, genericArgumentsInScope);
+
+            if (type == null)
+            {
+                return null;
+            }
+
             return new TransportModelEntityMember()
             {
                 Name = propertySignature.Name,
-                Type = this.CreateTypeReference(propertySignature.Type, inheritanceModel, astDescription, result, context, genericArgumentsInScope)
+                Type = type
             };
         }
 
@@ -415,6 +431,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     if (parameter.Constraint != null)
                     {
                         var constraintReference = this.CreateTypeReference(parameter.Constraint, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments);
+                        if (constraintReference is null)
+                        {
+                            throw new InvalidOperationException("Null type reference is unexpected for generic parameter.");
+                        }
+
                         if (constraintReference is TransportModelTypeReferenceTransportModelItem modelItemConstraint)
                         {
                             if (modelItemConstraint.TransportModelItem is TransportModelEnum)
@@ -455,15 +476,34 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         {
             if (context.ModelItemReferences.ContainsKey(typeReference))
             {
-                return new TransportModelTypeReferenceTransportModelItem()
+                var reference = new TransportModelTypeReferenceTransportModelItem()
                 {
-                    TransportModelItem = context.ModelItemReferences[typeReference],
-                    GenericArguments = this.CreateGenericArguments(typeReference.Named.Parameters, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments)
+                    TransportModelItem = context.ModelItemReferences[typeReference]
                 };
+
+                if (typeReference.Named != null)
+                {
+                    reference.GenericArguments = this.CreateGenericArguments(typeReference.Named.Parameters, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments);
+                }
+
+                return reference;
             }
 
-            var predefined = this.TryMapPredefined(typeReference);
-            if (predefined != null)
+            if (typeReference.Array != null)
+            {
+                var itemReference = this.CreateTypeReference(typeReference.Array.ElementType, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments);
+                if (itemReference is null)
+                {
+                    return null;
+                }
+
+                itemReference = itemReference.Clone();
+
+                itemReference.IsCollection = true;
+                return itemReference;
+            }
+
+            if (this.TryMapPredefined(typeReference, out TransportModelTypeReference predefined))
             {
                 return predefined;
             }
@@ -485,7 +525,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
                 if (genericArgumentsInScope != null && genericArgumentsInScope.Contains(typeReference.Named.Name))
                 {
-                    if (replacedGenericArguments.ContainsKey(typeReference.Named.Name))
+                    if (replacedGenericArguments != null && replacedGenericArguments.ContainsKey(typeReference.Named.Name))
                     {
                         return replacedGenericArguments[typeReference.Named.Name];
                     }
@@ -640,7 +680,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             if (typeReference.Union != null)
             {
-                var unionParts = typeReference.Union.Types.Select(r => this.CreateTypeReference(r, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments)).ToArray();
+                var unionParts = typeReference.Union.Types
+                    .Select(r => this.CreateTypeReference(r, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments))
+                    .Where(r => r != null)
+                    .ToArray();
+
                 if (unionParts.Length == 1)
                 {
                     return unionParts[0];
@@ -653,12 +697,27 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
                 var modelItemReferences = unionParts.OfType<TransportModelTypeReferenceTransportModelItem>().ToArray();
 
-                if (modelItemReferences.Any(r => !(r.TransportModelItem is TransportModelEntity)))
+                if (modelItemReferences.All(r => (r.TransportModelItem is TransportModelEnum)))
                 {
-                    throw new InvalidOperationException("Can create union interface only from entities.");
+                    var enumItems = modelItemReferences.Select(r => r.TransportModelItem).Cast<TransportModelEnum>().ToArray();
+                    if (enumItems.Length > 0 && enumItems.All(i => i == enumItems[0]))
+                    {
+                        return this.RegisterItemReference(
+                           new TransportModelTypeReferenceTransportModelItem()
+                           {
+                               TransportModelItem = enumItems[0]
+                           },
+                           context,
+                           typeReference);
+                    }
                 }
 
-                var entities = modelItemReferences.Select(r => r.TransportModelItem).Cast<TransportModelEntity>().ToArray();
+                if (modelItemReferences.Any(r => !(r.TransportModelItem is ITransportModelObject)))
+                {
+                    throw new InvalidOperationException("Can create union interface only from non-ITransportModelObject`s.");
+                }
+
+                var entities = modelItemReferences.Select(r => r.TransportModelItem).Cast<ITransportModelObject>().ToArray();
 
                 if (string.IsNullOrEmpty(enclosingName))
                 {
@@ -674,7 +733,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                            typeReference);
                     }
 
-                    var commonEntities = this.GetCommonBaseEntities(entities).ToArray();
+                    if (modelItemReferences.Any(r => !(r.TransportModelItem is TransportModelEntity)))
+                    {
+                        throw new InvalidOperationException("Can create union interface only from non-entities.");
+                    }
+
+                    var commonEntities = this.GetCommonBaseEntities(entities.Cast<TransportModelEntity>().ToArray()).ToArray();
                     if (commonEntities.Length > 0)
                     {
                         return this.RegisterItemReference(
@@ -774,31 +838,40 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             return false;
         }
 
-        private TransportModelTypeReference TryMapPredefined(TypeReference typeReference)
+        private bool TryMapPredefined(TypeReference typeReference, out TransportModelTypeReference result)
         {
             if (typeReference.Named != null)
             {
+                if (this.settings.VoidPrimitiveTypes.Contains(typeReference.Named.Name))
+                {
+                    result = null;
+                    return true;
+                }
+
                 if (this.settings.InterfacesMappedToPrimitiveTypes.ContainsKey(typeReference.Named.Name))
                 {
-                    return new TransportModelTypeReferencePrimitive()
+                    result = new TransportModelTypeReferencePrimitive()
                     {
                         FullyQualifiedName = this.settings.InterfacesMappedToPrimitiveTypes[typeReference.Named.Name]
                     };
+                    return true;
                 }
 
                 if (this.settings.PrimitiveTypesMappings.ContainsKey(typeReference.Named.Name))
                 {
-                    return new TransportModelTypeReferencePrimitive()
+                    result = new TransportModelTypeReferencePrimitive()
                     {
                         FullyQualifiedName = this.settings.PrimitiveTypesMappings[typeReference.Named.Name]
                     };
+                    return true;
                 }
             }
 
-            return null;
+            result = null;
+            return false;
         }
 
-        private List<TransportModelInterface> GetCommonInterfaces(TransportModelEntity[] transportModelItems)
+        private List<TransportModelInterface> GetCommonInterfaces(ITransportModelObject[] transportModelItems)
         {
             Dictionary<TransportModelInterface, int> interfaces = new Dictionary<TransportModelInterface, int>();
 
@@ -807,26 +880,20 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             {
                 currentItemInterfaces.Clear();
 
-                var currentItem = item;
-                while (currentItem != null)
+                foreach (var i in item.GetInterfaces())
                 {
-                    foreach (var i in currentItem.Interfaces)
+                    if (!currentItemInterfaces.Contains(i))
                     {
-                        if (!currentItemInterfaces.Contains(i))
+                        currentItemInterfaces.Add(i);
+                        if (interfaces.ContainsKey(i))
                         {
-                            currentItemInterfaces.Add(i);
-                            if (interfaces.ContainsKey(i))
-                            {
-                                interfaces[i]++;
-                            }
-                            else
-                            {
-                                interfaces.Add(i, 1);
-                            }
+                            interfaces[i]++;
+                        }
+                        else
+                        {
+                            interfaces.Add(i, 1);
                         }
                     }
-
-                    currentItem = currentItem.BaseEntity;
                 }
             }
 
@@ -919,7 +986,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 return new List<TransportModelTypeReference>();
             }
 
-            return typeReferences.Select(r => this.CreateTypeReference(r, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments)).ToList();
+            return typeReferences.Select(r => this.CreateTypeReference(r, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments))
+                .Where(r => r != null)
+                .ToList();
         }
 
         private bool ReferencePointsToExcludedType(
@@ -945,6 +1014,10 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             public Dictionary<string, TransportModelEntity> EntitiesInProgress = new Dictionary<string, TransportModelEntity>();
 
             public Dictionary<string, TransportModelInterface> InterfacesInProgress = new Dictionary<string, TransportModelInterface>();
+
+            public int TransportModelEntitiesToPopulate;
+
+            public int TransportModelInterfacesToPopulate;
         }
 
         private class MembersResolutionContext

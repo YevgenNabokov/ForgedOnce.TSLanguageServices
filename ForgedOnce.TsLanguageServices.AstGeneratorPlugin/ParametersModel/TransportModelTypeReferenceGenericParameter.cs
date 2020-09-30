@@ -7,5 +7,14 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
     public class TransportModelTypeReferenceGenericParameter : TransportModelTypeReference
     {
         public string Name;
+
+        public override TransportModelTypeReference Clone()
+        {
+            return new TransportModelTypeReferenceGenericParameter()
+            {
+                Name = this.Name,
+                IsCollection = this.IsCollection
+            };
+        }
     }
 }

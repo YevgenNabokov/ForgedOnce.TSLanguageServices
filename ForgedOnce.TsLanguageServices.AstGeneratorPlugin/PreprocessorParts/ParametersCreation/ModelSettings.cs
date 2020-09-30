@@ -24,11 +24,20 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             { "any", typeof(object).FullName },
         };
 
+        public HashSet<string> VoidPrimitiveTypes = new HashSet<string>()
+        {
+            "undefined"
+        };
+
         public Dictionary<string, string[]> ExcludedByEntityProperties = new Dictionary<string, string[]>()
         {
             { "SignatureDeclarationBase", new[] { "kind" } },
             { "FunctionOrConstructorTypeNodeBase", new[] { "kind" } },
             { "BooleanLiteral", new[] { "kind" } },
+            { "FunctionLikeDeclarationBase", new[] { "body" } },
+            { "ArrowFunction", new[] { "name" } },
+            { "ClassLikeDeclarationBase", new[] { "kind" } },
+            { "KeywordTypeNode", new[] { "kind" } },
         };
 
         public HashSet<string> OtherExcludedTypes;
