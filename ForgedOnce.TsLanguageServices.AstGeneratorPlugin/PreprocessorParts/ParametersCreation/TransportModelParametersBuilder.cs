@@ -114,8 +114,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             foreach (var modelInterface in result.TransportModelInterfaces.ToArray())
             {
-                var declaration = inheritanceModel.Declarations[modelInterface.Key];
-                modelInterface.Value.Members = this.CreateMembers(declaration, inheritanceModel, astDescription, result, context);
+                if (!context.AdditionalEmptyInterfaces.Contains(modelInterface.Key))
+                {
+                    var declaration = inheritanceModel.Declarations[modelInterface.Key];
+                    modelInterface.Value.Members = this.CreateMembers(declaration, inheritanceModel, astDescription, result, context);
+                }
+
                 context.TransportModelInterfacesToPopulate--;
             }
         }
@@ -227,7 +231,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             };
 
             context.InterfacesInProgress.Add(name, resultItem);
-
+            context.AdditionalEmptyInterfaces.Add(name);
 
             resultItem.Interfaces.AddRange(baseInterfaces);
 
@@ -1014,6 +1018,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             public Dictionary<string, TransportModelEntity> EntitiesInProgress = new Dictionary<string, TransportModelEntity>();
 
             public Dictionary<string, TransportModelInterface> InterfacesInProgress = new Dictionary<string, TransportModelInterface>();
+
+            public HashSet<string> AdditionalEmptyInterfaces = new HashSet<string>();
 
             public int TransportModelEntitiesToPopulate;
 
