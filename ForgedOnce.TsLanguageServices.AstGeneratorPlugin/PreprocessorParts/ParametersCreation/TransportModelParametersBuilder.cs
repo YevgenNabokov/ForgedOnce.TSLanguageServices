@@ -142,6 +142,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             resultItem.BaseEntity = underlyingEntity;
 
+            resultItem.TsDiscriminant = this.GetDiscriminantForWrapperEntity(underlyingEntity, genericArgument, inheritanceModel);
+
             context.EntitiesInProgress.Remove(name);
             result.TransportModelEntities.Add(name, resultItem);
             return resultItem;
@@ -217,10 +219,76 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 resultItem.Interfaces.Add(interfaceRepresentation as TransportModelInterface);
             }
 
+            resultItem.TsDiscriminant = this.GetDiscriminant(declaration.Value);
+
             context.EntitiesInProgress.Remove(declaration.Key);
             result.TransportModelEntities.Add(declaration.Key, resultItem);
 
             return resultItem;
+        }
+
+        private TransportModelEntityTsDiscriminant GetDiscriminant(InheritanceModelDeclaration declaration)
+        {
+            if (declaration.OriginalDeclaration.NamedDeclaration is InterfaceDescription interfaceDescription)
+            {
+                var kindProp = interfaceDescription.Members.FirstOrDefault(m => m.Property != null && m.Property.Name == "kind");
+
+                if (kindProp?.Property?.Type?.Named != null)
+                {
+                    var parts = kindProp.Property.Type.Named.Name.Split('.');
+                    if (parts.Length == 2 && parts[0] == "SyntaxKind")
+                    {
+                        return new TransportModelEntityTsDiscriminantSyntaxKind()
+                        {
+                            SyntaxKindValueName = parts[1]
+                        };
+                    }
+                }
+
+                var brandProp = interfaceDescription.Members.FirstOrDefault(m => m.Property != null && m.Property.Name.StartsWith("_") && m.Property.Name.EndsWith("Brand"));
+
+                if (brandProp != null)
+                {
+                    return new TransportModelEntityTsDiscriminantBrand()
+                    {
+                        BrandPropertyName = brandProp.Property.Name
+                    };
+                }
+            }
+
+            return null;
+        }
+
+        private TransportModelEntityTsDiscriminant GetDiscriminantForWrapperEntity(TransportModelEntity underlyingEntity, TypeReference genericArgument, InheritanceModel inheritanceModel)
+        {
+            if (inheritanceModel.Declarations.ContainsKey(underlyingEntity.Name))
+            {
+                var declaration = inheritanceModel.Declarations[underlyingEntity.Name];
+
+                if (declaration.OriginalDeclaration.NamedDeclaration is InterfaceDescription interfaceDescription)
+                {
+                    var kindProp = interfaceDescription.Members.FirstOrDefault(m => m.Property != null && m.Property.Name == "kind");
+
+                    if (kindProp?.Property?.Type?.Named != null
+                        && interfaceDescription.Parameters.Count == 1
+                        && interfaceDescription.Parameters.All(p => p.Name == kindProp?.Property?.Type?.Named.Name))
+                    {
+                        if (genericArgument.Named != null)
+                        {
+                            var parts = genericArgument.Named.Name.Split('.');
+                            if (parts.Length == 2 && parts[0] == "SyntaxKind")
+                            {
+                                return new TransportModelEntityTsDiscriminantSyntaxKind()
+                                {
+                                    SyntaxKindValueName = parts[1]
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+
+            throw new InvalidOperationException("Failed to create discriminant for wrapper entity.");
         }
 
         private TransportModelInterface CreateEmptyInterface(string name, TransportModelInterface[] baseInterfaces, InheritanceModel inheritanceModel, AstDescription astDescription, TransportModel result, Context context)
