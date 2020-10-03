@@ -9,7 +9,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
     {
         public Dictionary<string, TransportModelGenericParameterConstraint> GenericParameters { get; set; } = new Dictionary<string, TransportModelGenericParameterConstraint>();
 
-        public TransportModelEntity BaseEntity;
+        public TransportModelTypeReferenceTransportModelItem<TransportModelEntity> BaseEntity;
 
         public List<TransportModelInterface> Interfaces { get; set; } = new List<TransportModelInterface>();
 
@@ -25,7 +25,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 
             if (this.BaseEntity != null)
             {
-                foreach (var i in this.BaseEntity.GetInterfaces().Concat(this.Interfaces.SelectMany(s => s.GetInterfaces())))
+                foreach (var i in this.BaseEntity.TransportModelItem.GetInterfaces().Concat(this.Interfaces.SelectMany(s => s.GetInterfaces())))
                 {
                     if (!result.Contains(i))
                     {

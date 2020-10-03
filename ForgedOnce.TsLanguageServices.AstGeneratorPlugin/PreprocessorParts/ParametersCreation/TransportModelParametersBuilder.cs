@@ -10,6 +10,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 {
     public class TransportModelParametersBuilder
     {
+        private const string SyntaxKindName = "SyntaxKind";
+
         private readonly ModelSettings settings;
 
         public TransportModelParametersBuilder(ModelSettings settings)
@@ -93,6 +95,54 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             }
 
             this.PopulateMembers(inheritanceModel, astDescription, result, context);
+
+            this.SetGenericArguments(inheritanceModel, astDescription, result, context);
+        }
+
+        private void SetGenericArguments(
+            InheritanceModel inheritanceModel,
+            AstDescription astDescription,
+            TransportModel result,
+            Context context)
+        {
+            foreach (var entity in result.TransportModelEntities)
+            {
+                if (entity.Value.BaseEntity != null)
+                {
+                    if (entity.Value.BaseEntity.TransportModelItem.GenericParameters.Count > 0)
+                    {
+                        if (!context.AdditionalEntities.Contains(entity.Key))
+                        {
+                            var declaration = inheritanceModel.Declarations[entity.Key];
+                            List<TransportModelTypeReference> arguments = new List<TransportModelTypeReference>();
+
+                            if (declaration.OriginalDeclaration.InheritedTypes.Count != 1)
+                            {
+                                throw new InvalidOperationException("Unable to match inherited type reference to find generic arguments.");
+                            }
+
+                            var parameters = declaration.OriginalDeclaration.InheritedTypes.First().Named?.Parameters;
+                            if (parameters == null || parameters.Count != entity.Value.BaseEntity.TransportModelItem.GenericParameters.Count)
+                            {
+                                throw new InvalidOperationException("Base type reference has not matching generic arguments count.");
+                            }
+
+                            var genericParametersInScope = new HashSet<string>(entity.Value.GenericParameters.Select(g => g.Key));
+
+                            foreach (var param in parameters)
+                            {
+                                arguments.Add(this.CreateTypeReference(param, inheritanceModel, astDescription, result, context, genericParametersInScope));
+                            }
+
+                            entity.Value.BaseEntity.GenericArguments = arguments;
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("Additional entity generic arguments are not defined.");
+                        }
+                    }
+                }
+            }
         }
 
         private void PopulateMembers(
@@ -105,8 +155,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             foreach (var entity in result.TransportModelEntities.ToArray())
             {
-                var declaration = inheritanceModel.Declarations[entity.Key];
-                entity.Value.Members = this.CreateMembers(declaration, inheritanceModel, astDescription, result, context);
+                if (!context.AdditionalEntities.Contains(entity.Key))
+                {
+                    var declaration = inheritanceModel.Declarations[entity.Key];
+                    entity.Value.Members = this.CreateMembers(declaration, inheritanceModel, astDescription, result, context);
+                }
+
                 context.TransportModelEntitiesToPopulate--;
             }
 
@@ -122,6 +176,43 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
                 context.TransportModelInterfacesToPopulate--;
             }
+        }
+
+        private TransportModelEntity CreateWrapperEntitySpecificKind(TransportModelEntity underlyingEntity, TypeReference kindValue, InheritanceModel inheritanceModel, AstDescription astDescription, TransportModel result, Context context)
+        {
+            var parts = kindValue.Named.Name.Split('.');
+
+            if (parts.Length != 2 && parts[0] != SyntaxKindName)
+            {
+                throw new InvalidOperationException($"Kind value must be a member of {SyntaxKindName}.");
+            }
+
+            string name = $"{underlyingEntity.Name}{parts.Last()}";
+
+            if (result.TransportModelEntities.ContainsKey(name))
+            {
+                return result.TransportModelEntities[name];
+            }
+
+            var resultItem = new TransportModelEntity()
+            {
+                Name = name
+            };
+
+            context.EntitiesInProgress.Add(name, resultItem);
+
+            resultItem.BaseEntity = new TransportModelTypeReferenceTransportModelItem<TransportModelEntity>() { TransportModelItem = underlyingEntity };
+
+            resultItem.TsDiscriminant = new TransportModelEntityTsDiscriminantSyntaxKind()
+            {
+                SyntaxKindValueName = parts[1]
+            };
+
+            context.AdditionalEntities.Add(name);
+
+            context.EntitiesInProgress.Remove(name);
+            result.TransportModelEntities.Add(name, resultItem);
+            return resultItem;
         }
 
         private TransportModelEntity CreateWrapperEntity(TransportModelEntity underlyingEntity, TypeReference genericArgument, InheritanceModel inheritanceModel, AstDescription astDescription, TransportModel result, Context context)
@@ -140,7 +231,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             context.EntitiesInProgress.Add(name, resultItem);
 
-            resultItem.BaseEntity = underlyingEntity;
+            resultItem.BaseEntity = new TransportModelTypeReferenceTransportModelItem<TransportModelEntity>() { TransportModelItem = underlyingEntity };
 
             resultItem.TsDiscriminant = this.GetDiscriminantForWrapperEntity(underlyingEntity, genericArgument, inheritanceModel);
 
@@ -171,14 +262,10 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             if (declaration.Value.BaseDeclaration != null)
             {
-                var modelItem = this.GetModelItemByName(declaration.Value.BaseDeclaration.NamedDeclaration.Name, result, context, true, false);
-                if (modelItem != null)
+                var modelItem = this.GetModelItemByName(declaration.Value.BaseDeclaration.NamedDeclaration.Name, result, context, true, false) as TransportModelEntity;
+                if (modelItem == null)
                 {
-                    resultItem.BaseEntity = (TransportModelEntity)modelItem;
-                }
-                else
-                {
-                    resultItem.BaseEntity = this.CreateEntity(new KeyValuePair<string, InheritanceModelDeclaration>(
+                    modelItem = this.CreateEntity(new KeyValuePair<string, InheritanceModelDeclaration>(
                             declaration.Value.BaseDeclaration.NamedDeclaration.Name,
                             inheritanceModel.Declarations[declaration.Value.BaseDeclaration.NamedDeclaration.Name]),
                             inheritanceModel,
@@ -186,6 +273,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                             result,
                             context);
                 }
+
+                resultItem.BaseEntity = new TransportModelTypeReferenceTransportModelItem<TransportModelEntity>()
+                {
+                    TransportModelItem = modelItem,
+                };
             }
 
             if (declaration.Value.ImplementedInterfaces != null)
@@ -221,6 +313,24 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             resultItem.TsDiscriminant = this.GetDiscriminant(declaration.Value);
 
+            var kindProp = interfaceDescription.Members.FirstOrDefault(m => m.Property != null && m.Property.Name == "kind");
+            if (kindProp?.Property?.Type?.Union != null && kindProp.Property.Type.Union.Types.All(t => t.Named != null && t.Named.Name.Split('.')[0].StartsWith(SyntaxKindName)))
+            {
+                var typesNonDefinedInInheritedEntities = kindProp.Property.Type.Union.Types.Where(ut =>
+                    !inheritanceModel.Declarations.Any(d => declaration.Value != d.Value
+                        && inheritanceModel.InheritanceExists(declaration.Value.OriginalDeclaration, d.Value.OriginalDeclaration)
+                        && d.Value.OriginalDeclaration.NamedDeclaration is InterfaceDescription di
+                        && di.Members.Any(m => m.Property != null && m.Property.Name == "kind" && m.Property.Type == ut))).ToArray();
+
+                if (typesNonDefinedInInheritedEntities.Length > 0)
+                {
+                    foreach (var kind in typesNonDefinedInInheritedEntities)
+                    {
+                        this.CreateWrapperEntitySpecificKind(resultItem, kind, inheritanceModel, astDescription, result, context);
+                    }
+                }
+            }
+
             context.EntitiesInProgress.Remove(declaration.Key);
             result.TransportModelEntities.Add(declaration.Key, resultItem);
 
@@ -236,7 +346,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 if (kindProp?.Property?.Type?.Named != null)
                 {
                     var parts = kindProp.Property.Type.Named.Name.Split('.');
-                    if (parts.Length == 2 && parts[0] == "SyntaxKind")
+                    if (parts.Length == 2 && parts[0] == SyntaxKindName)
                     {
                         return new TransportModelEntityTsDiscriminantSyntaxKind()
                         {
@@ -276,7 +386,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                         if (genericArgument.Named != null)
                         {
                             var parts = genericArgument.Named.Name.Split('.');
-                            if (parts.Length == 2 && parts[0] == "SyntaxKind")
+                            if (parts.Length == 2 && parts[0] == SyntaxKindName)
                             {
                                 return new TransportModelEntityTsDiscriminantSyntaxKind()
                                 {
@@ -508,7 +618,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                             throw new InvalidOperationException("Null type reference is unexpected for generic parameter.");
                         }
 
-                        if (constraintReference is TransportModelTypeReferenceTransportModelItem modelItemConstraint)
+                        if (constraintReference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> modelItemConstraint)
                         {
                             if (modelItemConstraint.TransportModelItem is TransportModelEnum)
                             {
@@ -548,7 +658,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         {
             if (context.ModelItemReferences.ContainsKey(typeReference))
             {
-                var reference = new TransportModelTypeReferenceTransportModelItem()
+                var reference = new TransportModelTypeReferenceTransportModelItem<TransportModelItem>()
                 {
                     TransportModelItem = context.ModelItemReferences[typeReference]
                 };
@@ -651,7 +761,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
                     var genericArgs = this.CreateGenericArguments(typeReference.Named.Parameters, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments);
 
-                    if (genericArgs.Any(a => a is TransportModelTypeReferenceTransportModelItem modelArg && modelArg.TransportModelItem is TransportModelEnum) && modelItem is TransportModelEntity modelEntity)
+                    if (genericArgs.Any(a => a is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> modelArg && modelArg.TransportModelItem is TransportModelEnum) && modelItem is TransportModelEntity modelEntity)
                     {
                         if (modelEntity.GenericParameters.Count > 0)
                         {
@@ -666,7 +776,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                         var wrapperEntity = this.CreateWrapperEntity(modelEntity, typeReference.Named.Parameters[0], inheritanceModel, astDescription, result, context);
 
                         return this.RegisterItemReference(
-                           new TransportModelTypeReferenceTransportModelItem()
+                           new TransportModelTypeReferenceTransportModelItem<TransportModelEntity>()
                            {
                                TransportModelItem = wrapperEntity,
                                GenericArguments = new List<TransportModelTypeReference>()
@@ -677,7 +787,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     else
                     {
                         return this.RegisterItemReference(
-                       new TransportModelTypeReferenceTransportModelItem()
+                       new TransportModelTypeReferenceTransportModelItem<TransportModelItem>()
                        {
                            TransportModelItem = modelItem,
                            GenericArguments = genericArgs
@@ -691,7 +801,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 if (result.TransportModelEnums.ContainsKey(nameParts[0]))
                 {
                     return this.RegisterItemReference(
-                        new TransportModelTypeReferenceTransportModelItem()
+                        new TransportModelTypeReferenceTransportModelItem<TransportModelEnum>()
                         {
                             TransportModelItem = result.TransportModelEnums[nameParts[0]]
                         },
@@ -726,7 +836,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
                     modelItem = this.GetModelItemByName(typeReference.Named.Name, result, context);
                     return this.RegisterItemReference(
-                       new TransportModelTypeReferenceTransportModelItem()
+                       new TransportModelTypeReferenceTransportModelItem<TransportModelItem>()
                        {
                            TransportModelItem = modelItem,
                            GenericArguments = this.CreateGenericArguments(typeReference.Named.Parameters, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments)
@@ -762,12 +872,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     return unionParts[0];
                 }
 
-                if (unionParts.Any(p => !(p is TransportModelTypeReferenceTransportModelItem)))
+                if (unionParts.Any(p => !(p is ITransportModelTypeReferenceTransportModelItem<TransportModelItem>)))
                 {
                     throw new InvalidOperationException("Can build union type reference only with model item parts.");
                 }
 
-                var modelItemReferences = unionParts.OfType<TransportModelTypeReferenceTransportModelItem>().ToArray();
+                var modelItemReferences = unionParts.OfType<ITransportModelTypeReferenceTransportModelItem<TransportModelItem>>().ToArray();
 
                 if (modelItemReferences.All(r => (r.TransportModelItem is TransportModelEnum)))
                 {
@@ -775,7 +885,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     if (enumItems.Length > 0 && enumItems.All(i => i == enumItems[0]))
                     {
                         return this.RegisterItemReference(
-                           new TransportModelTypeReferenceTransportModelItem()
+                           new TransportModelTypeReferenceTransportModelItem<TransportModelEnum>()
                            {
                                TransportModelItem = enumItems[0]
                            },
@@ -797,7 +907,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     if (commonInterfaces.Length > 0)
                     {
                         return this.RegisterItemReference(
-                           new TransportModelTypeReferenceTransportModelItem()
+                           new TransportModelTypeReferenceTransportModelItem<TransportModelInterface>()
                            {
                                TransportModelItem = commonInterfaces[0]
                            },
@@ -814,7 +924,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     if (commonEntities.Length > 0)
                     {
                         return this.RegisterItemReference(
-                           new TransportModelTypeReferenceTransportModelItem()
+                           new TransportModelTypeReferenceTransportModelItem<TransportModelEntity>()
                            {
                                TransportModelItem = commonEntities[0]
                            },
@@ -834,7 +944,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     }
 
                     return this.RegisterItemReference(
-                           new TransportModelTypeReferenceTransportModelItem()
+                           new TransportModelTypeReferenceTransportModelItem<TransportModelInterface>()
                            {
                                TransportModelItem = enclosingInterface
                            },
@@ -997,7 +1107,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                         }
                     }
 
-                    currentItem = currentItem.BaseEntity;
+                    currentItem = currentItem.BaseEntity?.TransportModelItem;
                 }
             }
 
@@ -1034,7 +1144,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             return null;
         }
 
-        private TransportModelTypeReferenceTransportModelItem RegisterItemReference(TransportModelTypeReferenceTransportModelItem reference, Context context, TypeReference typeReference)
+        private TransportModelTypeReferenceTransportModelItem<T> RegisterItemReference<T>(TransportModelTypeReferenceTransportModelItem<T> reference, Context context, TypeReference typeReference) where T : TransportModelItem
         {
             if (!context.ModelItemReferences.ContainsKey(typeReference))
             {
@@ -1088,6 +1198,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             public Dictionary<string, TransportModelInterface> InterfacesInProgress = new Dictionary<string, TransportModelInterface>();
 
             public HashSet<string> AdditionalEmptyInterfaces = new HashSet<string>();
+
+            public HashSet<string> AdditionalEntities = new HashSet<string>();
 
             public int TransportModelEntitiesToPopulate;
 
