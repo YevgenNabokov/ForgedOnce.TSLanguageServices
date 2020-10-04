@@ -12,5 +12,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts
         public Dictionary<string, Declaration> ReferredDeclarations;
 
         public Dictionary<string, HashSet<TypeReference>> UnresolvedReferences;
+
+        public List<FunctionDescription> CreationFunctions;
     }
 }

@@ -22,9 +22,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
         public string AstNodeBaseTypeQualified;
 
-        public string ExcludedAstNodes = "ts.TransientIdentifier,ts.SyntaxList,ts.PropertyLikeDeclaration,ts.SuperCall,ts.ImportCall,ts.JsonObjectExpressionStatement,ts.ObjectDestructuringAssignment,ts.ArrayDestructuringAssignment,ts.PropertyAccessChain,ts.SuperPropertyAccessExpression,ts.SuperElementAccessExpression,ts.TsConfigSourceFile,ts.NonNullChain,ts.ElementAccessChain,ts.AssignmentExpression,ts.CallChain,ts.JsonSourceFile,ts.BindingOrAssignmentElement,ts.SyntheticExpression,ts.Bundle,ts.UnparsedSource,ts.UnparsedPrepend,ts.UnparsedTextLike,ts.UnparsedSection,ts.UnparsedSyntheticReference,ts.UnparsedPrologue,ts.JSDocAugmentsTag,ts.JSDocImplementsTag";
+        public string ExcludedAstNodes = "ts.TransientIdentifier,ts.SyntaxList,ts.PropertyLikeDeclaration,ts.SuperCall,ts.ImportCall,ts.JsonObjectExpressionStatement,ts.ObjectDestructuringAssignment"+
+            ",ts.ArrayDestructuringAssignment,ts.PropertyAccessChain,ts.SuperPropertyAccessExpression,ts.SuperElementAccessExpression,ts.TsConfigSourceFile,ts.NonNullChain,ts.ElementAccessChain"+
+            ",ts.AssignmentExpression,ts.CallChain,ts.JsonSourceFile,ts.BindingOrAssignmentElement,ts.SyntheticExpression,ts.Bundle,ts.UnparsedSource,ts.UnparsedPrepend,ts.UnparsedTextLike,ts.UnparsedSection"+
+            ",ts.UnparsedSyntheticReference,ts.UnparsedPrologue,ts.JSDocAugmentsTag,ts.JSDocImplementsTag,ts.NotEmittedStatement,ts.SourceFile,ts.PartiallyEmittedExpression,ts.MissingDeclaration";
 
-        public string OtherExcludedTypes = "ts.UnscopedEmitHelper,ts.TextRange,ts.JSDocAugmentsTag,ts.JSDocImplementsTag";
+        public string OtherExcludedTypes = "ts.UnscopedEmitHelper,ts.TextRange,ts.JSDocAugmentsTag,ts.JSDocImplementsTag,ts.SourceFile";
 
         public string TypesRepresentedAsInterface = "ts.Node";
 

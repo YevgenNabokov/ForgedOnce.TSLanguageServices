@@ -45,7 +45,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Ana
             {
                 AstDeclarations = astDeclarations.ToDictionary(d => d.Key, d => this.Filter(d.Value)),
                 ReferredDeclarations = referredDeclarations.ToDictionary(d => d.Key, d => this.Filter(d.Value)),
-                UnresolvedReferences = unresolvedReferences
+                UnresolvedReferences = unresolvedReferences,
+                CreationFunctions = description.Functions.Where(f => f.Name.StartsWith("create")).ToList()
             };
         }
 

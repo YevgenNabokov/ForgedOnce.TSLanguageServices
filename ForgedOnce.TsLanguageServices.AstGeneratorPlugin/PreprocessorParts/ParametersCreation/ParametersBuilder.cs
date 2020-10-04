@@ -1,4 +1,5 @@
 ﻿using ForgedOnce.TsLanguageServices.AstDescription.Model;
+using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,28 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             result.TransportModel = transportModelParametersBuilder.Create(astDescription);
 
+            this.Validate(result);
+
             return result;
+        }
+
+        protected void Validate(Parameters transportModel)
+        {
+            this.ValidateUniqueKindDiscriminants(transportModel);
+        }
+
+        protected void ValidateUniqueKindDiscriminants(Parameters transportModel)
+        {
+            Dictionary<string, string> cache = new Dictionary<string, string>();
+
+            foreach (var entity in transportModel.TransportModel.TransportModelEntities.Where(e => e.Value.TsDiscriminant is TransportModelEntityTsDiscriminantSyntaxKind))
+            {
+                var discriminant = (TransportModelEntityTsDiscriminantSyntaxKind)entity.Value.TsDiscriminant;
+                if (cache.ContainsKey(discriminant.SyntaxKindValueName))
+                {
+                    throw new InvalidOperationException($"Entities {cache[discriminant.SyntaxKindValueName]} and {entity.Key} are conflicting, both have kind discriminant {discriminant.SyntaxKindValueName}");
+                }
+            }
         }
     }
 }

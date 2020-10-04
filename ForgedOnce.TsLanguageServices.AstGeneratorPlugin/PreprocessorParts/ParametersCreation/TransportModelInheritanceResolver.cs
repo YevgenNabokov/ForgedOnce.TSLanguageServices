@@ -123,6 +123,16 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                             throw new InvalidOperationException("Entity cannot inherit from interface.");
                         }
 
+                        if (!item.Value.ImplementedInterfaces.Contains(item.Value.BaseDeclaration))
+                        {
+                            item.Value.ImplementedInterfaces.Add(item.Value.BaseDeclaration);
+                        }
+
+                        if (inheritanceModel.CollapsedToInterface.Contains(item.Value.BaseDeclaration) && !item.Value.MergedDeclarations.Contains(item.Value.BaseDeclaration))
+                        {
+                            item.Value.MergedDeclarations.Add(item.Value.BaseDeclaration);
+                        }
+
                         item.Value.BaseDeclaration = inheritanceModel.Declarations[item.Value.BaseDeclaration.GetName()].BaseDeclaration;
                     }
                 }

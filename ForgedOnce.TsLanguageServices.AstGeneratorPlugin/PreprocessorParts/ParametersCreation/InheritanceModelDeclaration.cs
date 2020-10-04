@@ -7,9 +7,18 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 {
     public class InheritanceModelDeclaration
     {
+
+
         public Declaration OriginalDeclaration;
 
-        public Declaration BaseDeclaration;
+        public Declaration BaseDeclaration
+        {
+            get => baseDeclaration;
+            set 
+            {
+                baseDeclaration = value;
+            }
+        }
 
         public List<Declaration> ImplementedInterfaces = new List<Declaration>();
 
@@ -20,5 +29,6 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         public bool CollapsedToInterface;
 
         public bool CollapsedToEmptyInterface;
+        private Declaration baseDeclaration;
     }
 }

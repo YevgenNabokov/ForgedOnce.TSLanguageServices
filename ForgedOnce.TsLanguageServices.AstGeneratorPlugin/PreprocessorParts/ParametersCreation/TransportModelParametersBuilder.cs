@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.ParametersCreation
 {
@@ -97,6 +98,20 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             this.PopulateMembers(inheritanceModel, astDescription, result, context);
 
             this.SetGenericArguments(inheritanceModel, astDescription, result, context);
+
+            this.BindCrationFunction(inheritanceModel, astDescription, result, context);
+        }
+
+        private void BindCrationFunction(
+            InheritanceModel inheritanceModel,
+            AstDescription astDescription,
+            TransportModel result,
+            Context context)
+        {
+            foreach (var entity in result.TransportModelEntities)
+            {
+                entity.Value.TsCreationFunctionBinding = this.GetCreationFunctionBinding(entity.Value, astDescription, result, context);
+            }
         }
 
         private void SetGenericArguments(
@@ -209,6 +224,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             };
 
             context.AdditionalEntities.Add(name);
+            context.AdditionalEntityToOriginalMapping.Add(resultItem, underlyingEntity);
 
             context.EntitiesInProgress.Remove(name);
             result.TransportModelEntities.Add(name, resultItem);
@@ -234,6 +250,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             resultItem.BaseEntity = new TransportModelTypeReferenceTransportModelItem<TransportModelEntity>() { TransportModelItem = underlyingEntity };
 
             resultItem.TsDiscriminant = this.GetDiscriminantForWrapperEntity(underlyingEntity, genericArgument, inheritanceModel);
+
+            context.AdditionalEntities.Add(name);
+            context.AdditionalEntityToOriginalMapping.Add(resultItem, underlyingEntity);
 
             context.EntitiesInProgress.Remove(name);
             result.TransportModelEntities.Add(name, resultItem);
@@ -335,6 +354,124 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             result.TransportModelEntities.Add(declaration.Key, resultItem);
 
             return resultItem;
+        }
+
+        private TransportModelFunctionBinding GetCreationFunctionBinding(
+            TransportModelEntity entity,
+            AstDescription astDescription,
+            TransportModel result,
+            Context context)
+        {
+            if (entity.TsDiscriminant is TransportModelEntityTsDiscriminantSyntaxKind kindDiscriminant)
+            {
+                if (this.settings.EntitiesWithSkippedCreationFunctions.Any(r => Regex.IsMatch(entity.Name, r)))
+                {
+                    return new TransportModelFunctionBindingSkipped();
+                }
+
+                var primaryEntity = entity;
+
+                if (context.AdditionalEntityToOriginalMapping.ContainsKey(entity))
+                {
+                    primaryEntity = context.AdditionalEntityToOriginalMapping[entity];
+                }
+
+                FunctionDescription candidateFunction = null;
+
+                bool usePrimaryEntity = true;
+                if (this.settings.CreationFunctionParametersToPropertyBindings.ContainsKey(entity.Name))
+                {
+                    candidateFunction = astDescription.CreationFunctions.FirstOrDefault(f => f.Name == this.settings.CreationFunctionParametersToPropertyBindings[entity.Name].Key);
+                    usePrimaryEntity = false;
+                }
+                else
+                {
+                    if (this.settings.CreationFunctionParametersToPropertyBindings.ContainsKey(primaryEntity.Name))
+                    {
+                        candidateFunction = astDescription.CreationFunctions.FirstOrDefault(f => f.Name == this.settings.CreationFunctionParametersToPropertyBindings[primaryEntity.Name].Key);
+                    }
+                    else
+                    {
+                        candidateFunction = astDescription.CreationFunctions.FirstOrDefault(f => f.Name == $"create{primaryEntity.Name}");
+                    }
+                }
+
+                if (candidateFunction == null)
+                {
+                    candidateFunction = astDescription.CreationFunctions.FirstOrDefault(f => f.Name.StartsWith("create") 
+                    && (f.Signature?.Type?.Named?.Name == primaryEntity.Name || (f.Signature?.Type?.Intersection != null && f.Signature.Type.Intersection.Types.Any(t => t.Named?.Name == primaryEntity.Name))));
+                }
+
+                if (candidateFunction != null)
+                {
+                    return new TransportModelFunctionBinding()
+                    {
+                        Name = candidateFunction.Name,
+                        Parameters = this.GetFunctionBindingParameters(candidateFunction, usePrimaryEntity ? primaryEntity : entity)
+                    };
+                }
+
+                throw new InvalidOperationException($"Unable to find creation function for {primaryEntity.Name}");
+            }
+
+            return null;
+        }
+
+        private List<TransportModelFunctionParameterBinding> GetFunctionBindingParameters(FunctionDescription function, TransportModelEntity entity)
+        {
+            List<TransportModelFunctionParameterBinding> result = new List<TransportModelFunctionParameterBinding>();
+
+            foreach (var param in function.Signature.Parameters)
+            {
+                if (param.IsOptional
+                    && this.settings.SkippedCreationFunctionOptionalParameters.ContainsKey(entity.Name)
+                    && this.settings.SkippedCreationFunctionOptionalParameters[entity.Name].ContainsKey(function.Name)
+                    && this.settings.SkippedCreationFunctionOptionalParameters[entity.Name][function.Name].Contains(param.Name))
+                {
+                    continue;
+                }
+
+                if (this.settings.CreationFunctionParametersToOneOfPropertiesBindings.ContainsKey(entity.Name)
+                    && this.settings.CreationFunctionParametersToOneOfPropertiesBindings[entity.Name].Key == function.Name
+                    && this.settings.CreationFunctionParametersToOneOfPropertiesBindings[entity.Name].Value.ContainsKey(param.Name))
+                {
+                    var propertyNames = this.settings.CreationFunctionParametersToOneOfPropertiesBindings[entity.Name].Value[param.Name];
+                    var notMapped = propertyNames.FirstOrDefault(p => entity.GetMemberByName(p) == null);
+                    if (notMapped != null)
+                    {
+                        throw new InvalidOperationException($"Unable to bind parameter {param.Name} in creation function {function.Name} for {entity.Name}.{notMapped}.");
+                    }
+
+                    result.Add(new TransportModelFunctionParameterBindingToOneOfProperties()
+                    {
+                        Names = propertyNames
+                    });
+                }
+                else
+                {
+                    string memberName = param.Name;
+
+                    if (this.settings.CreationFunctionParametersToPropertyBindings.ContainsKey(entity.Name)
+                        && this.settings.CreationFunctionParametersToPropertyBindings[entity.Name].Key == function.Name
+                        && this.settings.CreationFunctionParametersToPropertyBindings[entity.Name].Value.ContainsKey(param.Name))
+                    {
+                        memberName = this.settings.CreationFunctionParametersToPropertyBindings[entity.Name].Value[param.Name];
+                    }
+
+                    var matchingProperty = entity.GetMemberByName(memberName);
+
+                    if (matchingProperty != null)
+                    {
+                        result.Add(new TransportModelFunctionParameterBindingToProperty() { Name = matchingProperty.Name });
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Unable to bind parameter {param.Name} in creation function {function.Name} for {entity.Name}.");
+                    }
+                }
+            }
+
+            return result;
         }
 
         private TransportModelEntityTsDiscriminant GetDiscriminant(InheritanceModelDeclaration declaration)
@@ -1200,6 +1337,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             public HashSet<string> AdditionalEmptyInterfaces = new HashSet<string>();
 
             public HashSet<string> AdditionalEntities = new HashSet<string>();
+
+            public Dictionary<TransportModelEntity, TransportModelEntity> AdditionalEntityToOriginalMapping = new Dictionary<TransportModelEntity, TransportModelEntity>();
 
             public int TransportModelEntitiesToPopulate;
 

@@ -17,6 +17,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 
         public TransportModelEntityTsDiscriminant TsDiscriminant;
 
+        public TransportModelFunctionBinding TsCreationFunctionBinding;
+
         public IEnumerable<TransportModelInterface> GetInterfaces()
         {
             List<TransportModelInterface> result = new List<TransportModelInterface>();
@@ -35,6 +37,21 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
             }
 
             return result;
+        }
+
+        public TransportModelEntityMember GetMemberByName(string name)
+        {
+            if (this.Members.ContainsKey(name))
+            {
+                return this.Members[name];
+            }
+
+            if (this.BaseEntity != null)
+            {
+                return this.BaseEntity.TransportModelItem.GetMemberByName(name);
+            }
+
+            return null;
         }
     }
 }
