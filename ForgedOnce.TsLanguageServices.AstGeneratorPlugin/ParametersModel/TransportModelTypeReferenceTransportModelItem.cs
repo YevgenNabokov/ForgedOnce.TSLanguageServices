@@ -19,5 +19,30 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
                 IsCollection = this.IsCollection
             };
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> reference)
+            {
+                if (this.GenericArguments.Count != reference.GenericArguments.Count)
+                {
+                    return false;
+                }
+
+                for (var i = 0; i < this.GenericArguments.Count; i++)
+                {
+                    if (!this.GenericArguments[i].Equals(reference.GenericArguments[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return
+                    this.TransportModelItem == reference.TransportModelItem
+                    && this.IsCollection == reference.IsCollection;
+            }
+
+            return false;
+        }
     }
 }

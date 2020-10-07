@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -44,7 +45,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
                 var modelEnum = new TransportModelEnum()
                 {
-                    Name = enumDescription.Name
+                    Name = enumDescription.Name,
+                    IsFlags = enumDescription.Name.EndsWith("Flags")
                 };
 
                 foreach (var member in enumDescription.Members)
@@ -191,6 +193,165 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
                 context.TransportModelInterfacesToPopulate--;
             }
+
+            foreach (var entity in result.TransportModelEntities.ToArray())
+            {
+                this.FilterProperties(entity.Value);
+            }
+
+            foreach (var modelInterface in result.TransportModelInterfaces.ToArray())
+            {
+                this.FilterProperties(modelInterface.Value);
+            }
+
+            this.ValidateImplementation(result);
+        }
+
+        private void ValidateImplementation(TransportModel result)
+        {
+            foreach (var entity in result.TransportModelEntities)
+            {
+                foreach (var implementedInterface in entity.Value.Interfaces)
+                {
+                    foreach (var member in implementedInterface.GetAggregatedMembers())
+                    {
+                        var prop = entity.Value.GetMemberByName(member.Name);
+
+                        if (prop == null)
+                        {
+                            throw new InvalidOperationException($"{entity.Key} does not implement {member.Name} defined in {implementedInterface.Name} inerface.");
+                        }
+
+                        if (!prop.Type.Equals(member.Type))
+                        {
+                            throw new InvalidOperationException($"Member {member.Name} defined in {implementedInterface.Name} inerface is not properly implemented in {entity.Key}.");
+                        }
+                    }
+                }
+            }
+        }
+
+        private void FilterProperties(TransportModelEntity entity)
+        {
+            if (entity.BaseEntity == null)
+            {
+                return;
+            }
+
+            HashSet<string> toRemove = new HashSet<string>();
+
+            foreach (var prop in entity.Members)
+            {
+                var baseMember = entity.BaseEntity.TransportModelItem.GetMemberByName(prop.Key);
+
+                if (baseMember != null)
+                {
+                    if (!this.TypeReferenceInherits(baseMember.Type, prop.Value.Type))
+                    {
+                        throw new InvalidOperationException($"Inconsistent member {prop.Key} in entity {entity.Name}");
+                    }
+
+                    toRemove.Add(prop.Key);
+                }
+            }
+
+            foreach (var name in toRemove)
+            {
+                entity.Members.Remove(name);
+            }
+        }
+
+        private bool TypeReferenceInherits(TransportModelTypeReference parent, TransportModelTypeReference child)
+        {
+            if (parent.Equals(child))
+            {
+                return true;
+            }
+
+            if (parent is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> parentRef 
+                && child is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> childRef)
+            {
+                if (parentRef.GenericArguments.Count > 0)
+                {
+                    throw new InvalidOperationException("Cannot check inheritance for types with generic arguments.");
+                }
+
+                return this.TypeInherits(parentRef.TransportModelItem, childRef.TransportModelItem);
+            }
+
+            return false;
+        }
+
+        private bool TypeInherits(TransportModelItem parent, TransportModelItem child)
+        {
+            if (parent == child)
+            {
+                return true;
+            }
+
+            if (parent is TransportModelInterface parentInterface)
+            {
+                if (child is TransportModelEntity childEntity)
+                {
+                    return childEntity.Interfaces.Any(i => this.TypeInherits(parent, i)) || (childEntity.BaseEntity != null && this.TypeInherits(parent, childEntity.BaseEntity.TransportModelItem));
+                }
+                else
+                {
+                    if (child is TransportModelInterface childInerface)
+                    {
+                        return childInerface.Interfaces.Any(i => this.TypeInherits(parent, i));
+                    }
+                }
+            }
+            else
+            {
+                if (parent is TransportModelEntity parentEntity)
+                {
+                    if (child is TransportModelEntity childEntity)
+                    {
+                        return childEntity.BaseEntity != null && this.TypeInherits(parent, childEntity.BaseEntity.TransportModelItem);
+                    }
+                    else
+                    {
+                        if (child is TransportModelInterface childInerface)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
+        private void FilterProperties(TransportModelInterface iface)
+        {
+            HashSet<string> toRemove = new HashSet<string>();
+
+            foreach (var prop in iface.Members)
+            {
+                foreach (var baseInterface in iface.Interfaces)
+                {
+                    var baseMember = baseInterface.GetMemberByName(prop.Key);
+
+                    if (baseMember != null)
+                    {
+                        if (!this.TypeReferenceInherits(baseMember.Type, prop.Value.Type))
+                        {
+                            throw new InvalidOperationException($"Inconsistent member {prop.Key} in interface {iface.Name}");
+                        }
+
+                        toRemove.Add(prop.Key);
+                        break;
+                    }
+                }
+            }
+
+            foreach (var name in toRemove)
+            {
+                iface.Members.Remove(name);
+            }
         }
 
         private TransportModelEntity CreateWrapperEntitySpecificKind(TransportModelEntity underlyingEntity, TypeReference kindValue, InheritanceModel inheritanceModel, AstDescription astDescription, TransportModel result, Context context)
@@ -278,6 +439,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 result,
                 context,
                 out Dictionary<string, TransportModelTypeReference> replacedGenericArguments);
+
+            if (replacedGenericArguments != null && replacedGenericArguments.Count > 0)
+            {
+                context.ReplacedGenericParameters.Add(declaration.Key, replacedGenericArguments);
+            }
 
             if (declaration.Value.BaseDeclaration != null)
             {
@@ -652,6 +818,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         {
             Dictionary<string, TypeElementPropertySignature> result = new Dictionary<string, TypeElementPropertySignature>();
 
+            if (inheritanceModel.CollapsedToEmptyInterface.Contains(declaration.OriginalDeclaration))
+            {
+                return result;
+            }
+
             foreach (var merged in declaration.MergedDeclarations)
             {
                 var mergedInheritanceModelDeclaration = inheritanceModel.Declarations[merged.GetName()];
@@ -711,7 +882,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     ? interfaceDescription.Parameters.Select(p => p.Name)
                     : Array.Empty<string>());
 
-            var type = this.CreateTypeReference(propertySignature.Type, inheritanceModel, astDescription, result, context, genericArgumentsInScope);
+            var replacedGenericArguments = context.ReplacedGenericParameters.ContainsKey(declaration.OriginalDeclaration.GetName()) ? context.ReplacedGenericParameters[declaration.OriginalDeclaration.GetName()] : null;
+
+            var type = this.CreateTypeReference(propertySignature.Type, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments);
 
             if (type == null)
             {
@@ -829,6 +1002,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             if (typeReference.Named != null)
             {
+                if (replacedGenericArguments != null && replacedGenericArguments.ContainsKey(typeReference.Named.Name))
+                {
+                    return replacedGenericArguments[typeReference.Named.Name];
+                }
+
                 if (this.settings.InterfacesMappedAsCollection.Contains(typeReference.Named.Name))
                 {
                     var genericArguments = this.CreateGenericArguments(typeReference.Named.Parameters, inheritanceModel, astDescription, result, context, genericArgumentsInScope, replacedGenericArguments);
@@ -1339,6 +1517,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             public HashSet<string> AdditionalEntities = new HashSet<string>();
 
             public Dictionary<TransportModelEntity, TransportModelEntity> AdditionalEntityToOriginalMapping = new Dictionary<TransportModelEntity, TransportModelEntity>();
+
+            public Dictionary<string, Dictionary<string, TransportModelTypeReference>> ReplacedGenericParameters = new Dictionary<string, Dictionary<string, TransportModelTypeReference>>();
 
             public int TransportModelEntitiesToPopulate;
 

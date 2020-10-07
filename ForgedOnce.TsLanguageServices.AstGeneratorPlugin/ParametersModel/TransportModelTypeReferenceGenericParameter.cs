@@ -16,5 +16,15 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
                 IsCollection = this.IsCollection
             };
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is TransportModelTypeReferenceGenericParameter param)
+            {
+                return this.Name == param.Name && this.IsCollection == param.IsCollection;
+            }
+
+            return false;
+        }
     }
 }

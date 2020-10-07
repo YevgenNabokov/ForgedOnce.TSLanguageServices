@@ -38,6 +38,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             { "ArrowFunction", new[] { "name" } },
             { "ClassLikeDeclarationBase", new[] { "kind" } },
             { "KeywordTypeNode", new[] { "kind" } },
+
+            //// Interfaces
+            { "DeclarationStatement", new[] { "name" } },
+            { "ObjectLiteralElement", new[] { "name" } },
+            { "ClassElement", new[] { "name" } },
+            { "TypeElement", new[] { "name" } },
         };
 
         public Dictionary<string, KeyValuePair<string, Dictionary<string, string>>> CreationFunctionParametersToPropertyBindings = new Dictionary<string, KeyValuePair<string, Dictionary<string, string>>>()
