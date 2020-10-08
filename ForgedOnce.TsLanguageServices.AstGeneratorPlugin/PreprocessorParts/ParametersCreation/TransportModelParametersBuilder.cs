@@ -175,7 +175,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 if (!context.AdditionalEntities.Contains(entity.Key))
                 {
                     var declaration = inheritanceModel.Declarations[entity.Key];
-                    entity.Value.Members = this.CreateMembers(declaration, inheritanceModel, astDescription, result, context);
+                    entity.Value.Members = this.CreateMembers(declaration, inheritanceModel, astDescription, result, context, out Dictionary<string, TransportModelEntityMember> spare);
+                    entity.Value.MemberTypeLimiters = spare;
                 }
 
                 context.TransportModelEntitiesToPopulate--;
@@ -188,7 +189,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 if (!context.AdditionalEmptyInterfaces.Contains(modelInterface.Key))
                 {
                     var declaration = inheritanceModel.Declarations[modelInterface.Key];
-                    modelInterface.Value.Members = this.CreateMembers(declaration, inheritanceModel, astDescription, result, context);
+                    modelInterface.Value.Members = this.CreateMembers(declaration, inheritanceModel, astDescription, result, context, out _);
                 }
 
                 context.TransportModelInterfacesToPopulate--;
@@ -793,15 +794,25 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             return resultItem;
         }
 
-        private Dictionary<string, TransportModelEntityMember> CreateMembers(InheritanceModelDeclaration declaration, InheritanceModel inheritanceModel, AstDescription astDescription, TransportModel result, Context context)
+        private Dictionary<string, TransportModelEntityMember> CreateMembers(
+            InheritanceModelDeclaration declaration,
+            InheritanceModel inheritanceModel,
+            AstDescription astDescription,
+            TransportModel result,
+            Context context,
+            out Dictionary<string, TransportModelEntityMember> spareMembers)
         {
             context.CurrentNamespace = declaration.OriginalDeclaration.NamedDeclaration.Namespace;
 
             Dictionary<string, TransportModelEntityMember> members = new Dictionary<string, TransportModelEntityMember>();
+            spareMembers = new Dictionary<string, TransportModelEntityMember>();
+
             var interfaceDeclaration = declaration.OriginalDeclaration.NamedDeclaration as InterfaceDescription;
             MembersResolutionContext membersContext = new MembersResolutionContext();
 
-            foreach (var prop in this.ExtractProperties(declaration, inheritanceModel, membersContext))
+            var extractedProperties = this.ExtractProperties(declaration, inheritanceModel, membersContext, false, out Dictionary<string, TypeElementPropertySignature> spareProperties);
+
+            foreach (var prop in extractedProperties)
             {
                 var modelProp = this.CreateProperty(declaration, prop.Value, inheritanceModel, astDescription, result, context);
 
@@ -811,11 +822,27 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 }
             }
 
+            foreach (var prop in spareProperties)
+            {
+                var modelProp = this.CreateProperty(declaration, prop.Value, inheritanceModel, astDescription, result, context);
+
+                if (modelProp != null)
+                {
+                    spareMembers.Add(prop.Key, modelProp);
+                }
+            }
+
             return members;
         }
 
-        private Dictionary<string, TypeElementPropertySignature> ExtractProperties(InheritanceModelDeclaration declaration, InheritanceModel inheritanceModel, MembersResolutionContext context)
+        private Dictionary<string, TypeElementPropertySignature> ExtractProperties(
+            InheritanceModelDeclaration declaration,
+            InheritanceModel inheritanceModel,
+            MembersResolutionContext context,
+            bool aggregate,
+            out Dictionary<string, TypeElementPropertySignature> spareProperties)
         {
+            spareProperties = new Dictionary<string, TypeElementPropertySignature>();
             Dictionary<string, TypeElementPropertySignature> result = new Dictionary<string, TypeElementPropertySignature>();
 
             if (inheritanceModel.CollapsedToEmptyInterface.Contains(declaration.OriginalDeclaration))
@@ -823,14 +850,46 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 return result;
             }
 
+            var baseProperties = new Dictionary<string, TypeElementPropertySignature>();
+
+            if (declaration.BaseDeclaration != null)
+            {
+                baseProperties = this.ExtractProperties(inheritanceModel.Declarations[declaration.BaseDeclaration.GetName()], inheritanceModel, context, aggregate, out _);
+
+                if (aggregate)
+                {
+                    foreach (var prop in baseProperties)
+                    {
+                        if (!result.ContainsKey(prop.Key))
+                        {
+                            result.Add(prop.Key, prop.Value);
+                        }
+                    }
+                }
+            }
+
             foreach (var merged in declaration.MergedDeclarations)
             {
                 var mergedInheritanceModelDeclaration = inheritanceModel.Declarations[merged.GetName()];
-                foreach (var prop in this.ExtractProperties(mergedInheritanceModelDeclaration, inheritanceModel, context))
+                foreach (var prop in this.ExtractProperties(mergedInheritanceModelDeclaration, inheritanceModel, context, false, out _))
                 {
                     if (!result.ContainsKey(prop.Key))
                     {
-                        result.Add(prop.Key, prop.Value);
+                        if (!baseProperties.ContainsKey(prop.Key))
+                        {
+                            result.Add(prop.Key, prop.Value);
+                        }
+                        else
+                        {
+                            if (!spareProperties.ContainsKey(prop.Key))
+                            {
+                                spareProperties.Add(prop.Key, prop.Value);
+                            }
+                            else
+                            {
+                                spareProperties[prop.Key] = prop.Value;
+                            }
+                        }
                     }
                 }
             }
@@ -838,12 +897,22 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             var interfaceDeclaration = declaration.OriginalDeclaration.NamedDeclaration as InterfaceDescription;
             foreach (var explicitProperty in interfaceDeclaration.Members.Where(m => m.Property != null))
             {
-                if (result.ContainsKey(explicitProperty.Property.Name))
+                if (!result.ContainsKey(explicitProperty.Property.Name) && !baseProperties.ContainsKey(explicitProperty.Property.Name))
                 {
-                    result.Remove(explicitProperty.Property.Name);
+                    ////result.Remove(explicitProperty.Property.Name);
+                    result.Add(explicitProperty.Property.Name, explicitProperty.Property);
                 }
-
-                result.Add(explicitProperty.Property.Name, explicitProperty.Property);
+                else
+                {
+                    if (!spareProperties.ContainsKey(explicitProperty.Property.Name))
+                    {
+                        spareProperties.Add(explicitProperty.Property.Name, explicitProperty.Property);
+                    }
+                    else
+                    {
+                        spareProperties[explicitProperty.Property.Name] = explicitProperty.Property;
+                    }
+                }
             }
 
             if (this.settings.ExcludedByEntityProperties.ContainsKey(declaration.OriginalDeclaration.NamedDeclaration.Name))
@@ -854,6 +923,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                     {
                         result.Remove(excludedProp);
                     }
+
+                    if (spareProperties.ContainsKey(excludedProp))
+                    {
+                        spareProperties.Remove(excludedProp);
+                    }
                 }
             }
 
@@ -862,6 +936,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 if (result.ContainsKey(excludedProp))
                 {
                     result.Remove(excludedProp);
+                }
+
+                if (spareProperties.ContainsKey(excludedProp))
+                {
+                    spareProperties.Remove(excludedProp);
                 }
             }
 
@@ -1116,9 +1195,10 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 if (result.TransportModelEnums.ContainsKey(nameParts[0]))
                 {
                     return this.RegisterItemReference(
-                        new TransportModelTypeReferenceTransportModelItem<TransportModelEnum>()
+                        new TransportModelTypeReferenceEnum()
                         {
-                            TransportModelItem = result.TransportModelEnums[nameParts[0]]
+                            TransportModelItem = result.TransportModelEnums[nameParts[0]],
+                            MemberName = nameParts.Length > 1 ? nameParts[1] : null
                         },
                         context,
                         typeReference);

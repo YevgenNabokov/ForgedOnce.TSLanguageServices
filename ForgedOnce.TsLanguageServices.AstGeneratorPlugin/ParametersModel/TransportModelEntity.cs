@@ -15,6 +15,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 
         public Dictionary<string, TransportModelEntityMember> Members { get; set; } = new Dictionary<string, TransportModelEntityMember>();
 
+        public Dictionary<string, TransportModelEntityMember> MemberTypeLimiters { get; set; } = new Dictionary<string, TransportModelEntityMember>();
+
         public TransportModelEntityTsDiscriminant TsDiscriminant;
 
         public TransportModelFunctionBinding TsCreationFunctionBinding;
