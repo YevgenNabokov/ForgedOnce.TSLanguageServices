@@ -6,7 +6,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 {
     public class TransportModelTypeReferencePrimitive : TransportModelTypeReference
     {
-        public string FullyQualifiedName;
+        public TransportModelPrimitiveType PrimitiveType;
 
         public List<TransportModelTypeReference> GenericArguments = new List<TransportModelTypeReference>();
 
@@ -14,7 +14,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
         {
             return new TransportModelTypeReferencePrimitive()
             {
-                FullyQualifiedName = this.FullyQualifiedName,
+                PrimitiveType = this.PrimitiveType,
                 GenericArguments = new List<TransportModelTypeReference>(this.GenericArguments),
                 IsCollection = this.IsCollection
             };
@@ -37,7 +37,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
                     }
                 }
 
-                return this.FullyQualifiedName == primitive.FullyQualifiedName && this.IsCollection == primitive.IsCollection;
+                return this.PrimitiveType == primitive.PrimitiveType && this.IsCollection == primitive.IsCollection;
             }
 
             return false;

@@ -4,12 +4,11 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 {
-    public class TransportModelEntityMember
+    public enum TransportModelPrimitiveType
     {
-        public string Name;
-
-        public TransportModelTypeReference Type;
-
-        public bool IsNullable;
+        String,
+        Int,
+        Boolean,
+        Object
     }
 }

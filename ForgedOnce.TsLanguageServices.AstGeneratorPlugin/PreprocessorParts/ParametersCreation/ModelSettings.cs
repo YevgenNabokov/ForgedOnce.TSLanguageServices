@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,9 +7,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 {
     public class ModelSettings
     {
-        public Dictionary<string, string> InterfacesMappedToPrimitiveTypes = new Dictionary<string, string>()
+        public Dictionary<string, TransportModelPrimitiveType> InterfacesMappedToPrimitiveTypes = new Dictionary<string, TransportModelPrimitiveType>()
         {
-            { "__String", typeof(string).FullName }
+            { "__String", TransportModelPrimitiveType.String }
         };
 
         public HashSet<string> InterfacesMappedAsCollection = new HashSet<string>()
@@ -16,12 +17,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             "NodeArray"
         };
 
-        public Dictionary<string, string> PrimitiveTypesMappings = new Dictionary<string, string>()
+        public Dictionary<string, TransportModelPrimitiveType> PrimitiveTypesMappings = new Dictionary<string, TransportModelPrimitiveType>()
         {
-            { "string", typeof(string).FullName },
-            { "number", typeof(int).FullName },
-            { "boolean", typeof(bool).FullName },
-            { "any", typeof(object).FullName },
+            { "string", TransportModelPrimitiveType.String },
+            { "number", TransportModelPrimitiveType.Int },
+            { "boolean", TransportModelPrimitiveType.Boolean },
+            { "any", TransportModelPrimitiveType.Object },
         };
 
         public HashSet<string> VoidPrimitiveTypes = new HashSet<string>()
@@ -38,12 +39,6 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             { "ArrowFunction", new[] { "name" } },
             { "ClassLikeDeclarationBase", new[] { "kind" } },
             { "KeywordTypeNode", new[] { "kind" } },
-
-            //// Interfaces
-            ////{ "DeclarationStatement", new[] { "name" } },
-            ////{ "ObjectLiteralElement", new[] { "name" } },
-            ////{ "ClassElement", new[] { "name" } },
-            ////{ "TypeElement", new[] { "name" } },
         };
 
         public Dictionary<string, KeyValuePair<string, Dictionary<string, string>>> CreationFunctionParametersToPropertyBindings = new Dictionary<string, KeyValuePair<string, Dictionary<string, string>>>()

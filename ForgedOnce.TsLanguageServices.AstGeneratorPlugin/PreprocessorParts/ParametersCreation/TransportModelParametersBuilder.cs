@@ -936,7 +936,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             return new TransportModelEntityMember()
             {
                 Name = propertySignature.Name,
-                Type = type
+                Type = type,
+                IsNullable = propertySignature.IsOptional
             };
         }
 
@@ -1392,7 +1393,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 {
                     result = new TransportModelTypeReferencePrimitive()
                     {
-                        FullyQualifiedName = this.settings.InterfacesMappedToPrimitiveTypes[typeReference.Named.Name]
+                        PrimitiveType = this.settings.InterfacesMappedToPrimitiveTypes[typeReference.Named.Name]
                     };
                     return true;
                 }
@@ -1401,7 +1402,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 {
                     result = new TransportModelTypeReferencePrimitive()
                     {
-                        FullyQualifiedName = this.settings.PrimitiveTypesMappings[typeReference.Named.Name]
+                        PrimitiveType = this.settings.PrimitiveTypesMappings[typeReference.Named.Name]
                     };
                     return true;
                 }

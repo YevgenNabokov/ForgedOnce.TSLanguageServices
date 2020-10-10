@@ -17,7 +17,7 @@
               "type": "ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PluginFactory, ForgedOnce.TsLanguageServices.AstGeneratorPlugin",
               "config": {
                 "astDescriptionJsonFilePath": "..\\TsAstDescription\\TsAstDescription.json",
-                "astNodeBaseTypeQualified":  "ts.Node"
+                "astNodeBaseTypeQualified": "ts.Node"
               }
             }
           },
@@ -28,7 +28,8 @@
           },
           "output": {
             "settings": {
-              "CsModels": "*",
+              "CsTransportModels": "*",
+              "CsModelBuilders": "*",
               "TsModels": "*"
             }
           },
@@ -36,15 +37,21 @@
             "TsModels": {
               "name": "fileSystem",
               "settings": {
-                "path": "..\\ForgedOnce.TsLanguageServices.TSBuilder"
+                "path": "..\\ForgedOnce.TsLanguageServices.TSBuilder\\FullAstGenerated"
               }
             },
-            "CsModels": {
+            "CsTransportModels": {
               "settings": {
-                "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/Model/Generated"
+                "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/TransportModel/Generated"
+              }
+            },
+            "CsModelBuilders": {
+              "settings": {
+                "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/AstBuilder/Generated"
               }
             }
-          }
+          },
+          "cleanDestinations": true
         }
       ]
     }

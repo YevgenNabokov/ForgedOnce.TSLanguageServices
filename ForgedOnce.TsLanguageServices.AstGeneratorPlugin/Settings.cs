@@ -18,6 +18,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
         public const string ExcludedPropertiesKey = "excludedProperties";
 
+        public const string CsTransportModelNamespaceKey = "csTransportModelNamespace";
+
         public string AstDescriptionJsonFilePath;
 
         public string AstNodeBaseTypeQualified;
@@ -34,5 +36,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
         public string ExcludedProperties = "parent";
 
         public string BasePath;
+
+        public string CsTransportModelNamespace = "ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel";
     }
 }
