@@ -1,5 +1,6 @@
 ﻿using ForgedOnce.TsLanguageServices.AstDescription.Model;
 using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel;
+using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
         protected void Validate(Parameters transportModel)
         {
             this.ValidateUniqueKindDiscriminants(transportModel);
+            this.ValidateTypeLimiterInheritsPropertyType(transportModel);
         }
 
         protected void ValidateUniqueKindDiscriminants(Parameters transportModel)
@@ -68,6 +70,22 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 if (cache.ContainsKey(discriminant.SyntaxKindValueName))
                 {
                     throw new InvalidOperationException($"Entities {cache[discriminant.SyntaxKindValueName]} and {entity.Key} are conflicting, both have kind discriminant {discriminant.SyntaxKindValueName}");
+                }
+            }
+        }
+
+        protected void ValidateTypeLimiterInheritsPropertyType(Parameters transportModel)
+        {
+            foreach (var entity in transportModel.TransportModel.TransportModelEntities)
+            {
+                foreach (var limiter in entity.Value.MemberTypeLimiters)
+                {
+                    var prop = entity.Value.GetMemberByName(limiter.Key);
+
+                    if (!TransportModelHelper.TypeReferenceInherits(prop.Type, limiter.Value.Type))
+                    {
+                        throw new InvalidOperationException($"Entity {entity.Key} has type limiter {limiter.Key} that does not inherit property type.");
+                    }
                 }
             }
         }

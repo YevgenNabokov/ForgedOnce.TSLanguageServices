@@ -200,6 +200,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                 this.FilterProperties(entity.Value);
             }
 
+            foreach (var entity in result.TransportModelEntities.ToArray())
+            {
+                this.FilterTypeLimiters(entity.Value);
+            }
+
             foreach (var modelInterface in result.TransportModelInterfaces.ToArray())
             {
                 this.FilterProperties(modelInterface.Value);
@@ -232,6 +237,27 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             }
         }
 
+        private void FilterTypeLimiters(TransportModelEntity entity)
+        {
+            HashSet<string> toRemove = new HashSet<string>();
+
+            foreach (var limiter in entity.MemberTypeLimiters)
+            {
+                var prop = entity.GetMemberByName(limiter.Key);
+
+                if ((prop.Type.Equals(limiter.Value.Type)
+                        && !(limiter.Value.Type is TransportModelTypeReferenceEnum enumReference && !string.IsNullOrEmpty(enumReference.MemberName))))
+                {
+                    toRemove.Add(limiter.Key);
+                }
+            }
+
+            foreach (var limiterName in toRemove)
+            {
+                entity.MemberTypeLimiters.Remove(limiterName);
+            }
+        }
+
         private void FilterProperties(TransportModelEntity entity)
         {
             if (entity.BaseEntity == null)
@@ -247,7 +273,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
                 if (baseMember != null)
                 {
-                    if (!this.TypeReferenceInherits(baseMember.Type, prop.Value.Type))
+                    if (!TransportModelHelper.TypeReferenceInherits(baseMember.Type, prop.Value.Type))
                     {
                         throw new InvalidOperationException($"Inconsistent member {prop.Key} in entity {entity.Name}");
                     }
@@ -260,69 +286,6 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
             {
                 entity.Members.Remove(name);
             }
-        }
-
-        private bool TypeReferenceInherits(TransportModelTypeReference parent, TransportModelTypeReference child)
-        {
-            if (parent.Equals(child))
-            {
-                return true;
-            }
-
-            if (parent is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> parentRef 
-                && child is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> childRef)
-            {
-                if (parentRef.GenericArguments.Count > 0)
-                {
-                    throw new InvalidOperationException("Cannot check inheritance for types with generic arguments.");
-                }
-
-                return this.TypeInherits(parentRef.TransportModelItem, childRef.TransportModelItem);
-            }
-
-            return false;
-        }
-
-        private bool TypeInherits(TransportModelItem parent, TransportModelItem child)
-        {
-            if (parent == child)
-            {
-                return true;
-            }
-
-            if (parent is TransportModelInterface parentInterface)
-            {
-                if (child is TransportModelEntity childEntity)
-                {
-                    return childEntity.Interfaces.Any(i => this.TypeInherits(parent, i)) || (childEntity.BaseEntity != null && this.TypeInherits(parent, childEntity.BaseEntity.TransportModelItem));
-                }
-                else
-                {
-                    if (child is TransportModelInterface childInerface)
-                    {
-                        return childInerface.Interfaces.Any(i => this.TypeInherits(parent, i));
-                    }
-                }
-            }
-            else
-            {
-                if (parent is TransportModelEntity parentEntity)
-                {
-                    if (child is TransportModelEntity childEntity)
-                    {
-                        return childEntity.BaseEntity != null && this.TypeInherits(parent, childEntity.BaseEntity.TransportModelItem);
-                    }
-                    else
-                    {
-                        if (child is TransportModelInterface childInerface)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            return false;
         }
 
 
@@ -338,7 +301,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
                     if (baseMember != null)
                     {
-                        if (!this.TypeReferenceInherits(baseMember.Type, prop.Value.Type))
+                        if (!TransportModelHelper.TypeReferenceInherits(baseMember.Type, prop.Value.Type))
                         {
                             throw new InvalidOperationException($"Inconsistent member {prop.Key} in interface {iface.Name}");
                         }
