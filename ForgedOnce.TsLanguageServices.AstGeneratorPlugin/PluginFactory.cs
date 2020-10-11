@@ -20,6 +20,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             this.SetFromConfiguration((v) => settings.TypesRepresentedAsInterface = v, configuration, Settings.TypesRepresentedAsInterfaceKey);
             this.SetFromConfiguration((v) => settings.ExcludedProperties = v, configuration, Settings.ExcludedPropertiesKey);
             this.SetFromConfiguration((v) => settings.CsTransportModelNamespace = v, configuration, Settings.CsTransportModelNamespaceKey);
+            this.SetFromConfiguration((v) => settings.CsTransportModelCollectionType = v, configuration, Settings.CsTransportModelCollectionTypeKey);
 
             settings.BasePath = context.BasePath;
 

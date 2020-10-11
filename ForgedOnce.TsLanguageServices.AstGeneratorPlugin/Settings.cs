@@ -20,6 +20,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
         public const string CsTransportModelNamespaceKey = "csTransportModelNamespace";
 
+        public const string CsTransportModelCollectionTypeKey = "csTransportModelCollectionType";
+
         public string AstDescriptionJsonFilePath;
 
         public string AstNodeBaseTypeQualified;
@@ -38,5 +40,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
         public string BasePath;
 
         public string CsTransportModelNamespace = "ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel";
+
+        public string CsTransportModelCollectionType = "System.Collections.Generic.List";
     }
 }

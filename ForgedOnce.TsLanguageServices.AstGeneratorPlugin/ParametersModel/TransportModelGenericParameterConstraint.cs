@@ -6,6 +6,5 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 {
     public abstract class TransportModelGenericParameterConstraint
     {
-
     }
 }
