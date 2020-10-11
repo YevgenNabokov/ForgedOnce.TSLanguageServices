@@ -93,6 +93,29 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             var entityClass = ClassDeclaration(EmitterHelper.GetCSharpTransportModelShortName(entityModel));
             entityClass = entityClass.AddModifiers(Token(SyntaxKind.PublicKeyword));
 
+            var enumSetters = entityModel.MemberTypeLimiters.Where(l => l.Value.Type is TransportModelTypeReferenceEnum enumReference && !string.IsNullOrEmpty(enumReference.MemberName)).ToArray();
+            if (enumSetters.Length > 0)
+            {
+                entityClass = entityClass.AddMembers(
+                    ConstructorDeclaration(EmitterHelper.GetCSharpTransportModelShortName(entityModel))
+                    .AddModifiers(Token(SyntaxKind.PublicKeyword))
+                    .WithBody(Block().AddStatements(
+                        enumSetters.Select(s =>
+                        ExpressionStatement(
+                        AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                ThisExpression(),
+                                IdentifierName(s.Key)),
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                IdentifierName(EmitterHelper.GetCSharpTransportModelFullyQualifiedName(((TransportModelTypeReferenceEnum)s.Value.Type).TransportModelItem, this.settings)),
+                                IdentifierName(((TransportModelTypeReferenceEnum)s.Value.Type).MemberName))))
+                        ).ToArray<StatementSyntax>()))
+                    );
+            }
+
             if (entityModel.GenericParameters.Count > 0)
             {
                 entityClass = entityClass.WithTypeParameterList(TypeParameterList(SeparatedList<TypeParameterSyntax>(entityModel.GenericParameters.Select(p => TypeParameter(p.Key)))));
@@ -121,7 +144,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                 entityClass = entityClass.WithBaseList(BaseList(SeparatedList<BaseTypeSyntax>(baseTypes.Select(t => SimpleBaseType(ParseTypeName(t))))));
             }
 
-            entityClass = entityClass.WithMembers(List<MemberDeclarationSyntax>(entityModel.Members.Select(m => 
+            entityClass = entityClass.AddMembers(entityModel.Members.Select(m => 
                 PropertyDeclaration(ParseTypeName(this.GetPropertyTypeName(m.Value)), NameHelper.GetSafeVariableName(m.Value.Name))
                 .WithAccessorList(
                             SyntaxFactory.AccessorList(
@@ -133,7 +156,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
                                 })))
                 .AddModifiers(Token(SyntaxKind.PublicKeyword))
-                )));
+                ).ToArray<MemberDeclarationSyntax>());
 
             var nsContainer = NamespaceDeclaration(ParseName(this.settings.CsTransportModelNamespace));
             nsContainer = nsContainer.AddMembers(entityClass);
