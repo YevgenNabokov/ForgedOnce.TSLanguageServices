@@ -4,6 +4,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
 {
     public class ForOfStatement : ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IterationStatement
     {
+        public ForOfStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ForOfStatement;
+        }
+
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Token awaitModifier
         {
             get;

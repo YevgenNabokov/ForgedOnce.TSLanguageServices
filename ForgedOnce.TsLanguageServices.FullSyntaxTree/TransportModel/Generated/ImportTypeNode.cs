@@ -4,6 +4,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
 {
     public class ImportTypeNode : ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.NodeWithTypeArguments
     {
+        public ImportTypeNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ImportType;
+        }
+
         public System.Nullable<System.Boolean> isTypeOf
         {
             get;

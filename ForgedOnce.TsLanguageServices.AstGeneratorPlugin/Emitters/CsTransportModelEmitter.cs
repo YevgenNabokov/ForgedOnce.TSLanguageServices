@@ -93,27 +93,23 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             var entityClass = ClassDeclaration(EmitterHelper.GetCSharpTransportModelShortName(entityModel));
             entityClass = entityClass.AddModifiers(Token(SyntaxKind.PublicKeyword));
 
-            var enumSetters = entityModel.MemberTypeLimiters.Where(l => l.Value.Type is TransportModelTypeReferenceEnum enumReference && !string.IsNullOrEmpty(enumReference.MemberName)).ToArray();
-            if (enumSetters.Length > 0)
+            if (entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantSyntaxKind kindDiscriminant)
             {
                 entityClass = entityClass.AddMembers(
                     ConstructorDeclaration(EmitterHelper.GetCSharpTransportModelShortName(entityModel))
                     .AddModifiers(Token(SyntaxKind.PublicKeyword))
                     .WithBody(Block().AddStatements(
-                        enumSetters.Select(s =>
                         ExpressionStatement(
                         AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 ThisExpression(),
-                                IdentifierName(s.Key)),
+                                IdentifierName("kind")),
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                IdentifierName(EmitterHelper.GetCSharpTransportModelFullyQualifiedName(((TransportModelTypeReferenceEnum)s.Value.Type).TransportModelItem, this.settings)),
-                                IdentifierName(((TransportModelTypeReferenceEnum)s.Value.Type).MemberName))))
-                        ).ToArray<StatementSyntax>()))
-                    );
+                                IdentifierName($"{this.settings.CsTransportModelNamespace}.SyntaxKind"),
+                                IdentifierName(kindDiscriminant.SyntaxKindValueName)))))));
             }
 
             if (entityModel.GenericParameters.Count > 0)
