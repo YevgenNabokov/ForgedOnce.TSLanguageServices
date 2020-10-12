@@ -21,7 +21,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             set;
         }
 
-        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Token dotDotDotToken
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.DotDotDotTokenToken dotDotDotToken
         {
             get;
             set;

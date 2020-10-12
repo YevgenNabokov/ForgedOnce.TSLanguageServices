@@ -9,7 +9,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.MappedType;
         }
 
-        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IModifier readonlyToken
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.INode readonlyToken
         {
             get;
             set;
@@ -21,7 +21,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             set;
         }
 
-        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IModifier questionToken
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.INode questionToken
         {
             get;
             set;

@@ -9,7 +9,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ForOfStatement;
         }
 
-        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Token awaitModifier
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.AwaitKeywordToken awaitModifier
         {
             get;
             set;

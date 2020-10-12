@@ -15,7 +15,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             set;
         }
 
-        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Token exclamationToken
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.ExclamationTokenToken exclamationToken
         {
             get;
             set;

@@ -9,7 +9,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ArrowFunction;
         }
 
-        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Token equalsGreaterThanToken
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.EqualsGreaterThanTokenToken equalsGreaterThanToken
         {
             get;
             set;

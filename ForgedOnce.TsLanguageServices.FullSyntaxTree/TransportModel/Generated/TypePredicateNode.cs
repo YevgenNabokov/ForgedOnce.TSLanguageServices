@@ -9,7 +9,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.TypePredicate;
         }
 
-        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Token assertsModifier
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.AssertsKeywordToken assertsModifier
         {
             get;
             set;

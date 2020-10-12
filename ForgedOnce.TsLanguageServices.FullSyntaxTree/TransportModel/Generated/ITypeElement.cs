@@ -10,7 +10,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             set;
         }
 
-        ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Token questionToken
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.QuestionTokenToken questionToken
         {
             get;
             set;

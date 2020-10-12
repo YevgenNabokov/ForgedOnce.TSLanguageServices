@@ -1135,14 +1135,16 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
                         genericArgumentsInScope,
                         replacedGenericArguments);
 
-                    if (genericArgs.Any(a => a is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> modelArg && modelArg.TransportModelItem is TransportModelEnum) && modelItem is TransportModelEntity modelEntity)
+                    var rawGenericArgs = typeReference.Named.Parameters.Select(p => this.CreateTypeReference(p, inheritanceModel, astDescription, result, context)).ToList();
+
+                    if (rawGenericArgs.Any(a => a is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> modelArg && modelArg.TransportModelItem is TransportModelEnum) && modelItem is TransportModelEntity modelEntity)
                     {
                         if (modelEntity.GenericParameters.Count > 0)
                         {
                             throw new InvalidOperationException("Wrapper type generation is not possible.");
                         }
 
-                        if (genericArgs.Count > 1)
+                        if (rawGenericArgs.Count > 1)
                         {
                             throw new InvalidOperationException("Wrapper type generation supported only for single Enum type argument.");
                         }
@@ -1557,10 +1559,17 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
         private List<TypeReference> GetTypeReferenceActualGenericArguments(List<TypeReference> referenceParameters, TransportModelItem target, Context context)
         {
-            if (context.ReplacedGenericParameters.ContainsKey(target.Name))
+            var originalEntityName = target.Name;
+
+            if (target is TransportModelEntity entity && context.AdditionalEntityToOriginalMapping.ContainsKey(entity))
+            {
+                originalEntityName = context.AdditionalEntityToOriginalMapping[entity].Name;
+            }
+
+            if (context.ReplacedGenericParameters.ContainsKey(originalEntityName))
             {
                 List<TypeReference> result = new List<TypeReference>();
-                var replacements = context.ReplacedGenericParameters[target.Name];
+                var replacements = context.ReplacedGenericParameters[originalEntityName];
 
                 var index = 0;
                 foreach (var r in referenceParameters)

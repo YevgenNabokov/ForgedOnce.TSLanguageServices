@@ -9,7 +9,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.YieldExpression;
         }
 
-        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Token asteriskToken
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.AsteriskTokenToken asteriskToken
         {
             get;
             set;

@@ -9,7 +9,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JsxExpression;
         }
 
-        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Token dotDotDotToken
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.DotDotDotTokenToken dotDotDotToken
         {
             get;
             set;
