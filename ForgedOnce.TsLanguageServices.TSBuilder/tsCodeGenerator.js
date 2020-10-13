@@ -443,6 +443,9 @@ class TsTreeGenerator {
         return result;
     }
     generateStatement(context, statement) {
+        if (statement == null) {
+            return undefined;
+        }
         if (statement.NodeType == im.NodeType.StatementBlock) {
             return this.generateStatementBlock(context, statement, false);
         }
@@ -458,6 +461,10 @@ class TsTreeGenerator {
         if (statement.NodeType == im.NodeType.StatementFor) {
             var forStatement = statement;
             return ts.createFor(ts.createVariableDeclarationList([this.generateVariableDeclaration(context, forStatement.Initializer)]), this.generateExpression(context, forStatement.Condition), this.generateExpression(context, forStatement.Increment), this.generateStatement(context, forStatement.Statement));
+        }
+        if (statement.NodeType == im.NodeType.StatementIf) {
+            var ifStatement = statement;
+            return ts.createIf(this.generateExpression(context, ifStatement.Expression), this.generateStatement(context, ifStatement.Then), this.generateStatement(context, ifStatement.Else));
         }
         throw new Error('Cannot generate code for statement ' + statement.NodeType);
     }

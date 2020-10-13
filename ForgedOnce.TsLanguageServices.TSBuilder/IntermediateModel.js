@@ -37,6 +37,7 @@ var NodeType;
     NodeType[NodeType["StatementReturn"] = 24] = "StatementReturn";
     NodeType[NodeType["StatementExpression"] = 25] = "StatementExpression";
     NodeType[NodeType["StatementFor"] = 26] = "StatementFor";
+    NodeType[NodeType["StatementIf"] = 27] = "StatementIf";
 })(NodeType = exports.NodeType || (exports.NodeType = {}));
 var TypeReferenceKind;
 (function (TypeReferenceKind) {

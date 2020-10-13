@@ -34,6 +34,7 @@ namespace ForgedOnce.TsLanguageServices.Model.DefinitionTree
         StatementLocalDeclaration,
         StatementReturn,
         StatementExpression,
-        StatementFor
+        StatementFor,
+        StatementIf
     }
 }

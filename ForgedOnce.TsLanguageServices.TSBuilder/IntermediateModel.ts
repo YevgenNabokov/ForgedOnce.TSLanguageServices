@@ -130,7 +130,8 @@ export enum NodeType {
     StatementLocalDeclaration,
     StatementReturn,
     StatementExpression,
-    StatementFor
+    StatementFor,
+    StatementIf
 }
 export interface PropertyDeclaration extends Node {
     Modifiers: Array<Modifier>;
@@ -150,6 +151,11 @@ export interface StatementFor extends StatementNode {
     Condition: ExpressionNode;
     Increment: ExpressionNode;
     Statement: StatementNode;
+}
+export interface StatementIf extends StatementNode {
+    Expression: ExpressionNode;
+    Then: StatementNode;
+    Else: StatementNode;
 }
 export interface StatementLocalDeclaration extends StatementNode {
     TypeReference: TypeReferenceId;

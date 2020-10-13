@@ -663,6 +663,10 @@ export class TsTreeGenerator {
     }
 
     private generateStatement(context: GeneratorContext, statement: im.StatementNode): ts.Statement {
+        if (statement == null) {
+            return undefined;
+        }
+
         if (statement.NodeType == im.NodeType.StatementBlock) {
             return this.generateStatementBlock(context, statement as im.StatementBlock, false);
         }
@@ -686,6 +690,14 @@ export class TsTreeGenerator {
                 this.generateExpression(context, forStatement.Condition),
                 this.generateExpression(context, forStatement.Increment),
                 this.generateStatement(context, forStatement.Statement));
+        }
+
+        if (statement.NodeType == im.NodeType.StatementIf) {
+            var ifStatement = statement as im.StatementIf;
+            return ts.createIf(
+                this.generateExpression(context, ifStatement.Expression),
+                this.generateStatement(context, ifStatement.Then),
+                this.generateStatement(context, ifStatement.Else));
         }
 
         throw new Error('Cannot generate code for statement ' + statement.NodeType);
