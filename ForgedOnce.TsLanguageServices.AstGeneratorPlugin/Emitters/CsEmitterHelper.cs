@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 {
-    public class EmitterHelper
+    public class CsEmitterHelper
     {
         public static string GetCSharpTransportModelFullyQualifiedName(TransportModelItem item, Settings settings)
         {
@@ -74,7 +74,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
         public static string CreateModelTypeName(ITransportModelTypeReferenceTransportModelItem<TransportModelItem> reference, Settings settings)
         {
-            var typeName = EmitterHelper.GetCSharpTransportModelFullyQualifiedName(reference.TransportModelItem, settings);
+            var typeName = CsEmitterHelper.GetCSharpTransportModelFullyQualifiedName(reference.TransportModelItem, settings);
 
             if (reference.GenericArguments.Count > 0)
             {

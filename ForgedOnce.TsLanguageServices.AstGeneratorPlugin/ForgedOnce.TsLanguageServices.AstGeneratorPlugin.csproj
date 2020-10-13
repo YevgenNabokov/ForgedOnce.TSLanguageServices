@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="ForgedOnce.CSharp" Version="0.5.1" />
     <PackageReference Include="ForgedOnce.CSharp.Helpers" Version="0.1.7" />
-    <PackageReference Include="ForgedOnce.TypeScript" Version="0.6.1" />
+    <PackageReference Include="ForgedOnce.TypeScript" Version="0.6.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 

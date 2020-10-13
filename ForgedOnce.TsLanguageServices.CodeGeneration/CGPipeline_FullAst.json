@@ -17,7 +17,8 @@
               "type": "ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PluginFactory, ForgedOnce.TsLanguageServices.AstGeneratorPlugin",
               "config": {
                 "astDescriptionJsonFilePath": "..\\TsAstDescription\\TsAstDescription.json",
-                "astNodeBaseTypeQualified": "ts.Node"
+                "astNodeBaseTypeQualified": "ts.Node",
+                "csTransportModelAssemblyName": "ForgedOnce.TsLanguageServices.FullSyntaxTree"
               }
             }
           },

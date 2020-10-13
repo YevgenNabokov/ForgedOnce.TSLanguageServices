@@ -42,13 +42,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
         private void EmitEnum(TransportModelEnum enumModel, ICodeStream output)
         {
-            var outputFile = (CodeFileCSharp)output.CreateCodeFile($"{EmitterHelper.GetCSharpTransportModelShortName(enumModel)}.cs");
+            var outputFile = (CodeFileCSharp)output.CreateCodeFile($"{CsEmitterHelper.GetCSharpTransportModelShortName(enumModel)}.cs");
 
             var unit = CompilationUnit();
             unit = unit.AddUsings(
                 UsingDirective(ParseName(nameof(System))));
 
-            var enumDeclaration = EnumDeclaration(EmitterHelper.GetCSharpTransportModelShortName(enumModel));
+            var enumDeclaration = EnumDeclaration(CsEmitterHelper.GetCSharpTransportModelShortName(enumModel));
             enumDeclaration = enumDeclaration.AddModifiers(Token(SyntaxKind.PublicKeyword));
 
             enumDeclaration = enumDeclaration.WithMembers(SeparatedList<EnumMemberDeclarationSyntax>(enumModel.Members.Values.Select(EmitEnumMember)));
@@ -84,19 +84,19 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
         private void EmitEntity(TransportModelEntity entityModel, ICodeStream output)
         {
-            var outputFile = (CodeFileCSharp)output.CreateCodeFile($"{EmitterHelper.GetCSharpTransportModelShortName(entityModel)}.cs");
+            var outputFile = (CodeFileCSharp)output.CreateCodeFile($"{CsEmitterHelper.GetCSharpTransportModelShortName(entityModel)}.cs");
 
             var unit = CompilationUnit();
             unit = unit.AddUsings(
                 UsingDirective(ParseName(nameof(System))));
 
-            var entityClass = ClassDeclaration(EmitterHelper.GetCSharpTransportModelShortName(entityModel));
+            var entityClass = ClassDeclaration(CsEmitterHelper.GetCSharpTransportModelShortName(entityModel));
             entityClass = entityClass.AddModifiers(Token(SyntaxKind.PublicKeyword));
 
             if (entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantSyntaxKind kindDiscriminant)
             {
                 entityClass = entityClass.AddMembers(
-                    ConstructorDeclaration(EmitterHelper.GetCSharpTransportModelShortName(entityModel))
+                    ConstructorDeclaration(CsEmitterHelper.GetCSharpTransportModelShortName(entityModel))
                     .AddModifiers(Token(SyntaxKind.PublicKeyword))
                     .WithBody(Block().AddStatements(
                         ExpressionStatement(
@@ -120,19 +120,19 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                     entityModel.GenericParameters.Select(p => 
                     TypeParameterConstraintClause(
                     IdentifierName(p.Key),
-                    SeparatedList<TypeParameterConstraintSyntax>(new[] { TypeConstraint(ParseTypeName(EmitterHelper.GetGenericParameterConstraintTypeName(p.Value))) })))));
+                    SeparatedList<TypeParameterConstraintSyntax>(new[] { TypeConstraint(ParseTypeName(CsEmitterHelper.GetGenericParameterConstraintTypeName(p.Value))) })))));
             }
 
             List<string> baseTypes = new List<string>();
 
             if (entityModel.BaseEntity != null)
             {
-                baseTypes.Add(EmitterHelper.GetCSharpTransportModelReferenceName(entityModel.BaseEntity, this.settings));
+                baseTypes.Add(CsEmitterHelper.GetCSharpTransportModelReferenceName(entityModel.BaseEntity, this.settings));
             }
 
             foreach (var interfaceModel in entityModel.Interfaces)
             {
-                baseTypes.Add(EmitterHelper.GetCSharpTransportModelFullyQualifiedName(interfaceModel, this.settings));
+                baseTypes.Add(CsEmitterHelper.GetCSharpTransportModelFullyQualifiedName(interfaceModel, this.settings));
             }
 
             if (baseTypes.Count > 0)
@@ -162,13 +162,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
         private void EmitInterface(TransportModelInterface model, ICodeStream output)
         {
-            var outputFile = (CodeFileCSharp)output.CreateCodeFile($"{EmitterHelper.GetCSharpTransportModelShortName(model)}.cs");
+            var outputFile = (CodeFileCSharp)output.CreateCodeFile($"{CsEmitterHelper.GetCSharpTransportModelShortName(model)}.cs");
 
             var unit = CompilationUnit();
             unit = unit.AddUsings(
                 UsingDirective(ParseName(nameof(System))));
 
-            var entityInterface = InterfaceDeclaration(EmitterHelper.GetCSharpTransportModelShortName(model));
+            var entityInterface = InterfaceDeclaration(CsEmitterHelper.GetCSharpTransportModelShortName(model));
             entityInterface = entityInterface.AddModifiers(Token(SyntaxKind.PublicKeyword));
 
             if (model.GenericParameters.Count > 0)
@@ -179,14 +179,14 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                     model.GenericParameters.Select(p =>
                     TypeParameterConstraintClause(
                     IdentifierName(p.Key),
-                    SeparatedList<TypeParameterConstraintSyntax>(new[] { TypeConstraint(ParseTypeName(EmitterHelper.GetGenericParameterConstraintTypeName(p.Value))) })))));
+                    SeparatedList<TypeParameterConstraintSyntax>(new[] { TypeConstraint(ParseTypeName(CsEmitterHelper.GetGenericParameterConstraintTypeName(p.Value))) })))));
             }
 
             List<string> baseTypes = new List<string>();
 
             foreach (var interfaceModel in model.Interfaces)
             {
-                baseTypes.Add(EmitterHelper.GetCSharpTransportModelFullyQualifiedName(interfaceModel, this.settings));
+                baseTypes.Add(CsEmitterHelper.GetCSharpTransportModelFullyQualifiedName(interfaceModel, this.settings));
             }
 
             if (baseTypes.Count > 0)
@@ -221,12 +221,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                 && primitiveReference.PrimitiveType != TransportModelPrimitiveType.Object
                 && !member.Type.IsCollection)
             {
-                var name = EmitterHelper.CreatePrimitiveTypeName(primitiveReference, this.settings);
+                var name = CsEmitterHelper.CreatePrimitiveTypeName(primitiveReference, this.settings);
 
                 return $"System.Nullable<{name}>";
             }
 
-            return EmitterHelper.GetCSharpTransportModelReferenceName(member.Type, this.settings);
+            return CsEmitterHelper.GetCSharpTransportModelReferenceName(member.Type, this.settings);
         }
     }
 }
