@@ -5,7 +5,7 @@
     <Name>ForgedOnce.TsLanguageServices.TsBuilder</Name>
     <RootNamespace>ForgedOnce.TsLanguageServices.TsBuilder</RootNamespace>
     <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
-    <ScriptArguments>"c:/Users/Eugen/AppData/Local/Temp/CodeGenerationTask.json" "f:/Test/Output" "f:/Test/ResultMetadata.json"</ScriptArguments>
+    <ScriptArguments>TestFile.ts $(SolutionDir)TsPayload/TsTestFile.json</ScriptArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -14,7 +14,7 @@
     <ProjectGuid>11926c92-3a3e-43de-8b4d-1ea9bc09c528</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>generationLauncher.ts</StartupFile>
+    <StartupFile>astSerializationTest.ts</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -38,12 +38,21 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="tsconfig.json" />
+    <TypeScriptCompile Include="astSerializationTest.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="astTransportUtils.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="FullAstGenerated\TransportTypeMarker.ts" />
     <TypeScriptCompile Include="generationLauncher.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="IntermediateModel.ts" />
     <TypeScriptCompile Include="generationManager.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="TestFile.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="tsCodeGenerator.ts">

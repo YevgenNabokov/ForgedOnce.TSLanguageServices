@@ -1,6 +1,6 @@
 import * as T from "typescript";
 export class TypeMarker {
-    Mark(node: any): boolean {
+    public Mark(node: any): boolean {
         if (node.kind == T.SyntaxKind.ModuleBlock) {
             node.$type = "ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.ModuleBlock, ForgedOnce.TsLanguageServices.FullSyntaxTree";
             return true;

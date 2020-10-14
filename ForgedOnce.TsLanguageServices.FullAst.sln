@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.FullSyntaxTree", "ForgedOnce.TsLanguageServices.FullSyntaxTree\ForgedOnce.TsLanguageServices.FullSyntaxTree.csproj", "{AB24275D-7661-4083-84B4-4AAA23EF556B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForgedOnce.TsLanguageServices.AstTransportTest", "ForgedOnce.TsLanguageServices.AstTransportTest\ForgedOnce.TsLanguageServices.AstTransportTest.csproj", "{4C3CC1EC-AF3C-449E-82E8-C86C6426A780}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{AB24275D-7661-4083-84B4-4AAA23EF556B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB24275D-7661-4083-84B4-4AAA23EF556B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB24275D-7661-4083-84B4-4AAA23EF556B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C3CC1EC-AF3C-449E-82E8-C86C6426A780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C3CC1EC-AF3C-449E-82E8-C86C6426A780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C3CC1EC-AF3C-449E-82E8-C86C6426A780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C3CC1EC-AF3C-449E-82E8-C86C6426A780}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

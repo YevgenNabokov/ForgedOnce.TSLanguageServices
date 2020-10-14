@@ -42,6 +42,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
             var markerFunction = new MethodDeclaration()
                 .WithName("Mark")
+                .WithModifiers(BaseModel.Modifier.Public)
                 .WithReturnType(output.TypeRepository.RegisterTypeReferenceBuiltin("boolean"))
                 .WithBody(b => b)
                 .WithParameter(p =>
