@@ -29,6 +29,7 @@ namespace ForgedOnce.TsLanguageServices.Model.DefinitionTree
         ExpressionNew,
         ExpressionUnary,
         ExpressionTypeReference,
+        ExpressionElementAccess,
 
         StatementBlock,
         StatementLocalDeclaration,

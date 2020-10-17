@@ -10,11 +10,11 @@ if (fs.existsSync(process.argv[2])) {
 
     let sourceFile = ts.createSourceFile("Subject.d.ts", payload, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
 
-    let converter = new tu.TransportConverter();
+    //let converter = new tu.TransportConverter();
 
-    let result = converter.StatementsToString(sourceFile.statements);
+    //let result = converter.StatementsToString(sourceFile.statements);
 
-    fs.writeFileSync(process.argv[3], result);
+    //fs.writeFileSync(process.argv[3], result);
 } else {
     console.log('TS code file does not exist ' + process.argv[2]);
 }

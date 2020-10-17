@@ -10,7 +10,7 @@
     <PackageOutputPath>$(SolutionDir)/NugetOutputs</PackageOutputPath>
     <ApplicationIcon />
     <StartupObject />
-    <Version>0.2.16</Version>
+    <Version>0.2.17</Version>
     <PackageId>ForgedOnce.TsLanguageServices.ModelToCode</PackageId>
     <Authors>Yevgen Nabokov</Authors>
     <Product>ForgedOnce.TsLanguageServices</Product>

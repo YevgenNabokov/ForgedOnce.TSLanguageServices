@@ -532,6 +532,10 @@ class TsTreeGenerator {
                 return ts.createLiteral(expressionLiteral.Text);
             }
         }
+        if (expression.NodeType == im.NodeType.ExpressionElementAccess) {
+            var expressionElementAccess = expression;
+            return ts.createElementAccess(this.generateExpression(context, expressionElementAccess.Expression), this.generateExpression(context, expressionElementAccess.Index));
+        }
         if (expression.NodeType == im.NodeType.ExpressionMemberAccess) {
             var expressionMemberAccess = expression;
             return ts.createPropertyAccess(this.generateExpression(context, expressionMemberAccess.Expression), expressionMemberAccess.Name.Name);

@@ -29,6 +29,10 @@ export interface ExpressionBinary extends ExpressionNode {
     Right: ExpressionNode;
     Operator: string;
 }
+export interface ExpressionElementAccess extends ExpressionNode {
+    Expression: ExpressionNode;
+    Index: ExpressionNode;
+}
 export interface ExpressionIdentifierReference extends ExpressionNode {
     Name: Identifier;
 }
@@ -126,6 +130,7 @@ export enum NodeType {
     ExpressionNew,
     ExpressionUnary,
     ExpressionTypeReference,
+    ExpressionElementAccess,
     StatementBlock,
     StatementLocalDeclaration,
     StatementReturn,

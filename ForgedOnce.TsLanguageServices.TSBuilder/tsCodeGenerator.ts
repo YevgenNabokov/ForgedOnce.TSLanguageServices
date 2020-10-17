@@ -792,6 +792,11 @@ export class TsTreeGenerator {
             }
         }
 
+        if (expression.NodeType == im.NodeType.ExpressionElementAccess) {
+            var expressionElementAccess = expression as im.ExpressionElementAccess;
+            return ts.createElementAccess(this.generateExpression(context, expressionElementAccess.Expression), this.generateExpression(context, expressionElementAccess.Index));
+        }
+
         if (expression.NodeType == im.NodeType.ExpressionMemberAccess) {
             var expressionMemberAccess = expression as im.ExpressionMemberAccess;
             return ts.createPropertyAccess(this.generateExpression(context, expressionMemberAccess.Expression), expressionMemberAccess.Name.Name);
