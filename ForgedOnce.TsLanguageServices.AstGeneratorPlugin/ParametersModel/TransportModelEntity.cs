@@ -55,5 +55,61 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
 
             return null;
         }
+
+        public TransportModelEntityMember GetMemberByNameAndResolveGenericArguments(string name, List<TransportModelTypeReference> genericArgumentsInScope = null)
+        {
+            if (this.Members.ContainsKey(name))
+            {
+                var result = this.Members[name];
+                if (result.Type is TransportModelTypeReferenceGenericParameter parameterReference)
+                {
+                    return new TransportModelEntityMember()
+                    {
+                        IsNullable = result.IsNullable,
+                        Name = result.Name,
+                        Type = this.ResolveGenericParameter(parameterReference.Name, genericArgumentsInScope)
+                    };
+                }
+
+                return result;
+            }
+
+            if (this.BaseEntity != null)
+            {
+                List<TransportModelTypeReference> baseArguments = new List<TransportModelTypeReference>();
+
+                foreach (var arg in this.BaseEntity.GenericArguments)
+                {
+                    if (arg is TransportModelTypeReferenceGenericParameter parameterReference)
+                    {
+                        baseArguments.Add(this.ResolveGenericParameter(parameterReference.Name, genericArgumentsInScope));
+                    }
+                    else
+                    {
+                        baseArguments.Add(arg);
+                    }
+                }
+
+                return this.BaseEntity.TransportModelItem.GetMemberByNameAndResolveGenericArguments(name, baseArguments);
+            }
+
+            return null;
+        }
+
+        private TransportModelTypeReference ResolveGenericParameter(string name, List<TransportModelTypeReference> genericArgumentsInScope = null)
+        {
+            if (!this.GenericParameters.ContainsKey(name))
+            {
+                throw new InvalidOperationException($"Definition of {this.Name} does not contain generic parameter {name} referred by member '{name}'");
+            }
+
+            var argumentIndex = this.GenericParameters.Keys.ToList().IndexOf(name);
+            if (genericArgumentsInScope == null || genericArgumentsInScope.Count <= argumentIndex)
+            {
+                throw new InvalidOperationException($"Entity {this.Name} has invalid number of generic arguments.");
+            }
+
+            return genericArgumentsInScope[argumentIndex];
+        }
     }
 }

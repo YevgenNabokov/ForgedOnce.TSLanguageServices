@@ -67,6 +67,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
                 var tsAstToTransportTranslatorEmitter = new TsAstToTransportTranslatorEmitter(this.Settings);
                 tsAstToTransportTranslatorEmitter.Emit(parameters, this.tsModelsOutputStream);
 
+                var tsTransportToAstTranslatorEmitter = new TsTransportToAstTranslatorEmitter(this.Settings);
+                tsTransportToAstTranslatorEmitter.Emit(parameters, this.tsModelsOutputStream);
+
                 this.hasExecuted = true;
             }
         }
