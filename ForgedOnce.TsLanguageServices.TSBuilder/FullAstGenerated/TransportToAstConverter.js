@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const T = require("typescript");
 class Converter {
     ConvertNode(node) {
+        if (node == null) {
+            return undefined;
+        }
         if (node.kind == T.SyntaxKind.ModuleBlock) {
             var paramVar0 = this.ConvertNodes(node.statements);
             return T.createModuleBlock(paramVar0);
@@ -52,8 +55,7 @@ class Converter {
             return T.createNoSubstitutionTemplateLiteral(node.text, node.rawText);
         }
         if (node.kind == T.SyntaxKind.NumericLiteral) {
-            var paramVar1 = this.ConvertNode(node.flags);
-            return T.createNumericLiteral(node.text, paramVar1);
+            return T.createNumericLiteral(node.text, node.flags);
         }
         if (node.kind == T.SyntaxKind.CallExpression) {
             var paramVar0 = this.ConvertNode(node.expression);
@@ -103,52 +105,40 @@ class Converter {
             return T.createFunctionDeclaration(paramVar0, paramVar1, paramVar2, paramVar3, paramVar4, paramVar5, paramVar6, paramVar7);
         }
         if (node.kind == T.SyntaxKind.AnyKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.UnknownKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.NumberKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.BigIntKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.ObjectKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.BooleanKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.StringKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.SymbolKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.VoidKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.UndefinedKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.NullKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.NeverKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createKeywordTypeNode(paramVar0);
+            return T.createKeywordTypeNode(node.kind);
         }
         if (node.kind == T.SyntaxKind.ThisKeyword) {
             return T.createThis();
@@ -201,8 +191,7 @@ class Converter {
             var paramVar1 = this.ConvertNodes(node.modifiers);
             var paramVar2 = this.ConvertNode(node.name);
             var paramVar3 = this.ConvertNode(node.body);
-            var paramVar4 = this.ConvertNode(node.flags);
-            return T.createModuleDeclaration(paramVar0, paramVar1, paramVar2, paramVar3, paramVar4);
+            return T.createModuleDeclaration(paramVar0, paramVar1, paramVar2, paramVar3, node.flags);
         }
         if (node.kind == T.SyntaxKind.ImportEqualsDeclaration) {
             var paramVar0 = this.ConvertNodes(node.decorators);
@@ -352,8 +341,7 @@ class Converter {
         }
         if (node.kind == T.SyntaxKind.VariableDeclarationList) {
             var paramVar0 = this.ConvertNodes(node.declarations);
-            var paramVar1 = this.ConvertNode(node.flags);
-            return T.createVariableDeclarationList(paramVar0, paramVar1);
+            return T.createVariableDeclarationList(paramVar0, node.flags);
         }
         if (node.kind == T.SyntaxKind.ObjectBindingPattern) {
             var paramVar0 = this.ConvertNodes(node.elements);
@@ -391,9 +379,8 @@ class Converter {
             return T.createCatchClause(paramVar0, paramVar1);
         }
         if (node.kind == T.SyntaxKind.HeritageClause) {
-            var paramVar0 = this.ConvertNode(node.token);
             var paramVar1 = this.ConvertNodes(node.types);
-            return T.createHeritageClause(paramVar0, paramVar1);
+            return T.createHeritageClause(node.token, paramVar1);
         }
         if (node.kind == T.SyntaxKind.ExternalModuleReference) {
             var paramVar0 = this.ConvertNode(node.expression);
@@ -733,14 +720,12 @@ class Converter {
             return T.createSemicolonClassElement();
         }
         if (node.kind == T.SyntaxKind.PrefixUnaryExpression) {
-            var paramVar0 = this.ConvertNode(node.operator);
             var paramVar1 = this.ConvertNode(node.operand);
-            return T.createPrefix(paramVar0, paramVar1);
+            return T.createPrefix(node.operator, paramVar1);
         }
         if (node.kind == T.SyntaxKind.PostfixUnaryExpression) {
             var paramVar0 = this.ConvertNode(node.operand);
-            var paramVar1 = this.ConvertNode(node.operator);
-            return T.createPostfix(paramVar0, paramVar1);
+            return T.createPostfix(paramVar0, node.operator);
         }
         if (node.kind == T.SyntaxKind.JsxAttribute) {
             var paramVar0 = this.ConvertNode(node.name);
@@ -778,9 +763,8 @@ class Converter {
             return T.createArrayLiteral(paramVar0);
         }
         if (node.kind == T.SyntaxKind.MetaProperty) {
-            var paramVar0 = this.ConvertNode(node.keywordToken);
             var paramVar1 = this.ConvertNode(node.name);
-            return T.createMetaProperty(paramVar0, paramVar1);
+            return T.createMetaProperty(node.keywordToken, paramVar1);
         }
         if (node.kind == T.SyntaxKind.JsxElement) {
             var paramVar0 = this.ConvertNode(node.openingElement);
@@ -801,239 +785,184 @@ class Converter {
             return T.createJsxFragment(paramVar0, paramVar1, paramVar2);
         }
         if (node.kind == T.SyntaxKind.AbstractKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.AsyncKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.ConstKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.DeclareKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.DefaultKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.ExportKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.PublicKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.PrivateKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.ProtectedKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.ReadonlyKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.StaticKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.PlusToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.MinusToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.QuestionToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.QuestionQuestionToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.AsteriskAsteriskToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.AsteriskToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.SlashToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.PercentToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.LessThanLessThanToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.GreaterThanGreaterThanToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.GreaterThanGreaterThanGreaterThanToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.LessThanToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.LessThanEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.GreaterThanToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.GreaterThanEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.InstanceOfKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.InKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.EqualsEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.EqualsEqualsEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.ExclamationEqualsEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.ExclamationEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.AmpersandToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.BarToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.CaretToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.AmpersandAmpersandToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.BarBarToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.EqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.PlusEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.MinusEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.AsteriskAsteriskEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.AsteriskEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.SlashEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.PercentEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.AmpersandEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.BarEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.CaretEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.LessThanLessThanEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.GreaterThanGreaterThanEqualsToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.CommaToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.ExclamationToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.EqualsGreaterThanToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.QuestionDotToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.DotDotDotToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.AssertsKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.ColonToken) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
         if (node.kind == T.SyntaxKind.AwaitKeyword) {
-            var paramVar0 = this.ConvertNode(node.kind);
-            return T.createToken(paramVar0);
+            return T.createToken(node.kind);
         }
     }
     ConvertNodes(nodes) {
+        if (nodes == null) {
+            return undefined;
+        }
         var result = new Array();
         for (var i = 0; i < nodes.length; i++)
             result.push(this.ConvertNode(nodes[i]));

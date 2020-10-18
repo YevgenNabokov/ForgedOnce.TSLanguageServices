@@ -2,7 +2,7 @@
   "profiles": {
     "ForgedOnce.TsLanguageServices.AstTransportTest": {
       "commandName": "Project",
-      "commandLineArgs": "$(SolutionDir)TsPayload/TsTestFile.json"
+      "commandLineArgs": "$(SolutionDir)TsPayload/TsTestFile.json $(SolutionDir)TsPayload/TsTestFileReply.json"
     }
   }
 }

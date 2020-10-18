@@ -18,6 +18,10 @@ namespace ForgedOnce.TsLanguageServices.AstTransportTest
                 NullValueHandling = NullValueHandling.Ignore,
                 MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead
             });
+
+            var newPayload = JsonConvert.SerializeObject(ast);
+
+            File.WriteAllText(args[1], newPayload);
         }
 
         private class Wrapper

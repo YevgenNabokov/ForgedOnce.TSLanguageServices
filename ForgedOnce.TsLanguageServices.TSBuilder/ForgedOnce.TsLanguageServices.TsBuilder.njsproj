@@ -5,7 +5,7 @@
     <Name>ForgedOnce.TsLanguageServices.TsBuilder</Name>
     <RootNamespace>ForgedOnce.TsLanguageServices.TsBuilder</RootNamespace>
     <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
-    <ScriptArguments>TestFile.ts $(SolutionDir)TsPayload/TsTestFile.json</ScriptArguments>
+    <ScriptArguments>$(SolutionDir)TsPayload/TsTestFileReply.json $(SolutionDir)TsPayload/TestFileReply.ts</ScriptArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -14,7 +14,7 @@
     <ProjectGuid>11926c92-3a3e-43de-8b4d-1ea9bc09c528</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>generationLauncher.ts</StartupFile>
+    <StartupFile>astDeserializationTest.ts</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -38,6 +38,9 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="tsconfig.json" />
+    <TypeScriptCompile Include="astDeserializationTest.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="astSerializationTest.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>

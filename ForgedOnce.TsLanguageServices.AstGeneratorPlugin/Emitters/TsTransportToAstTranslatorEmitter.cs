@@ -59,6 +59,15 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                     .WithName(nodeParameterName)
                     .WithTypeReference(anyType));
 
+            convertFunction.Body.WithStatement(
+                new StatementIf()
+                    .WithExpression(
+                        new ExpressionBinary()
+                        .WithLeft(new ExpressionIdentifierReference().WithName(nodeParameterName))
+                        .WithOperator("==")
+                        .WithRight(new ExpressionIdentifierReference().WithName("null")))
+                    .WithThen(new StatementBlock().WithStatement(new StatementReturn().WithExpression(new ExpressionIdentifierReference().WithName("undefined")))));
+
             foreach (var entity in parameters.TransportModel.TransportModelEntities.Where(e => e.Value.TsCreationFunctionBinding != null && !(e.Value.TsCreationFunctionBinding is TransportModelFunctionBindingSkipped)))
             {
                 if (entity.Value.TsDiscriminant is null)
@@ -81,7 +90,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                     ////    throw new InvalidOperationException($"Generic parameter reference {member.Name} is not supported in creation method parameter binding for {entity.Key}");
                     ////}
 
-                    if (member.Type is ITransportModelTypeReferenceTransportModelItem<TransportModelItem>)
+                    if (member.Type is ITransportModelTypeReferenceTransportModelItem<TransportModelItem>  modelItemReference && !(modelItemReference.TransportModelItem is TransportModelEnum))
                     {
                         var varName = $"paramVar{index}";
 
@@ -154,6 +163,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                     .WithTypeReference(arrayOfAny))
                 .WithBody(b =>
                 b.WithStatements(
+                    new StatementIf()
+                    .WithExpression(
+                        new ExpressionBinary()
+                        .WithLeft(new ExpressionIdentifierReference().WithName(nodesParameterName))
+                        .WithOperator("==")
+                        .WithRight(new ExpressionIdentifierReference().WithName("null")))
+                        .WithThen(new StatementBlock().WithStatement(new StatementReturn().WithExpression(new ExpressionIdentifierReference().WithName("undefined")))),
                     new StatementLocalDeclaration()
                         .WithName(resultName)
                         .WithTypeReference(arrayOfAny)
