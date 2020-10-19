@@ -31,6 +31,7 @@
             "settings": {
               "CsTransportModels": "*",
               "CsModelBuilders": "*",
+              "CsAstModels": "*",
               "TsModels": "*"
             }
           },
@@ -49,6 +50,11 @@
             "CsModelBuilders": {
               "settings": {
                 "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/AstBuilder/Generated"
+              }
+            },
+            "CsAstModels": {
+              "settings": {
+                "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/AstModel/Generated"
               }
             }
           },

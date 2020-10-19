@@ -76,7 +76,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                                     .WithExpression(new ExpressionIdentifierReference().WithName(nodeParameterName))
                                     .WithName(typePropertyName))
                                 .WithRight(new ExpressionLiteral()
-                                    .WithText($"{CsEmitterHelper.GetCSharpTransportModelFullyQualifiedName(entity.Value, this.settings)}, {this.settings.CsTransportModelAssemblyName}"))),
+                                    .WithText($"{CsEmitterHelper.GetCSharpModelFullyQualifiedName(entity.Value, this.settings, ModelType.Transport)}, {this.settings.CsTransportModelAssemblyName}"))),
                         new StatementReturn()
                         .WithExpression(new ExpressionLiteral().WithText("true").WithIsNumeric(true))
                             )));

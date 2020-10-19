@@ -21,9 +21,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
     {
         public const string CsTransportModelsOutStreamName = "CsTransportModels";
 
+        public const string CsAstModelOutStreamName = "CsAstModels";
+
         public const string CsModelBuildersOutStreamName = "CsModelBuilders";
 
         public const string TsModelsOutStreamName = "TsModels";
+
+        protected ICodeStream csAstModelsOutputStream;
 
         protected ICodeStream csTransportModelsOutputStream;
 
@@ -49,6 +53,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             this.csTransportModelsOutputStream = codeStreamFactory.CreateCodeStream(Languages.CSharp, CsTransportModelsOutStreamName);
             result.Add(this.csTransportModelsOutputStream);
 
+            this.csAstModelsOutputStream = codeStreamFactory.CreateCodeStream(Languages.CSharp, CsAstModelOutStreamName);
+            result.Add(this.csAstModelsOutputStream);
+
             this.csModelBuildersOutputStream = codeStreamFactory.CreateCodeStream(Languages.CSharp, CsModelBuildersOutStreamName);
             result.Add(this.csModelBuildersOutputStream);
 
@@ -63,6 +70,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             {
                 var csTransportModelEmitter = new CsTransportModelEmitter(this.Settings);
                 csTransportModelEmitter.Emit(parameters, this.csTransportModelsOutputStream);
+
+                var csAstEmitter = new CsAstModelEmitter(this.Settings);
+                csAstEmitter.Emit(parameters, this.csAstModelsOutputStream);
 
                 var tsAstToTransportTranslatorEmitter = new TsAstToTransportTranslatorEmitter(this.Settings);
                 tsAstToTransportTranslatorEmitter.Emit(parameters, this.tsModelsOutputStream);

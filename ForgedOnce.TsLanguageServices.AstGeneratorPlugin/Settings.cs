@@ -24,9 +24,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
         public const string CsTransportModelAssemblyNameKey = "csTransportModelAssemblyName";
 
+        public const string CsAstModelNamespaceKey = "csAstModelNamespace";
+
         public string AstDescriptionJsonFilePath;
 
-        public string AstNodeBaseTypeQualified;
+        public string AstNodeBaseTypeQualified = "ts.Node";
 
         public string ExcludedAstNodes = "ts.TransientIdentifier,ts.SyntaxList,ts.PropertyLikeDeclaration,ts.SuperCall,ts.ImportCall,ts.JsonObjectExpressionStatement,ts.ObjectDestructuringAssignment"+
             ",ts.ArrayDestructuringAssignment,ts.PropertyAccessChain,ts.SuperPropertyAccessExpression,ts.SuperElementAccessExpression,ts.TsConfigSourceFile,ts.NonNullChain,ts.ElementAccessChain"+
@@ -46,5 +48,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
         public string CsTransportModelCollectionType = "System.Collections.Generic.List";
 
         public string CsTransportModelAssemblyName = "ForgedOnce.TsLanguageServices.FullSyntaxTree";
+
+        public string CsAstModelNamespace = "ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel";
     }
 }

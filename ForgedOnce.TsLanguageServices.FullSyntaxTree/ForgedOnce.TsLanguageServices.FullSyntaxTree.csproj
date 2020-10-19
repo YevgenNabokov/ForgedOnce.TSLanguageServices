@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Folder Include="AstBuilder\Generated\" />
+    <Folder Include="AstModel\Generated\" />
     <Folder Include="TransportModel\Generated\" />
   </ItemGroup>
 

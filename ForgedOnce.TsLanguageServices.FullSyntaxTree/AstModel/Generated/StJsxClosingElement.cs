@@ -1,0 +1,19 @@
+using System;
+
+namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
+{
+    public class StJsxClosingElement : ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNode
+    {
+        public StJsxClosingElement(ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.NodeFlags flags, System.Collections.Generic.List<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decorators, System.Collections.Generic.List<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStModifier> modifiers, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJsxTagNameExpression tagName): base(flags, decorators, modifiers)
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JsxClosingElement;
+            this.tagName = tagName;
+        }
+
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJsxTagNameExpression tagName
+        {
+            get;
+            set;
+        }
+    }
+}

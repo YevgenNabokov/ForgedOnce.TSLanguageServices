@@ -8,31 +8,35 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 {
     public class CsEmitterHelper
     {
-        public static string GetCSharpTransportModelFullyQualifiedName(TransportModelItem item, Settings settings)
+        public static string GetCSharpModelFullyQualifiedName(TransportModelItem item, Settings settings, ModelType modelType)
         {
-            return $"{settings.CsTransportModelNamespace}.{GetCSharpTransportModelShortName(item)}";
+            var modelNamespace = modelType == ModelType.Transport ? settings.CsTransportModelNamespace : settings.CsAstModelNamespace;
+
+            return $"{modelNamespace}.{GetCSharpModelShortName(item, modelType)}";
         }
 
-        public static string GetCSharpTransportModelShortName(TransportModelItem item)
+        public static string GetCSharpModelShortName(TransportModelItem item, ModelType modelType)
         {
+            var name = modelType == ModelType.Transport ? item.Name : $"St{item.Name}";
+
             if (item is TransportModelInterface)
             {
-                return $"I{item.Name}";
+                return $"I{name}";
             }
 
-            return item.Name;
+            return name;
         }
 
-        public static string GetCSharpTransportModelReferenceName(TransportModelTypeReference reference, Settings settings)
+        public static string GetCSharpModelReferenceName(TransportModelTypeReference reference, Settings settings, ModelType modelType)
         {
             if (reference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> modelItemReference)
             {
-                return CreateModelTypeName(modelItemReference, settings);
+                return CreateModelTypeName(modelItemReference, settings, modelType);
             }
 
             if (reference is TransportModelTypeReferencePrimitive primitiveReference)
             {
-                return CreatePrimitiveTypeName(primitiveReference, settings);
+                return CreateModelPrimitiveTypeName(primitiveReference, settings, modelType);
             }
 
             if (reference is TransportModelTypeReferenceGenericParameter transportModelTypeReferenceGenericParameter)
@@ -55,13 +59,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             return typeName;
         }
 
-        public static string CreatePrimitiveTypeName(TransportModelTypeReferencePrimitive reference, Settings settings)
+        public static string CreateModelPrimitiveTypeName(TransportModelTypeReferencePrimitive reference, Settings settings, ModelType modelType)
         {
             var typeName = MapPrimitiveTypeName(reference.PrimitiveType);
 
             if (reference.GenericArguments.Count > 0)
             {
-                typeName += "<" + string.Join(",", reference.GenericArguments.Select(a => GetCSharpTransportModelReferenceName(a, settings))) + ">";
+                typeName += "<" + string.Join(",", reference.GenericArguments.Select(a => GetCSharpModelReferenceName(a, settings, modelType))) + ">";
             }
 
             if (reference.IsCollection)
@@ -72,13 +76,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             return typeName;
         }
 
-        public static string CreateModelTypeName(ITransportModelTypeReferenceTransportModelItem<TransportModelItem> reference, Settings settings)
+        public static string CreateModelTypeName(ITransportModelTypeReferenceTransportModelItem<TransportModelItem> reference, Settings settings, ModelType modelType)
         {
-            var typeName = CsEmitterHelper.GetCSharpTransportModelFullyQualifiedName(reference.TransportModelItem, settings);
+            var typeName = CsEmitterHelper.GetCSharpModelFullyQualifiedName(reference.TransportModelItem, settings, modelType);
 
             if (reference.GenericArguments.Count > 0)
             {
-                typeName += "<" + string.Join(",", reference.GenericArguments.Select(a => GetCSharpTransportModelReferenceName(a, settings))) + ">";
+                typeName += "<" + string.Join(",", reference.GenericArguments.Select(a => GetCSharpModelReferenceName(a, settings, modelType))) + ">";
             }
 
             if (reference.IsCollection)
@@ -102,19 +106,35 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             throw new InvalidOperationException($"Unable to map {type}");
         }
 
-        public static string GetGenericParameterConstraintTypeName(TransportModelGenericParameterConstraint constraint)
+        public static string GetModelGenericParameterConstraintTypeName(TransportModelGenericParameterConstraint constraint, ModelType modelType)
         {
             if (constraint is TransportModelGenericParameterConstraintEntity entityConstraint)
             {
-                return GetCSharpTransportModelShortName(entityConstraint.Entity);
+                return GetCSharpModelShortName(entityConstraint.Entity, modelType);
             }
 
             if (constraint is TransportModelGenericParameterConstraintInterface interfaceConstraint)
             {
-                return GetCSharpTransportModelShortName(interfaceConstraint.Interface);
+                return GetCSharpModelShortName(interfaceConstraint.Interface, modelType);
             }
 
             throw new InvalidOperationException($"Not supported generic parameter constraint {constraint.GetType()}");
+        }
+
+        public static string GetPropertyTypeName(TransportModelEntityMember member, Settings settings, ModelType modelType)
+        {
+            if (member.IsNullable
+                && member.Type is TransportModelTypeReferencePrimitive primitiveReference
+                && primitiveReference.PrimitiveType != TransportModelPrimitiveType.String
+                && primitiveReference.PrimitiveType != TransportModelPrimitiveType.Object
+                && !member.Type.IsCollection)
+            {
+                var name = CreateModelPrimitiveTypeName(primitiveReference, settings, modelType);
+
+                return $"System.Nullable<{name}>";
+            }
+
+            return GetCSharpModelReferenceName(member.Type, settings, modelType);
         }
     }
 }
