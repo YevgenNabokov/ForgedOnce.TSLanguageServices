@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -233,6 +234,20 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                 }
             }
 
+            if (entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantBrand brandDiscriminant)
+            {
+                var member = entityModel.GetMemberByName(brandDiscriminant.BrandPropertyName);
+                if (member != null)
+                {
+                    initializers.Add(
+                            ExpressionStatement(
+                                AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(NameHelper.GetSafeVariableName(member.Name))),
+                                    ObjectCreationExpression(ParseTypeName(this.GetTypeName(member)), ArgumentList(), null))));
+                }
+            }
+
             propertyInitializers = initializers;
             baseConstructorArguments = baseArgs;
             return result;
@@ -266,6 +281,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                 {
                     result.Add(member.Name, finalMember);
                 }
+            }
+
+            if (entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantBrand brandDiscriminant && result.ContainsKey(brandDiscriminant.BrandPropertyName))
+            {
+                result.Remove(brandDiscriminant.BrandPropertyName);
             }
 
             return result;
