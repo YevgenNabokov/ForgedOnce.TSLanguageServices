@@ -67,7 +67,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
                     {
                         IsNullable = result.IsNullable,
                         Name = result.Name,
-                        Type = this.ResolveGenericParameter(parameterReference.Name, genericArgumentsInScope)
+                        Type = this.ResolveGenericParameter(parameterReference, genericArgumentsInScope)
                     };
                 }
 
@@ -82,7 +82,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
                 {
                     if (arg is TransportModelTypeReferenceGenericParameter parameterReference)
                     {
-                        baseArguments.Add(this.ResolveGenericParameter(parameterReference.Name, genericArgumentsInScope));
+                        baseArguments.Add(this.ResolveGenericParameter(parameterReference, genericArgumentsInScope));
                     }
                     else
                     {
@@ -96,8 +96,10 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
             return null;
         }
 
-        private TransportModelTypeReference ResolveGenericParameter(string name, List<TransportModelTypeReference> genericArgumentsInScope = null)
+        private TransportModelTypeReference ResolveGenericParameter(TransportModelTypeReferenceGenericParameter reference, List<TransportModelTypeReference> genericArgumentsInScope = null)
         {
+            var name = reference.Name;
+
             if (!this.GenericParameters.ContainsKey(name))
             {
                 throw new InvalidOperationException($"Definition of {this.Name} does not contain generic parameter {name} referred by member '{name}'");
@@ -109,7 +111,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel
                 throw new InvalidOperationException($"Entity {this.Name} has invalid number of generic arguments.");
             }
 
-            return genericArgumentsInScope[argumentIndex];
+            var result = genericArgumentsInScope[argumentIndex].Clone();
+
+            result.IsCollection = reference.IsCollection;
+
+            return result;
         }
     }
 }

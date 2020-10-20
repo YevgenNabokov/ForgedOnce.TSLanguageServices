@@ -634,7 +634,7 @@ export class Converter {
             return T.createTemplateTail(node.text, node.rawText);
         }
         if (node.kind == T.SyntaxKind.ObjectLiteralExpression) {
-            var paramVar0: any = this.ConvertNode(node.properties);
+            var paramVar0: any = this.ConvertNodes(node.properties);
             return T.createObjectLiteral(paramVar0);
         }
         if (node.kind == T.SyntaxKind.ExpressionWithTypeArguments) {
@@ -648,7 +648,7 @@ export class Converter {
             return T.createTypeAssertion(paramVar0, paramVar1);
         }
         if (node.kind == T.SyntaxKind.JsxAttributes) {
-            var paramVar0: any = this.ConvertNode(node.properties);
+            var paramVar0: any = this.ConvertNodes(node.properties);
             return T.createJsxAttributes(paramVar0);
         }
         if (node.kind == T.SyntaxKind.DoStatement) {
