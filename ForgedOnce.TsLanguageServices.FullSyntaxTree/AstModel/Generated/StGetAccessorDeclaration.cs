@@ -29,5 +29,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             get;
             set;
         }
+
+        public override System.Object GetTransportModelNode()
+        {
+            return new ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.GetAccessorDeclaration()
+            {kind = this.kind, flags = this.flags, decorators = this.GetTransportModelNodes<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Decorator>(this.decorators), modifiers = this.GetTransportModelNodes<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IModifier>(this.modifiers), name = this.name != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IPropertyName)this.name.GetTransportModelNode() : null, typeParameters = this.GetTransportModelNodes<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.TypeParameterDeclaration>(this.typeParameters), parameters = this.GetTransportModelNodes<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.ParameterDeclaration>(this.parameters), type = this.type != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.ITypeNode)this.type.GetTransportModelNode() : null, _functionLikeDeclarationBrand = this._functionLikeDeclarationBrand, asteriskToken = this.asteriskToken != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.AsteriskTokenToken)this.asteriskToken.GetTransportModelNode() : null, questionToken = this.questionToken != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.QuestionTokenToken)this.questionToken.GetTransportModelNode() : null, exclamationToken = this.exclamationToken != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.ExclamationTokenToken)this.exclamationToken.GetTransportModelNode() : null, _classElementBrand = this._classElementBrand, _objectLiteralBrand = this._objectLiteralBrand, body = this.body != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Block)this.body.GetTransportModelNode() : null};
+        }
     }
 }

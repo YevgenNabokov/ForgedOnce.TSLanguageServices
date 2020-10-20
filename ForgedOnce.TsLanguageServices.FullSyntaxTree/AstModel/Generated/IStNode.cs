@@ -2,7 +2,7 @@ using System;
 
 namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
 {
-    public interface IStNode
+    public interface IStNode : ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNodeBase
     {
         ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind kind
         {

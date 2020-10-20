@@ -29,5 +29,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             get;
             set;
         }
+
+        public override System.Object GetTransportModelNode()
+        {
+            return new ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.ForOfStatement()
+            {kind = this.kind, flags = this.flags, decorators = this.GetTransportModelNodes<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Decorator>(this.decorators), modifiers = this.GetTransportModelNodes<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IModifier>(this.modifiers), statement = this.statement != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IStatement)this.statement.GetTransportModelNode() : null, awaitModifier = this.awaitModifier != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.AwaitKeywordToken)this.awaitModifier.GetTransportModelNode() : null, initializer = this.initializer != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IForInitializer)this.initializer.GetTransportModelNode() : null, expression = this.expression != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IExpression)this.expression.GetTransportModelNode() : null};
+        }
     }
 }

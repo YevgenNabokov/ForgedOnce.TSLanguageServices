@@ -43,5 +43,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             get;
             set;
         }
+
+        public override System.Object GetTransportModelNode()
+        {
+            return new ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.JSDocCallbackTag()
+            {kind = this.kind, flags = this.flags, decorators = this.GetTransportModelNodes<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Decorator>(this.decorators), modifiers = this.GetTransportModelNodes<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IModifier>(this.modifiers), tagName = this.tagName != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Identifier)this.tagName.GetTransportModelNode() : null, comment = this.comment, name = this.name != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Identifier)this.name.GetTransportModelNode() : null, fullName = this.fullName != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.INode)this.fullName.GetTransportModelNode() : null, typeExpression = this.typeExpression != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.JSDocSignature)this.typeExpression.GetTransportModelNode() : null};
+        }
     }
 }

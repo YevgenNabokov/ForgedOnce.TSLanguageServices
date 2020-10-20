@@ -20,6 +20,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
         private readonly string baseNodeType = "StNodeBase";
 
+        private readonly string baseNodeTypeInterface = "IStNodeBase";
+
         public CsAstModelEmitter(Settings settings)
         {
             this.settings = settings;
@@ -61,6 +63,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             }
 
             List<string> baseTypes = new List<string>();
+
+            if (model.Name == this.settings.AstNodeBaseTypeQualified.Split('.').Last())
+            {
+                baseTypes.Add($"{settings.CsAstModelNamespace}.{baseNodeTypeInterface}");
+            }
 
             foreach (var interfaceModel in model.Interfaces)
             {
@@ -195,10 +202,93 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                 .AddModifiers(Token(SyntaxKind.PublicKeyword))
                 ).ToArray<MemberDeclarationSyntax>());
 
+            if (entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantSyntaxKind)
+            {
+                entityClass = entityClass.AddMembers(this.GenerateConversionMethod(entityModel));
+            }
+
             var nsContainer = NamespaceDeclaration(ParseName(this.settings.CsAstModelNamespace));
             nsContainer = nsContainer.AddMembers(entityClass);
             unit = unit.AddMembers(nsContainer);
             outputFile.SyntaxTree = unit.SyntaxTree;
+        }
+
+        private MethodDeclarationSyntax GenerateConversionMethod(TransportModelEntity entityModel)
+        {
+            var members = this.GetMembers(entityModel, null, true);
+
+            List<ExpressionSyntax> initializers = new List<ExpressionSyntax>();
+
+            foreach (var member in members)
+            {
+                var propertyName = NameHelper.GetSafeVariableName(member.Key);
+
+                if (member.Value.Type is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference
+                    && !(itemReference.TransportModelItem is TransportModelEnum))
+                {
+                    if (itemReference.IsCollection)
+                    {
+                        initializers.Add(
+                            AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                IdentifierName(propertyName),
+                                InvocationExpression(
+                                    MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        ThisExpression(),
+                                        GenericName(
+                                            Identifier("GetTransportModelNodes"),
+                                            TypeArgumentList(
+                                                SeparatedList<TypeSyntax>(
+                                                    new[] 
+                                                    {
+                                                        ParseTypeName(CsEmitterHelper.GetCSharpModelFullyQualifiedName(itemReference.TransportModelItem, this.settings, ModelType.Transport))
+                                                    })))))
+                                .WithArgumentList(ArgumentList(SeparatedList<ArgumentSyntax>(new[] { Argument(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(propertyName))) })))
+                                ));
+                    }
+                    else
+                    {
+                        initializers.Add(
+                            AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                IdentifierName(propertyName),
+                                ConditionalExpression(
+                                    BinaryExpression(SyntaxKind.NotEqualsExpression, MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(propertyName)), IdentifierName("null")), 
+                                    CastExpression(ParseTypeName(CsEmitterHelper.GetPropertyTypeName(member.Value, this.settings, ModelType.Transport)),
+                                    InvocationExpression(
+                                        MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(propertyName)),
+                                            IdentifierName("GetTransportModelNode")))
+                                    .WithArgumentList(ArgumentList())),
+                                    IdentifierName("null")
+                                )));
+                    }
+                }
+                else
+                {
+                    initializers.Add(
+                            AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                IdentifierName(propertyName),
+                                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(propertyName))));
+                }
+            }
+
+            return MethodDeclaration(ParseTypeName(typeof(object).FullName), "GetTransportModelNode")
+                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.OverrideKeyword)))
+                .WithParameterList(ParameterList())
+                .WithBody(
+                    Block(
+                        List<StatementSyntax>(
+                            new[] { 
+                                ReturnStatement(
+                                    ObjectCreationExpression(ParseTypeName(CsEmitterHelper.GetCSharpModelFullyQualifiedName(entityModel, this.settings, ModelType.Transport)))
+                                    .WithArgumentList(ArgumentList())
+                                    .WithInitializer(
+                                        InitializerExpression(SyntaxKind.ObjectInitializerExpression, SeparatedList<ExpressionSyntax>(initializers))))
+                            })));
         }
 
         private IEnumerable<ParameterSyntax> GetConstructorParameters(TransportModelEntity entityModel, out List<StatementSyntax> propertyInitializers, out List<ArgumentSyntax> baseConstructorArguments)
@@ -207,9 +297,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             List<StatementSyntax> initializers = new List<StatementSyntax>();
             List<ArgumentSyntax> baseArgs = new List<ArgumentSyntax>();
 
-            var members = this.GetMembersForConstructor(entityModel);
+            var members = this.GetMembers(entityModel);
             var baseMembers = entityModel.BaseEntity != null 
-                ? this.GetMembersForConstructor(entityModel.BaseEntity.TransportModelItem, entityModel.BaseEntity.GenericArguments)
+                ? this.GetMembers(entityModel.BaseEntity.TransportModelItem, entityModel.BaseEntity.GenericArguments)
                 : new Dictionary<string, TransportModelEntityMember>();
 
             foreach (var member in members)
@@ -253,13 +343,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             return result;
         }
 
-        private Dictionary<string, TransportModelEntityMember> GetMembersForConstructor(TransportModelEntity entityModel, List<TransportModelTypeReference> genericArgumentsInScope = null)
+        private Dictionary<string, TransportModelEntityMember> GetMembers(TransportModelEntity entityModel, List<TransportModelTypeReference> genericArgumentsInScope = null, bool allMembers = false)
         {
             Dictionary<string, TransportModelEntityMember> result = new Dictionary<string, TransportModelEntityMember>();
 
             if (entityModel.BaseEntity != null)
             {
-                result = this.GetMembersForConstructor(entityModel.BaseEntity.TransportModelItem, entityModel.BaseEntity.GenericArguments);
+                result = this.GetMembers(entityModel.BaseEntity.TransportModelItem, entityModel.BaseEntity.GenericArguments, allMembers);
             }
 
             var members = entityModel.Members.Keys.Select(m => genericArgumentsInScope == null ? entityModel.GetMemberByName(m) : entityModel.GetMemberByNameAndResolveGenericArguments(m, genericArgumentsInScope));
@@ -283,7 +373,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                 }
             }
 
-            if (entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantBrand brandDiscriminant && result.ContainsKey(brandDiscriminant.BrandPropertyName))
+            if (!allMembers && entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantBrand brandDiscriminant && result.ContainsKey(brandDiscriminant.BrandPropertyName))
             {
                 result.Remove(brandDiscriminant.BrandPropertyName);
             }

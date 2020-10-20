@@ -36,5 +36,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             get;
             set;
         }
+
+        public override System.Object GetTransportModelNode()
+        {
+            return new ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.MappedTypeNode()
+            {kind = this.kind, flags = this.flags, decorators = this.GetTransportModelNodes<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Decorator>(this.decorators), modifiers = this.GetTransportModelNodes<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.IModifier>(this.modifiers), readonlyToken = this.readonlyToken != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.INode)this.readonlyToken.GetTransportModelNode() : null, typeParameter = this.typeParameter != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.TypeParameterDeclaration)this.typeParameter.GetTransportModelNode() : null, questionToken = this.questionToken != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.INode)this.questionToken.GetTransportModelNode() : null, type = this.type != null ? (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.ITypeNode)this.type.GetTransportModelNode() : null};
+        }
     }
 }
