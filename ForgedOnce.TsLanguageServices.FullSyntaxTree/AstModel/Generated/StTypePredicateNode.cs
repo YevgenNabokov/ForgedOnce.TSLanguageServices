@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.type = type;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAssertsKeywordToken _assertsModifier;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode _parameterName;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _type;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAssertsKeywordToken assertsModifier
         {
-            get;
-            set;
+            get
+            {
+                return this._assertsModifier;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._assertsModifier, value);
+                this._assertsModifier = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode parameterName
         {
-            get;
-            set;
+            get
+            {
+                return this._parameterName;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._parameterName, value);
+                this._parameterName = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode type
         {
-            get;
-            set;
+            get
+            {
+                return this._type;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._type, value);
+                this._type = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

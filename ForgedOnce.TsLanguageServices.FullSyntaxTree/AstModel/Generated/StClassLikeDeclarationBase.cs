@@ -15,28 +15,37 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.members.AddRange(members);
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name
         {
-            get;
-            set;
+            get
+            {
+                return this._name;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._name, value);
+                this._name = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration> typeParameters
         {
             get;
-            set;
+            private set;
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StHeritageClause> heritageClauses
         {
             get;
-            set;
+            private set;
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStClassElement> members
         {
             get;
-            set;
+            private set;
         }
     }
 }

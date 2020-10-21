@@ -14,28 +14,55 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.typeParameters.AddRange(typeParameters);
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _tagName;
+        System.String _comment;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocTypeExpression _constraint;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier tagName
         {
-            get;
-            set;
+            get
+            {
+                return this._tagName;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._tagName, value);
+                this._tagName = value;
+            }
         }
 
         public System.String comment
         {
-            get;
-            set;
+            get
+            {
+                return this._comment;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._comment = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocTypeExpression constraint
         {
-            get;
-            set;
+            get
+            {
+                return this._constraint;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._constraint, value);
+                this._constraint = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration> typeParameters
         {
             get;
-            set;
+            private set;
         }
 
         public override System.Object GetTransportModelNode()

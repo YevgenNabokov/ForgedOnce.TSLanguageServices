@@ -10,10 +10,19 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.tagName = tagName;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJsxTagNameExpression _tagName;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJsxTagNameExpression tagName
         {
-            get;
-            set;
+            get
+            {
+                return this._tagName;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._tagName, value);
+                this._tagName = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

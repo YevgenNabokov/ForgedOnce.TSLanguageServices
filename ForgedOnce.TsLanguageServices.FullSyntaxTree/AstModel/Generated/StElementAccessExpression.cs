@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.argumentExpression = argumentExpression;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression _expression;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionDotTokenToken _questionDotToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _argumentExpression;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression expression
         {
-            get;
-            set;
+            get
+            {
+                return this._expression;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._expression, value);
+                this._expression = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionDotTokenToken questionDotToken
         {
-            get;
-            set;
+            get
+            {
+                return this._questionDotToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._questionDotToken, value);
+                this._questionDotToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression argumentExpression
         {
-            get;
-            set;
+            get
+            {
+                return this._argumentExpression;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._argumentExpression, value);
+                this._argumentExpression = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

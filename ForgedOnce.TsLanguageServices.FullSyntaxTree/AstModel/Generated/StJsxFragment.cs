@@ -13,22 +13,40 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.closingFragment = closingFragment;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxOpeningFragment _openingFragment;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxClosingFragment _closingFragment;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxOpeningFragment openingFragment
         {
-            get;
-            set;
+            get
+            {
+                return this._openingFragment;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._openingFragment, value);
+                this._openingFragment = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJsxChild> children
         {
             get;
-            set;
+            private set;
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxClosingFragment closingFragment
         {
-            get;
-            set;
+            get
+            {
+                return this._closingFragment;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._closingFragment, value);
+                this._closingFragment = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

@@ -10,10 +10,19 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.declarationList = declarationList;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList _declarationList;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList declarationList
         {
-            get;
-            set;
+            get
+            {
+                return this._declarationList;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._declarationList, value);
+                this._declarationList = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

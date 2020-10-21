@@ -12,16 +12,25 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.templateSpans.AddRange(templateSpans);
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateHead _head;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateHead head
         {
-            get;
-            set;
+            get
+            {
+                return this._head;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._head, value);
+                this._head = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateSpan> templateSpans
         {
             get;
-            set;
+            private set;
         }
 
         public override System.Object GetTransportModelNode()

@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.elseStatement = elseStatement;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement _thenStatement;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement _elseStatement;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression expression
         {
-            get;
-            set;
+            get
+            {
+                return this._expression;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._expression, value);
+                this._expression = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement thenStatement
         {
-            get;
-            set;
+            get
+            {
+                return this._thenStatement;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._thenStatement, value);
+                this._thenStatement = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement elseStatement
         {
-            get;
-            set;
+            get
+            {
+                return this._elseStatement;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._elseStatement, value);
+                this._elseStatement = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

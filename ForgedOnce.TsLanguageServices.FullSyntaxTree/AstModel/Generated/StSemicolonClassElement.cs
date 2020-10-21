@@ -11,16 +11,34 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this._classElementBrand = _classElementBrand;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
+        System.Object __classElementBrand;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name
         {
-            get;
-            set;
+            get
+            {
+                return this._name;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._name, value);
+                this._name = value;
+            }
         }
 
         public System.Object _classElementBrand
         {
-            get;
-            set;
+            get
+            {
+                return this.__classElementBrand;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this.__classElementBrand = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

@@ -12,28 +12,64 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this._literalExpressionBrand = new System.Object();
         }
 
+        System.String _text;
+        System.Nullable<System.Boolean> _isUnterminated;
+        System.Nullable<System.Boolean> _hasExtendedUnicodeEscape;
+        System.Object __literalExpressionBrand;
         public System.String text
         {
-            get;
-            set;
+            get
+            {
+                return this._text;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._text = value;
+            }
         }
 
         public System.Nullable<System.Boolean> isUnterminated
         {
-            get;
-            set;
+            get
+            {
+                return this._isUnterminated;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._isUnterminated = value;
+            }
         }
 
         public System.Nullable<System.Boolean> hasExtendedUnicodeEscape
         {
-            get;
-            set;
+            get
+            {
+                return this._hasExtendedUnicodeEscape;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._hasExtendedUnicodeEscape = value;
+            }
         }
 
         public System.Object _literalExpressionBrand
         {
-            get;
-            set;
+            get
+            {
+                return this.__literalExpressionBrand;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this.__literalExpressionBrand = value;
+            }
         }
     }
 }

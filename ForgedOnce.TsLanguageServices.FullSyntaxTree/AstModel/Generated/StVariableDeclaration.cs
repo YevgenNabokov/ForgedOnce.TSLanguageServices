@@ -13,28 +13,64 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.initializer = initializer;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken _exclamationToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _type;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _initializer;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name
         {
-            get;
-            set;
+            get
+            {
+                return this._name;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._name, value);
+                this._name = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken exclamationToken
         {
-            get;
-            set;
+            get
+            {
+                return this._exclamationToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._exclamationToken, value);
+                this._exclamationToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode type
         {
-            get;
-            set;
+            get
+            {
+                return this._type;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._type, value);
+                this._type = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression initializer
         {
-            get;
-            set;
+            get
+            {
+                return this._initializer;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._initializer, value);
+                this._initializer = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

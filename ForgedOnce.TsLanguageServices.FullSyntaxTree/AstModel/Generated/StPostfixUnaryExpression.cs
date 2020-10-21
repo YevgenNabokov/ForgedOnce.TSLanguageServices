@@ -11,16 +11,34 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.@operator = @operator;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression _operand;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _operator;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression operand
         {
-            get;
-            set;
+            get
+            {
+                return this._operand;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._operand, value);
+                this._operand = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind @operator
         {
-            get;
-            set;
+            get
+            {
+                return this._operator;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._operator = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

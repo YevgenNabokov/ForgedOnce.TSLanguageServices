@@ -11,16 +11,34 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.literal = literal;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTemplateLiteralLikeNode _literal;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression expression
         {
-            get;
-            set;
+            get
+            {
+                return this._expression;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._expression, value);
+                this._expression = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTemplateLiteralLikeNode literal
         {
-            get;
-            set;
+            get
+            {
+                return this._literal;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._literal, value);
+                this._literal = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

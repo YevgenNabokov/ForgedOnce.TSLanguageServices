@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.namedBindings = namedBindings;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
+        System.Boolean _isTypeOnly;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNamedImportBindings _namedBindings;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name
         {
-            get;
-            set;
+            get
+            {
+                return this._name;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._name, value);
+                this._name = value;
+            }
         }
 
         public System.Boolean isTypeOnly
         {
-            get;
-            set;
+            get
+            {
+                return this._isTypeOnly;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._isTypeOnly = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNamedImportBindings namedBindings
         {
-            get;
-            set;
+            get
+            {
+                return this._namedBindings;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._namedBindings, value);
+                this._namedBindings = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

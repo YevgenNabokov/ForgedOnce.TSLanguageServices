@@ -9,10 +9,19 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.statement = statement;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement _statement;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement statement
         {
-            get;
-            set;
+            get
+            {
+                return this._statement;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._statement, value);
+                this._statement = value;
+            }
         }
     }
 }

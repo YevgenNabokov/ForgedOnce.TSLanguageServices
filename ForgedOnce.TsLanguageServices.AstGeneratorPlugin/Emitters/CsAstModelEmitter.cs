@@ -80,6 +80,16 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             }
 
             entityInterface = entityInterface.WithMembers(List<MemberDeclarationSyntax>(model.Members.Select(m =>
+                this.IsNodeCollection(m.Value.Type) ?
+                PropertyDeclaration(ParseTypeName(this.GetTypeName(m.Value)), NameHelper.GetSafeVariableName(m.Value.Name))
+                .WithAccessorList(
+                            SyntaxFactory.AccessorList(
+                                SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
+                                {
+                                    SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+                                })))
+                :
                 PropertyDeclaration(ParseTypeName(this.GetTypeName(m.Value)), NameHelper.GetSafeVariableName(m.Value.Name))
                 .WithAccessorList(
                             SyntaxFactory.AccessorList(
@@ -149,9 +159,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
             foreach (var property in entityModel.Members)
             {
-                if (property.Value.Type.IsCollection
-                    && property.Value.Type is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> modelItemReference
-                    && !(modelItemReference.TransportModelItem is TransportModelEnum))
+                if (this.IsNodeCollection(property.Value.Type))
                 {
                     constructorBody = constructorBody.AddStatements(
                         ExpressionStatement(
@@ -209,19 +217,15 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                 entityClass = entityClass.WithBaseList(BaseList(SeparatedList<BaseTypeSyntax>(baseTypes.Select(t => SimpleBaseType(ParseTypeName(t))))));
             }
 
-            entityClass = entityClass.AddMembers(entityModel.Members.Select(m =>
-                PropertyDeclaration(ParseTypeName(this.GetTypeName(m.Value)), NameHelper.GetSafeVariableName(m.Value.Name))
-                .WithAccessorList(
-                            SyntaxFactory.AccessorList(
-                                SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
-                                {
-                                    SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                                    SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-                                })))
-                .AddModifiers(Token(SyntaxKind.PublicKeyword))
-                ).ToArray<MemberDeclarationSyntax>());
+            entityClass = entityClass.AddMembers(
+                entityModel
+                .Members
+                .Where(m => !this.IsNodeCollection(m.Value.Type))
+                .Select(m =>
+                FieldDeclaration(VariableDeclaration(ParseTypeName(this.GetTypeName(m.Value)), SeparatedList<VariableDeclaratorSyntax>(new[] { VariableDeclarator(this.GetFieldName(m.Key)) })))
+                    ).ToArray<MemberDeclarationSyntax>());
+
+            entityClass = entityClass.AddMembers(entityModel.Members.Select(m => this.CreatePropertyDeclaration(m.Value)).ToArray<MemberDeclarationSyntax>());
 
             if (entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantSyntaxKind)
             {
@@ -232,6 +236,96 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             nsContainer = nsContainer.AddMembers(entityClass);
             unit = unit.AddMembers(nsContainer);
             outputFile.SyntaxTree = unit.SyntaxTree;
+        }
+
+        private MemberDeclarationSyntax CreatePropertyDeclaration(TransportModelEntityMember member)
+        {
+            if (this.IsNode(member.Type))
+            {
+                if (member.Type.IsCollection)
+                {
+                    return PropertyDeclaration(ParseTypeName(this.GetTypeName(member)), NameHelper.GetSafeVariableName(member.Name))
+                        .WithAccessorList(
+                                    SyntaxFactory.AccessorList(
+                                        SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
+                                        {
+                                            SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                                            SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                                            .WithModifiers(TokenList(this.IsNodeCollection(member.Type) ? new [] { Token(SyntaxKind.PrivateKeyword) } : new SyntaxToken[0]))
+                                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+                                        })))
+                        .AddModifiers(Token(SyntaxKind.PublicKeyword));
+                }
+                else
+                {
+                    return PropertyDeclaration(ParseTypeName(this.GetTypeName(member)), NameHelper.GetSafeVariableName(member.Name))
+                        .WithAccessorList(
+                                    SyntaxFactory.AccessorList(
+                                        SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
+                                        {
+                                            SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                                            .WithBody(Block(List<StatementSyntax>(new [] { ReturnStatement(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(this.GetFieldName(member.Name)))) }))),
+                                            SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                                            .WithBody(
+                                                Block(
+                                                    List<StatementSyntax>(new [] 
+                                                    {
+                                                        ExpressionStatement(
+                                                            InvocationExpression(
+                                                                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName("SetAsParentFor")),
+                                                                ArgumentList(SeparatedList<ArgumentSyntax>(new [] 
+                                                                { 
+                                                                    Argument(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(this.GetFieldName(member.Name)))),
+                                                                    Argument(IdentifierName("value"))
+                                                                })))),
+                                                        ExpressionStatement(
+                                                            AssignmentExpression(
+                                                                SyntaxKind.SimpleAssignmentExpression,
+                                                                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(this.GetFieldName(member.Name))),
+                                                                IdentifierName("value")))
+                                                    })))
+                                        })))
+                        .AddModifiers(Token(SyntaxKind.PublicKeyword));
+                }
+            }
+            else
+            {
+                if (member.Type.IsCollection)
+                {
+                    throw new InvalidOperationException("Non-node collections are not supported yet.");
+                }
+
+                return PropertyDeclaration(ParseTypeName(this.GetTypeName(member)), NameHelper.GetSafeVariableName(member.Name))
+                        .WithAccessorList(
+                                    SyntaxFactory.AccessorList(
+                                        SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
+                                        {
+                                            SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                                            .WithBody(Block(List<StatementSyntax>(new [] { ReturnStatement(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(this.GetFieldName(member.Name)))) }))),
+                                            SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                                            .WithBody(
+                                                Block(
+                                                    List<StatementSyntax>(new []
+                                                    {
+                                                        ExpressionStatement(
+                                                            InvocationExpression(
+                                                                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName("EnsureIsEditable")),
+                                                                ArgumentList(SeparatedList<ArgumentSyntax>()))),
+                                                        ExpressionStatement(
+                                                            AssignmentExpression(
+                                                                SyntaxKind.SimpleAssignmentExpression,
+                                                                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(this.GetFieldName(member.Name))),
+                                                                IdentifierName("value")))
+                                                    })))
+                                        })))
+                        .AddModifiers(Token(SyntaxKind.PublicKeyword));
+            }
+        }
+
+        private string GetFieldName(string propertyName)
+        {
+            return NameHelper.GetSafeVariableName($"_{propertyName}");
         }
 
         private MethodDeclarationSyntax GenerateConversionMethod(TransportModelEntity entityModel)
@@ -312,11 +406,22 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                             })));
         }
 
+        private bool IsEnum(TransportModelTypeReference reference)
+        {
+            return reference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference
+                && itemReference.TransportModelItem is TransportModelEnum;
+        }
+
+        private bool IsNode(TransportModelTypeReference reference)
+        {
+            return ((reference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference
+                && !(itemReference.TransportModelItem is TransportModelEnum))
+                    || reference is TransportModelTypeReferenceGenericParameter parameterReference);
+        }
+
         private bool IsNodeCollection(TransportModelTypeReference reference)
         {
-            return reference.IsCollection
-                && reference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference
-                && !(itemReference.TransportModelItem is TransportModelEnum);
+            return reference.IsCollection && this.IsNode(reference);
         }
 
         private IEnumerable<ParameterSyntax> GetConstructorParameters(TransportModelEntity entityModel, out List<StatementSyntax> propertyInitializers, out List<ArgumentSyntax> baseConstructorArguments)

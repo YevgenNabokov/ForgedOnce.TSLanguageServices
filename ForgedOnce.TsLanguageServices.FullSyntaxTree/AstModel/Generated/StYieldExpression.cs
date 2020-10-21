@@ -11,16 +11,34 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.expression = expression;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAsteriskTokenToken _asteriskToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAsteriskTokenToken asteriskToken
         {
-            get;
-            set;
+            get
+            {
+                return this._asteriskToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._asteriskToken, value);
+                this._asteriskToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression expression
         {
-            get;
-            set;
+            get
+            {
+                return this._expression;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._expression, value);
+                this._expression = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

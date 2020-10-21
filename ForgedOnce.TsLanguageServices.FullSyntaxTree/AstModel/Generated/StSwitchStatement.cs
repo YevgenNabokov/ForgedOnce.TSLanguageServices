@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.possiblyExhaustive = possiblyExhaustive;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCaseBlock _caseBlock;
+        System.Nullable<System.Boolean> _possiblyExhaustive;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression expression
         {
-            get;
-            set;
+            get
+            {
+                return this._expression;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._expression, value);
+                this._expression = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCaseBlock caseBlock
         {
-            get;
-            set;
+            get
+            {
+                return this._caseBlock;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._caseBlock, value);
+                this._caseBlock = value;
+            }
         }
 
         public System.Nullable<System.Boolean> possiblyExhaustive
         {
-            get;
-            set;
+            get
+            {
+                return this._possiblyExhaustive;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._possiblyExhaustive = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

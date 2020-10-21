@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.qualifier = qualifier;
         }
 
+        System.Nullable<System.Boolean> _isTypeOf;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _argument;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName _qualifier;
         public System.Nullable<System.Boolean> isTypeOf
         {
-            get;
-            set;
+            get
+            {
+                return this._isTypeOf;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._isTypeOf = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode argument
         {
-            get;
-            set;
+            get
+            {
+                return this._argument;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._argument, value);
+                this._argument = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName qualifier
         {
-            get;
-            set;
+            get
+            {
+                return this._qualifier;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._qualifier, value);
+                this._qualifier = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

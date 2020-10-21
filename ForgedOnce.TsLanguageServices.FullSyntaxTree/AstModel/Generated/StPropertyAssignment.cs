@@ -13,28 +13,64 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.initializer = initializer;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
+        System.Object __objectLiteralBrand;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _initializer;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name
         {
-            get;
-            set;
+            get
+            {
+                return this._name;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._name, value);
+                this._name = value;
+            }
         }
 
         public System.Object _objectLiteralBrand
         {
-            get;
-            set;
+            get
+            {
+                return this.__objectLiteralBrand;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this.__objectLiteralBrand = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken questionToken
         {
-            get;
-            set;
+            get
+            {
+                return this._questionToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._questionToken, value);
+                this._questionToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression initializer
         {
-            get;
-            set;
+            get
+            {
+                return this._initializer;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._initializer, value);
+                this._initializer = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

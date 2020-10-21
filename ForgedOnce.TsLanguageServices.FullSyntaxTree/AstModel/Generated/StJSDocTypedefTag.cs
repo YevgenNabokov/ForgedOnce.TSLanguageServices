@@ -14,34 +14,79 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.typeExpression = typeExpression;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _tagName;
+        System.String _comment;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode _fullName;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _typeExpression;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier tagName
         {
-            get;
-            set;
+            get
+            {
+                return this._tagName;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._tagName, value);
+                this._tagName = value;
+            }
         }
 
         public System.String comment
         {
-            get;
-            set;
+            get
+            {
+                return this._comment;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._comment = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name
         {
-            get;
-            set;
+            get
+            {
+                return this._name;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._name, value);
+                this._name = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode fullName
         {
-            get;
-            set;
+            get
+            {
+                return this._fullName;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._fullName, value);
+                this._fullName = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode typeExpression
         {
-            get;
-            set;
+            get
+            {
+                return this._typeExpression;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._typeExpression, value);
+                this._typeExpression = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

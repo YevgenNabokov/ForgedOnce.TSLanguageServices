@@ -14,34 +14,79 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.initializer = initializer;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
+        System.Object __typeElementBrand;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _type;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _initializer;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name
         {
-            get;
-            set;
+            get
+            {
+                return this._name;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._name, value);
+                this._name = value;
+            }
         }
 
         public System.Object _typeElementBrand
         {
-            get;
-            set;
+            get
+            {
+                return this.__typeElementBrand;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this.__typeElementBrand = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken questionToken
         {
-            get;
-            set;
+            get
+            {
+                return this._questionToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._questionToken, value);
+                this._questionToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode type
         {
-            get;
-            set;
+            get
+            {
+                return this._type;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._type, value);
+                this._type = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression initializer
         {
-            get;
-            set;
+            get
+            {
+                return this._initializer;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._initializer, value);
+                this._initializer = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

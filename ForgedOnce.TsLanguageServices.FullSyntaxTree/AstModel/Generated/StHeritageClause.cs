@@ -12,16 +12,25 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.types.AddRange(types);
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _token;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind token
         {
-            get;
-            set;
+            get
+            {
+                return this._token;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._token = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExpressionWithTypeArguments> types
         {
             get;
-            set;
+            private set;
         }
 
         public override System.Object GetTransportModelNode()

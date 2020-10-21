@@ -10,10 +10,19 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.typeParameter = typeParameter;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration _typeParameter;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration typeParameter
         {
-            get;
-            set;
+            get
+            {
+                return this._typeParameter;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._typeParameter, value);
+                this._typeParameter = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

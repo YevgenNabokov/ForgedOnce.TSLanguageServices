@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.body = body;
         }
 
+        System.Object __classElementBrand;
+        System.Object __objectLiteralBrand;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock _body;
         public System.Object _classElementBrand
         {
-            get;
-            set;
+            get
+            {
+                return this.__classElementBrand;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this.__classElementBrand = value;
+            }
         }
 
         public System.Object _objectLiteralBrand
         {
-            get;
-            set;
+            get
+            {
+                return this.__objectLiteralBrand;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this.__objectLiteralBrand = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock body
         {
-            get;
-            set;
+            get
+            {
+                return this._body;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._body, value);
+                this._body = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

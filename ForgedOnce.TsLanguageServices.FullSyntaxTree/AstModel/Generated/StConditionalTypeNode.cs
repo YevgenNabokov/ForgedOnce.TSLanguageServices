@@ -13,28 +13,64 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.falseType = falseType;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _checkType;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _extendsType;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _trueType;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _falseType;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode checkType
         {
-            get;
-            set;
+            get
+            {
+                return this._checkType;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._checkType, value);
+                this._checkType = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode extendsType
         {
-            get;
-            set;
+            get
+            {
+                return this._extendsType;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._extendsType, value);
+                this._extendsType = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode trueType
         {
-            get;
-            set;
+            get
+            {
+                return this._trueType;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._trueType, value);
+                this._trueType = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode falseType
         {
-            get;
-            set;
+            get
+            {
+                return this._falseType;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._falseType, value);
+                this._falseType = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

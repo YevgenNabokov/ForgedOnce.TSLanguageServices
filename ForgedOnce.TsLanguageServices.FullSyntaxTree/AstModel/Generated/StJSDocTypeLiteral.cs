@@ -12,16 +12,25 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.isArrayType = isArrayType;
         }
 
+        System.Nullable<System.Boolean> _isArrayType;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocPropertyLikeTag> jsDocPropertyTags
         {
             get;
-            set;
+            private set;
         }
 
         public System.Nullable<System.Boolean> isArrayType
         {
-            get;
-            set;
+            get
+            {
+                return this._isArrayType;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._isArrayType = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

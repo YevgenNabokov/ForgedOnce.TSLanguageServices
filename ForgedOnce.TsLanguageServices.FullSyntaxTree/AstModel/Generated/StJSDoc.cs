@@ -12,16 +12,25 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.comment = comment;
         }
 
+        System.String _comment;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJSDocTag> tags
         {
             get;
-            set;
+            private set;
         }
 
         public System.String comment
         {
-            get;
-            set;
+            get
+            {
+                return this._comment;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._comment = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

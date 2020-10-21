@@ -11,16 +11,34 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.operand = operand;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _operator;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStUnaryExpression _operand;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind @operator
         {
-            get;
-            set;
+            get
+            {
+                return this._operator;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._operator = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStUnaryExpression operand
         {
-            get;
-            set;
+            get
+            {
+                return this._operand;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._operand, value);
+                this._operand = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

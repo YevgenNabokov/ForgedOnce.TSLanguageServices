@@ -13,28 +13,64 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.type = type;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode _readonlyToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration _typeParameter;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode _questionToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _type;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode readonlyToken
         {
-            get;
-            set;
+            get
+            {
+                return this._readonlyToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._readonlyToken, value);
+                this._readonlyToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration typeParameter
         {
-            get;
-            set;
+            get
+            {
+                return this._typeParameter;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._typeParameter, value);
+                this._typeParameter = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode questionToken
         {
-            get;
-            set;
+            get
+            {
+                return this._questionToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._questionToken, value);
+                this._questionToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode type
         {
-            get;
-            set;
+            get
+            {
+                return this._type;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._type, value);
+                this._type = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

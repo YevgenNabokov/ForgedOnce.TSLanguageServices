@@ -13,28 +13,64 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.moduleSpecifier = moduleSpecifier;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
+        System.Boolean _isTypeOnly;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNamedExportBindings _exportClause;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _moduleSpecifier;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name
         {
-            get;
-            set;
+            get
+            {
+                return this._name;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._name, value);
+                this._name = value;
+            }
         }
 
         public System.Boolean isTypeOnly
         {
-            get;
-            set;
+            get
+            {
+                return this._isTypeOnly;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._isTypeOnly = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNamedExportBindings exportClause
         {
-            get;
-            set;
+            get
+            {
+                return this._exportClause;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._exportClause, value);
+                this._exportClause = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression moduleSpecifier
         {
-            get;
-            set;
+            get
+            {
+                return this._moduleSpecifier;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._moduleSpecifier, value);
+                this._moduleSpecifier = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

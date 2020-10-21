@@ -19,13 +19,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decorators
         {
             get;
-            set;
         }
 
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStModifier> modifiers
         {
             get;
-            set;
         }
     }
 }

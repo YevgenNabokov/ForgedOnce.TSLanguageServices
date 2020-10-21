@@ -10,10 +10,19 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.body = body;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock _body;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock body
         {
-            get;
-            set;
+            get
+            {
+                return this._body;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._body, value);
+                this._body = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

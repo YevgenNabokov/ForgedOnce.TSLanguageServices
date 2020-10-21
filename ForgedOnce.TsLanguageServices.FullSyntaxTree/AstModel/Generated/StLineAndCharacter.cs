@@ -10,16 +10,34 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.character = character;
         }
 
+        System.Int32 _line;
+        System.Int32 _character;
         public System.Int32 line
         {
-            get;
-            set;
+            get
+            {
+                return this._line;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._line = value;
+            }
         }
 
         public System.Int32 character
         {
-            get;
-            set;
+            get
+            {
+                return this._character;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._character = value;
+            }
         }
     }
 }

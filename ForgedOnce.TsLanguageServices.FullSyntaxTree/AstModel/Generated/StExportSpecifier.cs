@@ -11,16 +11,34 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.propertyName = propertyName;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _propertyName;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name
         {
-            get;
-            set;
+            get
+            {
+                return this._name;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._name, value);
+                this._name = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier propertyName
         {
-            get;
-            set;
+            get
+            {
+                return this._propertyName;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._propertyName, value);
+                this._propertyName = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

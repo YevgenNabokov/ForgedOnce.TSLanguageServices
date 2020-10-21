@@ -13,28 +13,64 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.rawText = rawText;
         }
 
+        System.String _text;
+        System.Nullable<System.Boolean> _isUnterminated;
+        System.Nullable<System.Boolean> _hasExtendedUnicodeEscape;
+        System.String _rawText;
         public System.String text
         {
-            get;
-            set;
+            get
+            {
+                return this._text;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._text = value;
+            }
         }
 
         public System.Nullable<System.Boolean> isUnterminated
         {
-            get;
-            set;
+            get
+            {
+                return this._isUnterminated;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._isUnterminated = value;
+            }
         }
 
         public System.Nullable<System.Boolean> hasExtendedUnicodeEscape
         {
-            get;
-            set;
+            get
+            {
+                return this._hasExtendedUnicodeEscape;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._hasExtendedUnicodeEscape = value;
+            }
         }
 
         public System.String rawText
         {
-            get;
-            set;
+            get
+            {
+                return this._rawText;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._rawText = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

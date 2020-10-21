@@ -10,10 +10,19 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.literal = literal;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode _literal;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode literal
         {
-            get;
-            set;
+            get
+            {
+                return this._literal;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._literal, value);
+                this._literal = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

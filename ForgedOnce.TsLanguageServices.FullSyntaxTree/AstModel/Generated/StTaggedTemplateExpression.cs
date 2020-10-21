@@ -13,22 +13,40 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.template = template;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression _tag;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTemplateLiteral _template;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression tag
         {
-            get;
-            set;
+            get
+            {
+                return this._tag;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._tag, value);
+                this._tag = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode> typeArguments
         {
             get;
-            set;
+            private set;
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTemplateLiteral template
         {
-            get;
-            set;
+            get
+            {
+                return this._template;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._template, value);
+                this._template = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

@@ -10,10 +10,19 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.rawText = rawText;
         }
 
+        System.String _rawText;
         public System.String rawText
         {
-            get;
-            set;
+            get
+            {
+                return this._rawText;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._rawText = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

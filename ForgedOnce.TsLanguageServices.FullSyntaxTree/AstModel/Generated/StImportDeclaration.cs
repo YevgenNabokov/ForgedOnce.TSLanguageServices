@@ -11,16 +11,34 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.moduleSpecifier = moduleSpecifier;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportClause _importClause;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _moduleSpecifier;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportClause importClause
         {
-            get;
-            set;
+            get
+            {
+                return this._importClause;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._importClause, value);
+                this._importClause = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression moduleSpecifier
         {
-            get;
-            set;
+            get
+            {
+                return this._moduleSpecifier;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._moduleSpecifier, value);
+                this._moduleSpecifier = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

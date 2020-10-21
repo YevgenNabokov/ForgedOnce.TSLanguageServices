@@ -14,34 +14,79 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.whenFalse = whenFalse;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _condition;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _whenTrue;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StColonTokenToken _colonToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _whenFalse;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression condition
         {
-            get;
-            set;
+            get
+            {
+                return this._condition;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._condition, value);
+                this._condition = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken questionToken
         {
-            get;
-            set;
+            get
+            {
+                return this._questionToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._questionToken, value);
+                this._questionToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression whenTrue
         {
-            get;
-            set;
+            get
+            {
+                return this._whenTrue;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._whenTrue, value);
+                this._whenTrue = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StColonTokenToken colonToken
         {
-            get;
-            set;
+            get
+            {
+                return this._colonToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._colonToken, value);
+                this._colonToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression whenFalse
         {
-            get;
-            set;
+            get
+            {
+                return this._whenFalse;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._whenFalse, value);
+                this._whenFalse = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

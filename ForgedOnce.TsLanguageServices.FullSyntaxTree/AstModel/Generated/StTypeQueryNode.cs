@@ -10,10 +10,19 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.exprName = exprName;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName _exprName;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName exprName
         {
-            get;
-            set;
+            get
+            {
+                return this._exprName;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._exprName, value);
+                this._exprName = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

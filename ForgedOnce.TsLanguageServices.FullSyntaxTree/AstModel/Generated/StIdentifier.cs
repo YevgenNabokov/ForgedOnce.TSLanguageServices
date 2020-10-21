@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.isInJSDocNamespace = isInJSDocNamespace;
         }
 
+        System.String _escapedText;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _originalKeywordKind;
+        System.Nullable<System.Boolean> _isInJSDocNamespace;
         public System.String escapedText
         {
-            get;
-            set;
+            get
+            {
+                return this._escapedText;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._escapedText = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind originalKeywordKind
         {
-            get;
-            set;
+            get
+            {
+                return this._originalKeywordKind;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._originalKeywordKind = value;
+            }
         }
 
         public System.Nullable<System.Boolean> isInJSDocNamespace
         {
-            get;
-            set;
+            get
+            {
+                return this._isInJSDocNamespace;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._isInJSDocNamespace = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

@@ -12,28 +12,64 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this._functionLikeDeclarationBrand = new System.Object();
         }
 
+        System.Object __functionLikeDeclarationBrand;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAsteriskTokenToken _asteriskToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken _exclamationToken;
         public System.Object _functionLikeDeclarationBrand
         {
-            get;
-            set;
+            get
+            {
+                return this.__functionLikeDeclarationBrand;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this.__functionLikeDeclarationBrand = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAsteriskTokenToken asteriskToken
         {
-            get;
-            set;
+            get
+            {
+                return this._asteriskToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._asteriskToken, value);
+                this._asteriskToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken questionToken
         {
-            get;
-            set;
+            get
+            {
+                return this._questionToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._questionToken, value);
+                this._questionToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken exclamationToken
         {
-            get;
-            set;
+            get
+            {
+                return this._exclamationToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._exclamationToken, value);
+                this._exclamationToken = value;
+            }
         }
     }
 }

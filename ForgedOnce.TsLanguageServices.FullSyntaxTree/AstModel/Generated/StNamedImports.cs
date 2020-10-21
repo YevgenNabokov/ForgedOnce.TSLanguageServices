@@ -14,7 +14,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier> elements
         {
             get;
-            set;
+            private set;
         }
 
         public override System.Object GetTransportModelNode()

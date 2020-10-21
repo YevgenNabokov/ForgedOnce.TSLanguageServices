@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.finallyBlock = finallyBlock;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock _tryBlock;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause _catchClause;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock _finallyBlock;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock tryBlock
         {
-            get;
-            set;
+            get
+            {
+                return this._tryBlock;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._tryBlock, value);
+                this._tryBlock = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause catchClause
         {
-            get;
-            set;
+            get
+            {
+                return this._catchClause;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._catchClause, value);
+                this._catchClause = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock finallyBlock
         {
-            get;
-            set;
+            get
+            {
+                return this._finallyBlock;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._finallyBlock, value);
+                this._finallyBlock = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

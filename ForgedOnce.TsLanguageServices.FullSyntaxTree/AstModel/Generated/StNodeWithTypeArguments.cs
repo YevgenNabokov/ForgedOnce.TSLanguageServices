@@ -13,7 +13,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode> typeArguments
         {
             get;
-            set;
+            private set;
         }
     }
 }

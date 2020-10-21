@@ -15,40 +15,94 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.objectAssignmentInitializer = objectAssignmentInitializer;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
+        System.Object __objectLiteralBrand;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken _exclamationToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEqualsTokenToken _equalsToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _objectAssignmentInitializer;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name
         {
-            get;
-            set;
+            get
+            {
+                return this._name;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._name, value);
+                this._name = value;
+            }
         }
 
         public System.Object _objectLiteralBrand
         {
-            get;
-            set;
+            get
+            {
+                return this.__objectLiteralBrand;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this.__objectLiteralBrand = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken questionToken
         {
-            get;
-            set;
+            get
+            {
+                return this._questionToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._questionToken, value);
+                this._questionToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken exclamationToken
         {
-            get;
-            set;
+            get
+            {
+                return this._exclamationToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._exclamationToken, value);
+                this._exclamationToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEqualsTokenToken equalsToken
         {
-            get;
-            set;
+            get
+            {
+                return this._equalsToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._equalsToken, value);
+                this._equalsToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression objectAssignmentInitializer
         {
-            get;
-            set;
+            get
+            {
+                return this._objectAssignmentInitializer;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._objectAssignmentInitializer, value);
+                this._objectAssignmentInitializer = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

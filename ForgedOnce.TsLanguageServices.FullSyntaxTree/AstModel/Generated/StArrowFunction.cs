@@ -11,16 +11,34 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.body = body;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEqualsGreaterThanTokenToken _equalsGreaterThanToken;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStConciseBody _body;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEqualsGreaterThanTokenToken equalsGreaterThanToken
         {
-            get;
-            set;
+            get
+            {
+                return this._equalsGreaterThanToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._equalsGreaterThanToken, value);
+                this._equalsGreaterThanToken = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStConciseBody body
         {
-            get;
-            set;
+            get
+            {
+                return this._body;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._body, value);
+                this._body = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

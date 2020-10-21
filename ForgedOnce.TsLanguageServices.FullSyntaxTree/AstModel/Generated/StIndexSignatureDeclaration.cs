@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.questionToken = questionToken;
         }
 
+        System.Object __classElementBrand;
+        System.Object __typeElementBrand;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;
         public System.Object _classElementBrand
         {
-            get;
-            set;
+            get
+            {
+                return this.__classElementBrand;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this.__classElementBrand = value;
+            }
         }
 
         public System.Object _typeElementBrand
         {
-            get;
-            set;
+            get
+            {
+                return this.__typeElementBrand;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this.__typeElementBrand = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken questionToken
         {
-            get;
-            set;
+            get
+            {
+                return this._questionToken;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._questionToken, value);
+                this._questionToken = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

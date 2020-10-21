@@ -10,10 +10,19 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.label = label;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _label;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier label
         {
-            get;
-            set;
+            get
+            {
+                return this._label;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._label, value);
+                this._label = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

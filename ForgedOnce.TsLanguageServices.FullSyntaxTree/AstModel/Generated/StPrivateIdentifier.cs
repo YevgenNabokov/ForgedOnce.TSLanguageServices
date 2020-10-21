@@ -10,10 +10,19 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.escapedText = escapedText;
         }
 
+        System.String _escapedText;
         public System.String escapedText
         {
-            get;
-            set;
+            get
+            {
+                return this._escapedText;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._escapedText = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()

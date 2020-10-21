@@ -13,28 +13,46 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.modifiers.AddRange(modifiers);
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _kind;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.NodeFlags _flags;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind kind
         {
-            get;
-            set;
+            get
+            {
+                return this._kind;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._kind = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.NodeFlags flags
         {
-            get;
-            set;
+            get
+            {
+                return this._flags;
+            }
+
+            set
+            {
+                this.EnsureIsEditable();
+                this._flags = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decorators
         {
             get;
-            set;
+            private set;
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStModifier> modifiers
         {
             get;
-            set;
+            private set;
         }
     }
 }

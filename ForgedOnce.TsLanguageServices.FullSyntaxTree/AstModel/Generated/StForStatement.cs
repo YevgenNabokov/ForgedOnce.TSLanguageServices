@@ -12,22 +12,49 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.incrementor = incrementor;
         }
 
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStForInitializer _initializer;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _condition;
+        ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _incrementor;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStForInitializer initializer
         {
-            get;
-            set;
+            get
+            {
+                return this._initializer;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._initializer, value);
+                this._initializer = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression condition
         {
-            get;
-            set;
+            get
+            {
+                return this._condition;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._condition, value);
+                this._condition = value;
+            }
         }
 
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression incrementor
         {
-            get;
-            set;
+            get
+            {
+                return this._incrementor;
+            }
+
+            set
+            {
+                this.SetAsParentFor(this._incrementor, value);
+                this._incrementor = value;
+            }
         }
 
         public override System.Object GetTransportModelNode()
