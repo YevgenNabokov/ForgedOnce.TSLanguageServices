@@ -147,6 +147,27 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                                 IdentifierName(kindDiscriminant.SyntaxKindValueName)))));
             }
 
+            foreach (var property in entityModel.Members)
+            {
+                if (property.Value.Type.IsCollection
+                    && property.Value.Type is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> modelItemReference
+                    && !(modelItemReference.TransportModelItem is TransportModelEnum))
+                {
+                    constructorBody = constructorBody.AddStatements(
+                        ExpressionStatement(
+                            AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    ThisExpression(),
+                                    IdentifierName(NameHelper.GetSafeVariableName(property.Key))),
+                                ObjectCreationExpression(
+                                    ParseTypeName(this.GetTypeName(property.Value)),
+                                    ArgumentList(SeparatedList<ArgumentSyntax>(new[] { Argument(ThisExpression()) })),
+                                    null))));
+                }
+            }
+
             if (propertyInitializers != null && propertyInitializers.Count > 0)
             {
                 constructorBody = constructorBody.AddStatements(propertyInitializers.ToArray());
@@ -291,6 +312,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                             })));
         }
 
+        private bool IsNodeCollection(TransportModelTypeReference reference)
+        {
+            return reference.IsCollection
+                && reference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference
+                && !(itemReference.TransportModelItem is TransportModelEnum);
+        }
+
         private IEnumerable<ParameterSyntax> GetConstructorParameters(TransportModelEntity entityModel, out List<StatementSyntax> propertyInitializers, out List<ArgumentSyntax> baseConstructorArguments)
         {
             List<ParameterSyntax> result = new List<ParameterSyntax>();
@@ -306,7 +334,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             {
                 if (member.Key != "kind")
                 {
-                    result.Add(Parameter(List<AttributeListSyntax>(), TokenList(), ParseTypeName(this.GetTypeName(member.Value)), Identifier(NameHelper.GetSafeVariableName(member.Key)), null));
+                    result.Add(Parameter(List<AttributeListSyntax>(), TokenList(), ParseTypeName(this.GetTypeName(member.Value, true)), Identifier(NameHelper.GetSafeVariableName(member.Key)), null));
 
                     if (baseMembers.ContainsKey(member.Key))
                     {
@@ -314,12 +342,26 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                     }
                     else
                     {
-                        initializers.Add(
+                        if (this.IsNodeCollection(member.Value.Type))
+                        {
+                            initializers.Add(
+                            ExpressionStatement(
+                                    InvocationExpression(
+                                    MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(NameHelper.GetSafeVariableName(member.Key))),
+                                        IdentifierName("AddRange")),
+                                    ArgumentList(SeparatedList<ArgumentSyntax>(new[] { Argument(IdentifierName(NameHelper.GetSafeVariableName(member.Key))) })))));
+                        }
+                        else
+                        {
+                            initializers.Add(
                             ExpressionStatement(
                                 AssignmentExpression(
                                     SyntaxKind.SimpleAssignmentExpression,
                                     MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(NameHelper.GetSafeVariableName(member.Key))),
                                     IdentifierName(NameHelper.GetSafeVariableName(member.Key)))));
+                        }
                     }
                 }
             }
@@ -381,15 +423,15 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             return result;
         }
 
-        private string GetTypeName(TransportModelEntityMember member)
+        private string GetTypeName(TransportModelEntityMember member, bool useSimpleCollections = false)
         {
             if (member.Type is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference && itemReference.TransportModelItem is TransportModelEnum)
             {
-                return CsEmitterHelper.CreateModelTypeName(itemReference, this.settings, ModelType.Transport);
+                return CsEmitterHelper.CreateModelTypeName(itemReference, this.settings, ModelType.Transport, useSimpleCollections);
             }
             else
             {
-                return CsEmitterHelper.GetPropertyTypeName(member, this.settings, ModelType.Ast);
+                return CsEmitterHelper.GetPropertyTypeName(member, this.settings, ModelType.Ast, useSimpleCollections);
             }
         }
     }

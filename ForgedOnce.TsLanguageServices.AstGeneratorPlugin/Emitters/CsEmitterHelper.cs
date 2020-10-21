@@ -27,11 +27,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             return name;
         }
 
-        public static string GetCSharpModelReferenceName(TransportModelTypeReference reference, Settings settings, ModelType modelType)
+        public static string GetCSharpModelReferenceName(TransportModelTypeReference reference, Settings settings, ModelType modelType, bool useSimpleCollections = false)
         {
             if (reference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> modelItemReference)
             {
-                return CreateModelTypeName(modelItemReference, settings, modelType);
+                return CreateModelTypeName(modelItemReference, settings, modelType, useSimpleCollections);
             }
 
             if (reference is TransportModelTypeReferencePrimitive primitiveReference)
@@ -76,7 +76,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             return typeName;
         }
 
-        public static string CreateModelTypeName(ITransportModelTypeReferenceTransportModelItem<TransportModelItem> reference, Settings settings, ModelType modelType)
+        public static string CreateModelTypeName(ITransportModelTypeReferenceTransportModelItem<TransportModelItem> reference, Settings settings, ModelType modelType, bool useSimpleCollections = false)
         {
             var typeName = CsEmitterHelper.GetCSharpModelFullyQualifiedName(reference.TransportModelItem, settings, modelType);
 
@@ -87,7 +87,14 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
             if (reference.IsCollection)
             {
-                typeName = $"{settings.CsTransportModelCollectionType}<{typeName}>";
+                string collectionType = settings.CsTransportModelCollectionType;
+
+                if (!useSimpleCollections && modelType == ModelType.Ast && !(reference.TransportModelItem is TransportModelEnum))
+                {
+                    collectionType = settings.CsAstModelNodeCollectionType;
+                }
+
+                typeName = $"{collectionType}<{typeName}>";
             }
 
             return typeName;
@@ -121,7 +128,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             throw new InvalidOperationException($"Not supported generic parameter constraint {constraint.GetType()}");
         }
 
-        public static string GetPropertyTypeName(TransportModelEntityMember member, Settings settings, ModelType modelType)
+        public static string GetPropertyTypeName(TransportModelEntityMember member, Settings settings, ModelType modelType, bool useSimpleCollections = false)
         {
             if (member.IsNullable
                 && member.Type is TransportModelTypeReferencePrimitive primitiveReference
@@ -134,7 +141,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                 return $"System.Nullable<{name}>";
             }
 
-            return GetCSharpModelReferenceName(member.Type, settings, modelType);
+            return GetCSharpModelReferenceName(member.Type, settings, modelType, useSimpleCollections);
         }
     }
 }
