@@ -37,7 +37,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             ",ts.AssignmentExpression,ts.CallChain,ts.JsonSourceFile,ts.BindingOrAssignmentElement,ts.SyntheticExpression,ts.Bundle,ts.UnparsedSource,ts.UnparsedPrepend,ts.UnparsedTextLike,ts.UnparsedSection"+
             ",ts.UnparsedSyntheticReference,ts.UnparsedPrologue,ts.JSDocAugmentsTag,ts.JSDocImplementsTag,ts.NotEmittedStatement,ts.SourceFile,ts.PartiallyEmittedExpression,ts.MissingDeclaration";
 
-        public string OtherExcludedTypes = "ts.UnscopedEmitHelper,ts.TextRange,ts.JSDocAugmentsTag,ts.JSDocImplementsTag,ts.SourceFile";
+        public string OtherExcludedTypes = "ts.UnscopedEmitHelper,ts.TextRange,ts.JSDocAugmentsTag,ts.JSDocImplementsTag,ts.SourceFile,ts.LineAndCharacter";
 
         public string TypesRepresentedAsInterface = "ts.Node";
 

@@ -6,11 +6,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
     {
         public StObjectLiteralExpressionBase(ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.NodeFlags flags, System.Collections.Generic.List<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decorators, System.Collections.Generic.List<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStModifier> modifiers, System.Collections.Generic.List<T> properties): base(flags, decorators, modifiers)
         {
-            this.properties = new System.Collections.Generic.List<T>(this);
+            this.properties = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<T>(this);
             this.properties.AddRange(properties);
         }
 
-        public System.Collections.Generic.List<T> properties
+        public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<T> properties
         {
             get;
             private set;

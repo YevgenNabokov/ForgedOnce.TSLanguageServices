@@ -41,19 +41,26 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
             if (reference is TransportModelTypeReferenceGenericParameter transportModelTypeReferenceGenericParameter)
             {
-                return CreateGenericParameterReferenceName(transportModelTypeReferenceGenericParameter, settings);
+                return CreateGenericParameterReferenceName(transportModelTypeReferenceGenericParameter, settings, modelType, useSimpleCollections);
             }
 
             throw new InvalidOperationException($"Unable to map reference name {reference.GetType()}");
         }
 
-        public static string CreateGenericParameterReferenceName(TransportModelTypeReferenceGenericParameter transportModelTypeReferenceGenericParameter, Settings settings)
+        public static string CreateGenericParameterReferenceName(TransportModelTypeReferenceGenericParameter transportModelTypeReferenceGenericParameter, Settings settings, ModelType modelType, bool useSimpleCollections = false)
         {
             var typeName = transportModelTypeReferenceGenericParameter.Name;
 
             if (transportModelTypeReferenceGenericParameter.IsCollection)
             {
-                typeName = $"{settings.CsTransportModelCollectionType}<{typeName}>";
+                string collectionType = settings.CsTransportModelCollectionType;
+
+                if (!useSimpleCollections && modelType == ModelType.Ast)
+                {
+                    collectionType = settings.CsAstModelNodeCollectionType;
+                }
+
+                typeName = $"{collectionType}<{typeName}>";
             }
 
             return typeName;
