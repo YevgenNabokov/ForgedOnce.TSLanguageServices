@@ -25,6 +25,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
         public const string CsModelBuildersOutStreamName = "CsModelBuilders";
 
+        public const string CsTransportToAstConverterOutputStreamName = "CsTransportToAstConverter";
+
         public const string TsModelsOutStreamName = "TsModels";
 
         protected ICodeStream csAstModelsOutputStream;
@@ -32,6 +34,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
         protected ICodeStream csTransportModelsOutputStream;
 
         protected ICodeStream csModelBuildersOutputStream;
+
+        protected ICodeStream csTransportToAstConverterOutputStream;
 
         protected ICodeStream tsModelsOutputStream;
 
@@ -59,6 +63,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             this.csModelBuildersOutputStream = codeStreamFactory.CreateCodeStream(Languages.CSharp, CsModelBuildersOutStreamName);
             result.Add(this.csModelBuildersOutputStream);
 
+            this.csTransportToAstConverterOutputStream = codeStreamFactory.CreateCodeStream(Languages.CSharp, CsTransportToAstConverterOutputStreamName);
+            result.Add(this.csTransportToAstConverterOutputStream);
+
             this.tsModelsOutputStream = codeStreamFactory.CreateCodeStream(Languages.LimitedTypeScript, TsModelsOutStreamName);
             result.Add(this.tsModelsOutputStream);
             return result;
@@ -73,6 +80,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
                 var csAstEmitter = new CsAstModelEmitter(this.Settings);
                 csAstEmitter.Emit(parameters, this.csAstModelsOutputStream);
+
+                var csTransportToAstTranslatorEmitter = new CsTransportToAstTranslatorEmitter(this.Settings);
+                csTransportToAstTranslatorEmitter.Emit(parameters, this.csTransportToAstConverterOutputStream);
 
                 var tsAstToTransportTranslatorEmitter = new TsAstToTransportTranslatorEmitter(this.Settings);
                 tsAstToTransportTranslatorEmitter.Emit(parameters, this.tsModelsOutputStream);

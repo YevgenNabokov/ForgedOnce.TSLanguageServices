@@ -8,6 +8,7 @@
     <Folder Include="AstBuilder\Generated\" />
     <Folder Include="AstModel\Generated\" />
     <Folder Include="TransportModel\Generated\" />
+    <Folder Include="TransportToAstConverter\Generated\" />
   </ItemGroup>
 
   <ItemGroup>

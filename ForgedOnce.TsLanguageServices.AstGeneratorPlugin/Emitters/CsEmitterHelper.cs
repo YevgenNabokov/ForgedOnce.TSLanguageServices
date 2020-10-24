@@ -150,5 +150,73 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
             return GetCSharpModelReferenceName(member.Type, settings, modelType, useSimpleCollections);
         }
+
+        public static Dictionary<string, TransportModelEntityMember> GetMembers(TransportModelEntity entityModel, List<TransportModelTypeReference> genericArgumentsInScope = null, bool allMembers = false)
+        {
+            Dictionary<string, TransportModelEntityMember> result = new Dictionary<string, TransportModelEntityMember>();
+
+            if (entityModel.BaseEntity != null)
+            {
+                result = GetMembers(entityModel.BaseEntity.TransportModelItem, entityModel.BaseEntity.GenericArguments, allMembers);
+            }
+
+            var members = entityModel.Members.Keys.Select(m => genericArgumentsInScope == null ? entityModel.GetMemberByName(m) : entityModel.GetMemberByNameAndResolveGenericArguments(m, genericArgumentsInScope));
+
+            foreach (var member in members)
+            {
+                var finalMember = member;
+
+                if (entityModel.MemberTypeLimiters.ContainsKey(member.Name))
+                {
+                    finalMember = entityModel.MemberTypeLimiters[member.Name];
+                }
+
+                if (result.ContainsKey(member.Name))
+                {
+                    result[member.Name] = finalMember;
+                }
+                else
+                {
+                    result.Add(member.Name, finalMember);
+                }
+            }
+
+            if (!allMembers && entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantBrand brandDiscriminant && result.ContainsKey(brandDiscriminant.BrandPropertyName))
+            {
+                result.Remove(brandDiscriminant.BrandPropertyName);
+            }
+
+            return result;
+        }
+
+        public static bool IsEnum(TransportModelTypeReference reference)
+        {
+            return reference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference
+                && itemReference.TransportModelItem is TransportModelEnum;
+        }
+
+        public static bool IsNode(TransportModelTypeReference reference)
+        {
+            return ((reference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference
+                && !(itemReference.TransportModelItem is TransportModelEnum))
+                    || reference is TransportModelTypeReferenceGenericParameter parameterReference);
+        }
+
+        public static bool IsNodeCollection(TransportModelTypeReference reference)
+        {
+            return reference.IsCollection && IsNode(reference);
+        }
+
+        public static string GetAstModelPropertyTypeName(TransportModelEntityMember member, Settings settings, bool useSimpleCollections = false)
+        {
+            if (member.Type is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference && itemReference.TransportModelItem is TransportModelEnum)
+            {
+                return CreateModelTypeName(itemReference, settings, ModelType.Transport, useSimpleCollections);
+            }
+            else
+            {
+                return GetPropertyTypeName(member, settings, ModelType.Ast, useSimpleCollections);
+            }
+        }
     }
 }

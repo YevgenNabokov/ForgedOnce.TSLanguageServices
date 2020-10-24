@@ -80,8 +80,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             }
 
             entityInterface = entityInterface.WithMembers(List<MemberDeclarationSyntax>(model.Members.Select(m =>
-                this.IsNodeCollection(m.Value.Type) ?
-                PropertyDeclaration(ParseTypeName(this.GetTypeName(m.Value)), NameHelper.GetSafeVariableName(m.Value.Name))
+                CsEmitterHelper.IsNodeCollection(m.Value.Type) ?
+                PropertyDeclaration(ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(m.Value, this.settings)), NameHelper.GetSafeVariableName(m.Value.Name))
                 .WithAccessorList(
                             SyntaxFactory.AccessorList(
                                 SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
@@ -90,7 +90,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
                                 })))
                 :
-                PropertyDeclaration(ParseTypeName(this.GetTypeName(m.Value)), NameHelper.GetSafeVariableName(m.Value.Name))
+                PropertyDeclaration(ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(m.Value, this.settings)), NameHelper.GetSafeVariableName(m.Value.Name))
                 .WithAccessorList(
                             SyntaxFactory.AccessorList(
                                 SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
@@ -159,7 +159,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
             foreach (var property in entityModel.Members)
             {
-                if (this.IsNodeCollection(property.Value.Type))
+                if (CsEmitterHelper.IsNodeCollection(property.Value.Type))
                 {
                     constructorBody = constructorBody.AddStatements(
                         ExpressionStatement(
@@ -170,7 +170,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                                     ThisExpression(),
                                     IdentifierName(NameHelper.GetSafeVariableName(property.Key))),
                                 ObjectCreationExpression(
-                                    ParseTypeName(this.GetTypeName(property.Value)),
+                                    ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(property.Value, this.settings)),
                                     ArgumentList(SeparatedList<ArgumentSyntax>(new[] { Argument(ThisExpression()) })),
                                     null))));
                 }
@@ -220,9 +220,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             entityClass = entityClass.AddMembers(
                 entityModel
                 .Members
-                .Where(m => !this.IsNodeCollection(m.Value.Type))
+                .Where(m => !CsEmitterHelper.IsNodeCollection(m.Value.Type))
                 .Select(m =>
-                FieldDeclaration(VariableDeclaration(ParseTypeName(this.GetTypeName(m.Value)), SeparatedList<VariableDeclaratorSyntax>(new[] { VariableDeclarator(this.GetFieldName(m.Key)) })))
+                FieldDeclaration(VariableDeclaration(ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(m.Value, this.settings)), SeparatedList<VariableDeclaratorSyntax>(new[] { VariableDeclarator(this.GetFieldName(m.Key)) })))
                     ).ToArray<MemberDeclarationSyntax>());
 
             entityClass = entityClass.AddMembers(entityModel.Members.Select(m => this.CreatePropertyDeclaration(m.Value)).ToArray<MemberDeclarationSyntax>());
@@ -240,11 +240,11 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
         private MemberDeclarationSyntax CreatePropertyDeclaration(TransportModelEntityMember member)
         {
-            if (this.IsNode(member.Type))
+            if (CsEmitterHelper.IsNode(member.Type))
             {
                 if (member.Type.IsCollection)
                 {
-                    return PropertyDeclaration(ParseTypeName(this.GetTypeName(member)), NameHelper.GetSafeVariableName(member.Name))
+                    return PropertyDeclaration(ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(member, this.settings)), NameHelper.GetSafeVariableName(member.Name))
                         .WithAccessorList(
                                     SyntaxFactory.AccessorList(
                                         SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
@@ -252,14 +252,14 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                                             SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
                                             .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
                                             SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                                            .WithModifiers(TokenList(this.IsNodeCollection(member.Type) ? new [] { Token(SyntaxKind.PrivateKeyword) } : new SyntaxToken[0]))
+                                            .WithModifiers(TokenList(CsEmitterHelper.IsNodeCollection(member.Type) ? new [] { Token(SyntaxKind.PrivateKeyword) } : new SyntaxToken[0]))
                                             .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
                                         })))
                         .AddModifiers(Token(SyntaxKind.PublicKeyword));
                 }
                 else
                 {
-                    return PropertyDeclaration(ParseTypeName(this.GetTypeName(member)), NameHelper.GetSafeVariableName(member.Name))
+                    return PropertyDeclaration(ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(member, this.settings)), NameHelper.GetSafeVariableName(member.Name))
                         .WithAccessorList(
                                     SyntaxFactory.AccessorList(
                                         SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
@@ -296,7 +296,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                     throw new InvalidOperationException("Non-node collections are not supported yet.");
                 }
 
-                return PropertyDeclaration(ParseTypeName(this.GetTypeName(member)), NameHelper.GetSafeVariableName(member.Name))
+                return PropertyDeclaration(ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(member, this.settings)), NameHelper.GetSafeVariableName(member.Name))
                         .WithAccessorList(
                                     SyntaxFactory.AccessorList(
                                         SyntaxFactory.List<AccessorDeclarationSyntax>(new AccessorDeclarationSyntax[]
@@ -330,7 +330,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
         private MethodDeclarationSyntax GenerateConversionMethod(TransportModelEntity entityModel)
         {
-            var members = this.GetMembers(entityModel, null, true);
+            var members = CsEmitterHelper.GetMembers(entityModel, null, true);
 
             List<ExpressionSyntax> initializers = new List<ExpressionSyntax>();
 
@@ -406,40 +406,22 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                             })));
         }
 
-        private bool IsEnum(TransportModelTypeReference reference)
-        {
-            return reference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference
-                && itemReference.TransportModelItem is TransportModelEnum;
-        }
-
-        private bool IsNode(TransportModelTypeReference reference)
-        {
-            return ((reference is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference
-                && !(itemReference.TransportModelItem is TransportModelEnum))
-                    || reference is TransportModelTypeReferenceGenericParameter parameterReference);
-        }
-
-        private bool IsNodeCollection(TransportModelTypeReference reference)
-        {
-            return reference.IsCollection && this.IsNode(reference);
-        }
-
         private IEnumerable<ParameterSyntax> GetConstructorParameters(TransportModelEntity entityModel, out List<StatementSyntax> propertyInitializers, out List<ArgumentSyntax> baseConstructorArguments)
         {
             List<ParameterSyntax> result = new List<ParameterSyntax>();
             List<StatementSyntax> initializers = new List<StatementSyntax>();
             List<ArgumentSyntax> baseArgs = new List<ArgumentSyntax>();
 
-            var members = this.GetMembers(entityModel);
+            var members = CsEmitterHelper.GetMembers(entityModel);
             var baseMembers = entityModel.BaseEntity != null 
-                ? this.GetMembers(entityModel.BaseEntity.TransportModelItem, entityModel.BaseEntity.GenericArguments)
+                ? CsEmitterHelper.GetMembers(entityModel.BaseEntity.TransportModelItem, entityModel.BaseEntity.GenericArguments)
                 : new Dictionary<string, TransportModelEntityMember>();
 
             foreach (var member in members)
             {
                 if (member.Key != "kind")
                 {
-                    result.Add(Parameter(List<AttributeListSyntax>(), TokenList(), ParseTypeName(this.GetTypeName(member.Value, true)), Identifier(NameHelper.GetSafeVariableName(member.Key)), null));
+                    result.Add(Parameter(List<AttributeListSyntax>(), TokenList(), ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(member.Value, this.settings, true)), Identifier(NameHelper.GetSafeVariableName(member.Key)), null));
 
                     if (baseMembers.ContainsKey(member.Key))
                     {
@@ -447,7 +429,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                     }
                     else
                     {
-                        if (this.IsNodeCollection(member.Value.Type))
+                        if (CsEmitterHelper.IsNodeCollection(member.Value.Type))
                         {
                             initializers.Add(
                             ExpressionStatement(
@@ -481,63 +463,13 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                                 AssignmentExpression(
                                     SyntaxKind.SimpleAssignmentExpression,
                                     MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpression(), IdentifierName(NameHelper.GetSafeVariableName(member.Name))),
-                                    ObjectCreationExpression(ParseTypeName(this.GetTypeName(member)), ArgumentList(), null))));
+                                    ObjectCreationExpression(ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(member, this.settings)), ArgumentList(), null))));
                 }
             }
 
             propertyInitializers = initializers;
             baseConstructorArguments = baseArgs;
             return result;
-        }
-
-        private Dictionary<string, TransportModelEntityMember> GetMembers(TransportModelEntity entityModel, List<TransportModelTypeReference> genericArgumentsInScope = null, bool allMembers = false)
-        {
-            Dictionary<string, TransportModelEntityMember> result = new Dictionary<string, TransportModelEntityMember>();
-
-            if (entityModel.BaseEntity != null)
-            {
-                result = this.GetMembers(entityModel.BaseEntity.TransportModelItem, entityModel.BaseEntity.GenericArguments, allMembers);
-            }
-
-            var members = entityModel.Members.Keys.Select(m => genericArgumentsInScope == null ? entityModel.GetMemberByName(m) : entityModel.GetMemberByNameAndResolveGenericArguments(m, genericArgumentsInScope));
-
-            foreach (var member in members)
-            {
-                var finalMember = member;
-
-                if (entityModel.MemberTypeLimiters.ContainsKey(member.Name))
-                {
-                    finalMember = entityModel.MemberTypeLimiters[member.Name];
-                }
-
-                if (result.ContainsKey(member.Name))
-                {
-                    result[member.Name] = finalMember;
-                }
-                else
-                {
-                    result.Add(member.Name, finalMember);
-                }
-            }
-
-            if (!allMembers && entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantBrand brandDiscriminant && result.ContainsKey(brandDiscriminant.BrandPropertyName))
-            {
-                result.Remove(brandDiscriminant.BrandPropertyName);
-            }
-
-            return result;
-        }
-
-        private string GetTypeName(TransportModelEntityMember member, bool useSimpleCollections = false)
-        {
-            if (member.Type is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference && itemReference.TransportModelItem is TransportModelEnum)
-            {
-                return CsEmitterHelper.CreateModelTypeName(itemReference, this.settings, ModelType.Transport, useSimpleCollections);
-            }
-            else
-            {
-                return CsEmitterHelper.GetPropertyTypeName(member, this.settings, ModelType.Ast, useSimpleCollections);
-            }
         }
     }
 }
