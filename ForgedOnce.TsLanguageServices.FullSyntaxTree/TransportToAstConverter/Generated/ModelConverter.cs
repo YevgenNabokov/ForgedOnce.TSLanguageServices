@@ -6,6 +6,8 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
     {
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode ConvertFromNode(ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.INode node)
         {
+            if (node == null)
+                return null;
             if (node.kind == ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ModuleBlock)
             {
                 var concreteNode = (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.ModuleBlock)node;
@@ -1748,6 +1750,8 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
         public System.Collections.Generic.List<T> ConvertFromNodeCollection<T>(System.Collections.Generic.IEnumerable<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.INode> nodes)
             where T : ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode
         {
+            if (nodes == null)
+                return null;
             System.Collections.Generic.List<T> result = new System.Collections.Generic.List<T>();
             foreach (var node in nodes)
             {

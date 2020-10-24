@@ -1,8 +1,10 @@
-﻿using ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel;
+﻿using ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel;
+using ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ForgedOnce.TsLanguageServices.AstTransportTest
 {
@@ -19,7 +21,13 @@ namespace ForgedOnce.TsLanguageServices.AstTransportTest
                 MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead
             });
 
-            var newPayload = JsonConvert.SerializeObject(ast);
+            ModelConverter converter = new ModelConverter();
+
+            var builderAst = ast.Select(n => converter.ConvertFromNode(n)).ToArray();
+
+            var rAst = builderAst.Select(n => (IStatement)n.GetTransportModelNode()).ToArray();
+
+            var newPayload = JsonConvert.SerializeObject(rAst);
 
             File.WriteAllText(args[1], newPayload);
         }

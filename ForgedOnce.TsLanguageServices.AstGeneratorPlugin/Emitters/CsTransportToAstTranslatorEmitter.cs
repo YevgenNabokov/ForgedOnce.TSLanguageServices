@@ -53,6 +53,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                 .WithParameterList(ParameterList(SeparatedList<ParameterSyntax>(new[] { Parameter(Identifier(this.nodeParameterName)).WithType(ParseTypeName(CsEmitterHelper.GetCSharpModelFullyQualifiedName(baseNodeInterface.Value, this.settings, ModelType.Transport))) })))
                 .WithBody(Block());
 
+            conversionMethod = conversionMethod.AddBodyStatements(
+                IfStatement(
+                    BinaryExpression(SyntaxKind.EqualsExpression, IdentifierName(this.nodeParameterName), IdentifierName("null")),
+                    ReturnStatement(IdentifierName("null")))
+                );
+
             foreach (var entityModel in parameters.TransportModel.TransportModelEntities.Where(e => e.Value.TsDiscriminant is TransportModelEntityTsDiscriminantSyntaxKind))
             {
                 conversionMethod = conversionMethod.AddBodyStatements(this.EmitForEntity(entityModel.Value, syntaxKindEnum.Value));
@@ -96,6 +102,12 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                         SeparatedList<TypeParameterConstraintSyntax>(new [] { TypeConstraint(ParseTypeName(CsEmitterHelper.GetCSharpModelFullyQualifiedName(baseNodeInterface, this.settings, ModelType.Ast))) }))
                 }))
                 .WithBody(Block());
+
+            conversionMethod = conversionMethod.AddBodyStatements(
+                IfStatement(
+                    BinaryExpression(SyntaxKind.EqualsExpression, IdentifierName(this.nodesParameterName), IdentifierName("null")),
+                    ReturnStatement(IdentifierName("null")))
+                );
 
             conversionMethod = conversionMethod.AddBodyStatements(
                 LocalDeclarationStatement(
