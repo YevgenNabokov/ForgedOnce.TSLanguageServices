@@ -146,7 +146,43 @@ namespace ForgedOnce.TsLanguageServices.ModelBuilder
                 return;
             }
 
+            if (node is ExpressionElementAccess)
+            {
+                this.VisitExpressionElementAccess(node as ExpressionElementAccess, context);
+                return;
+            }
+
+            if (node is StatementIf)
+            {
+                this.VisitStatementIf(node as StatementIf, context);
+                return;
+            }
+
+            if (node is ExpressionTypeReference)
+            {
+                this.VisitExpressionTypeReference(node as ExpressionTypeReference, context);
+                return;
+            }
+
             throw new NotImplementedException($"No method for {node.GetType()}");
+        }
+
+        public virtual void VisitExpressionTypeReference(ExpressionTypeReference node, TContext context)
+        {
+            this.Visit(node.TypeId, context);
+        }
+
+        public virtual void VisitStatementIf(StatementIf node, TContext context)
+        {
+            this.Visit(node.Expression, context);
+            this.Visit(node.Else, context);
+            this.Visit(node.Then, context);
+        }
+
+        public virtual void VisitExpressionElementAccess(ExpressionElementAccess node, TContext context)
+        {
+            this.Visit(node.Expression, context);
+            this.Visit(node.Index, context);
         }
 
         public virtual void VisitTypeReferenceId(TypeReferenceId node, TContext context)

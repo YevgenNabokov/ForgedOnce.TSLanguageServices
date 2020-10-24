@@ -17,6 +17,39 @@ namespace ForgedOnce.TsLanguageServices.ModelBuilder.SyntaxTools
             base.Visit(node, context);
         }
 
+        public override void VisitExpressionTypeReference(ExpressionTypeReference node, CloningDefinitionTreeVisitorContext context)
+        {
+            var result = new ExpressionTypeReference()
+            {
+                TypeId = this.CloneNode(node.TypeId, context)
+            };
+
+            context.Result = result;
+        }
+
+        public override void VisitStatementIf(StatementIf node, CloningDefinitionTreeVisitorContext context)
+        {
+            var result = new StatementIf()
+            {
+                Expression = this.CloneNode(node.Expression, context),
+                Else = this.CloneNode(node.Else, context),
+                Then = this.CloneNode(node.Then, context)
+            };
+
+            context.Result = result;
+        }
+
+        public override void VisitExpressionElementAccess(ExpressionElementAccess node, CloningDefinitionTreeVisitorContext context)
+        {
+            var result = new ExpressionElementAccess()
+            {
+                Expression = this.CloneNode(node.Expression, context),
+                Index = this.CloneNode(node.Index, context)
+            };
+
+            context.Result = result;
+        }
+
         public override void VisitClassDefinition(ClassDefinition node, CloningDefinitionTreeVisitorContext context)
         {
             var result = new ClassDefinition()
