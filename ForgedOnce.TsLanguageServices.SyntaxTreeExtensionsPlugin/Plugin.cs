@@ -176,7 +176,7 @@ namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
                     TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword)),
                     containerTypeSyntax,
                     null,
-                    Identifier($"With{preparedItemName}"),
+                    Identifier($"With{NameHelper.FirstCharToUpper(item.PreprocessedItemName)}"),
                     null,
                     ParameterList(SeparatedList<ParameterSyntax>(itemParameters)),
                     List<TypeParameterConstraintClauseSyntax>(),
@@ -191,7 +191,7 @@ namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
                                     MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         IdentifierName(subjectIdentifier),
-                                        IdentifierName(item.Name)),
+                                        IdentifierName(NameHelper.GetSafeVariableName(item.Name))),
                                     IdentifierName("Add")),
                                 ArgumentList(SeparatedList<ArgumentSyntax>(
                                     new ArgumentSyntax[]{ Argument(valueSyntax) })))
@@ -201,7 +201,7 @@ namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
                                     MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         IdentifierName(subjectIdentifier),
-                                        IdentifierName(item.Name)),
+                                        IdentifierName(NameHelper.GetSafeVariableName(item.Name))),
                                     valueSyntax), Token(SyntaxKind.SemicolonToken)),
                                 ReturnStatement(IdentifierName(subjectIdentifier))
                         })),

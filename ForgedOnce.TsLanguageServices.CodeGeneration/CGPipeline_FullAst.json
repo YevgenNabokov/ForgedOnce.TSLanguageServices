@@ -67,6 +67,41 @@
           "cleanDestinations": true
         }
       ]
+    },
+    {
+      "name": "Batch02",
+      "stages": [
+        {
+          "name": "BuilderExtensionMethods",
+          "plugin": {
+            "pluginFactory": {
+              "type": "ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin.PluginFactory, ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin",
+              "config": {
+                "outputNamespace": "ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder",
+                "requiredClassBaseType": "ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNode",
+                "ignorePropertyNames": "Parent;kind",
+                "unpluralizeVariables": "true"
+              }
+            }
+          },
+          "input": {
+            "settings": {
+              "CsAstModels": "*.cs"
+            }
+          },
+          "output": {
+            "settings": {
+              "PassThrough": "*"
+            }
+          },
+          "destinationMapping": {
+            "PassThrough": {
+              "settings": { "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/AstBuilder/Generated" }
+            }
+          },
+          "cleanDestinations": true
+        }
+      ]
     }
   ]
 }
