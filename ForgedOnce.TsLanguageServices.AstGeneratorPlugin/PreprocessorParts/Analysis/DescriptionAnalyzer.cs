@@ -15,11 +15,14 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Ana
 
         private readonly HashSet<string> otherExcludedTypes;
 
+        private readonly HashSet<string> otherIncludedTypes;
+
         public DescriptionAnalyzer(Settings pluginSettings)
         {
             this.pluginSettings = pluginSettings;
             this.excludedAstNodes = new HashSet<string>(pluginSettings.ExcludedAstNodes.Split(','));
             this.otherExcludedTypes = new HashSet<string>(pluginSettings.OtherExcludedTypes.Split(','));
+            this.otherIncludedTypes = new HashSet<string>(pluginSettings.OtherIncludedTypes.Split(','));
         }
 
         public AstDescription Analyze(Root description)
@@ -162,6 +165,14 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Ana
 
                 declarations = new Dictionary<string, List<Declaration>>(nextBatchDeclarations);
                 nextBatchDeclarations.Clear();
+            }
+
+            foreach (var included in this.otherIncludedTypes)
+            {
+                if (declarationGraph.ContainsKey(included) && !referredDeclarations.ContainsKey(included))
+                {
+                    referredDeclarations.Add(included, new List<Declaration>(declarationGraph[included]));
+                }
             }
 
             processedReferences = references;

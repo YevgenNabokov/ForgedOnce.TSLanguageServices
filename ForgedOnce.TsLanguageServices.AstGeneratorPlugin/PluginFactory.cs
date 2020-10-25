@@ -24,6 +24,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             this.SetFromConfiguration((v) => settings.CsTransportModelAssemblyName = v, configuration, Settings.CsTransportModelAssemblyNameKey);
             this.SetFromConfiguration((v) => settings.CsAstModelNamespace = v, configuration, Settings.CsAstModelNamespaceKey);
             this.SetFromConfiguration((v) => settings.CsAstModelNodeCollectionType = v, configuration, Settings.CsAstModelNodeCollectionTypeKey);
+            this.SetFromConfiguration((v) => settings.OtherIncludedTypes = v, configuration, Settings.OtherIncludedTypesKey);
 
             settings.BasePath = context.BasePath;
 

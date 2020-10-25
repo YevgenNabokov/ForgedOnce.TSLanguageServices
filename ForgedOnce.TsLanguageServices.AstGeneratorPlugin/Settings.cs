@@ -14,6 +14,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
 
         public const string OtherExcludedTypesKey = "otherExcludedTypes";
 
+        public const string OtherIncludedTypesKey = "otherIncludedTypes";
+
         public const string TypesRepresentedAsInterfaceKey = "typesRepresentedAsInterface";
 
         public const string ExcludedPropertiesKey = "excludedProperties";
@@ -38,6 +40,8 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             ",ts.UnparsedSyntheticReference,ts.UnparsedPrologue,ts.JSDocAugmentsTag,ts.JSDocImplementsTag,ts.NotEmittedStatement,ts.SourceFile,ts.PartiallyEmittedExpression,ts.MissingDeclaration";
 
         public string OtherExcludedTypes = "ts.UnscopedEmitHelper,ts.TextRange,ts.JSDocAugmentsTag,ts.JSDocImplementsTag,ts.SourceFile,ts.LineAndCharacter";
+
+        public string OtherIncludedTypes = "ts.ScriptKind,ts.LanguageVariant";
 
         public string TypesRepresentedAsInterface = "ts.Node";
 
