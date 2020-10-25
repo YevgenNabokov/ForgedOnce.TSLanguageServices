@@ -4,6 +4,20 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageOutputPath>$(SolutionDir)/NugetOutputs</PackageOutputPath>
+    <ApplicationIcon />
+    <StartupObject />
+    <Version>0.0.1</Version>
+    <PackageId>ForgedOnce.TsLanguageServices.FullSyntaxTree</PackageId>
+    <Authors>Yevgen Nabokov</Authors>
+    <Product>ForgedOnce.TsLanguageServices</Product>
+    <Description>.NET library with TypeScript AST models</Description>
+    <Copyright>Yevgen Nabokov</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/yevgennabokov/forgedonce.tslanguageservices</PackageProjectUrl>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="AstBuilder\Generated\" />
     <Folder Include="AstModel\Generated\" />

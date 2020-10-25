@@ -47,6 +47,12 @@
     <TypeScriptCompile Include="astTransportUtils.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="foTsHost.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="foTsHostLauncher.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="FullAstGenerated\TransportToAstConverter.ts" />
     <TypeScriptCompile Include="FullAstGenerated\TransportTypeMarker.ts" />
     <TypeScriptCompile Include="generationLauncher.ts">
