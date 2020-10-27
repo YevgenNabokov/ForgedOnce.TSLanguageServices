@@ -4,9 +4,11 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.Host.Commands
 {
-    public enum CommandType
+    public class PingCommand : Command
     {
-        Shutdown,
-        Ping
+        public PingCommand()
+        {
+            this.CommandType = CommandType.Ping;
+        }
     }
 }

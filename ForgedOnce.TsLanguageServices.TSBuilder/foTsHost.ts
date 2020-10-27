@@ -41,7 +41,7 @@ export class Host {
                 try {
                     command = this.readCommand(requestPayload);
 
-                    if (command.type == CommandType.Shutdown) {
+                    if (command.CommandType == CommandType.Shutdown) {
                         response.writeHead(200);
                         response.end();
 
@@ -77,16 +77,28 @@ export class Host {
             return rawCommand;
         }
 
+        if (rawCommand.CommandType === CommandType.Ping) {
+            return rawCommand;
+        }
+
         throw new Error(`Unrecognized command type=${rawCommand.CommandType}`);
     }
 
     private processCommand(command: Command): any {
+        if (command.CommandType === CommandType.Ping) {
+            return {};
+        }
 
+        if (command.CommandType === CommandType.Shutdown) {
+            //// Finalization code here.
+            return {};
+        }
     }
 }
 
 export enum CommandType {
-    Shutdown
+    Shutdown,
+    Ping
 }
 
 export abstract class Command {
@@ -97,5 +109,12 @@ export class ShutdownCommand extends Command {
     constructor() {
         super();
         this.CommandType = CommandType.Shutdown;
+    }
+}
+
+export class PingCommand extends Command {
+    constructor() {
+        super();
+        this.CommandType = CommandType.Ping;
     }
 }
