@@ -17,7 +17,14 @@
                             'generationLauncher.js',
                             'generationManager.js',
                             'IntermediateModel.js',
-                            'tsCodeGenerator.js'], dest: '<%= destinationFolder %>/'
+                            'tsCodeGenerator.js',
+
+                            'FullAstGenerated/TransportToAstConverter.js',
+                            'FullAstGenerated/TransportTypeMarker.js',
+                            'astTransportUtils.js',
+                            'foTsHost.js',
+                            'foTsHostLauncher.js'
+                            ], dest: '<%= destinationFolder %>/'
                     },
 
                     {

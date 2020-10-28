@@ -4,10 +4,10 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.Host.Commands
 {
-    public enum CommandType
+    public class ReadFileCommandResult
     {
-        Shutdown,
-        Ping,
-        ReadFile
+        public string AstPayload { get; set; }
+
+        public string FileName { get; set; }
     }
 }

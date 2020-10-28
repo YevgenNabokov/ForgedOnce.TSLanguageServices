@@ -1,4 +1,6 @@
-﻿using ForgedOnce.TsLanguageServices.Host.Commands;
+﻿using ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel;
+using ForgedOnce.TsLanguageServices.Host.Commands;
+using ForgedOnce.TsLanguageServices.Host.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -105,6 +107,31 @@ namespace ForgedOnce.TsLanguageServices.Host
                     throw new InvalidOperationException($"Unable to start TypeScript host within given timeout {this.hostStartTimeoutMs}ms");
                 }
             }
+        }
+
+        public TsFile ReadFile(string filePath)
+        {
+            var command = new ReadFileCommand()
+            {
+                FilePath = filePath
+            };
+
+            var response = this.ExecuteCommand(command);
+
+            var result = JsonConvert.DeserializeObject<ReadFileCommandResult>(response);
+
+            List<IStatement> ast = JsonConvert.DeserializeObject<List<IStatement>>(result.AstPayload, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                NullValueHandling = NullValueHandling.Ignore,
+                MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead
+            });
+
+            return new TsFile()
+            {
+                FileName = result.FileName,
+                Statements = ast
+            };
         }
 
         public void Ping()

@@ -1,167 +1,137 @@
-import * as http from "http"
-
-import * as fs from "fs"
-
-import * as tu from "./astTransportUtils";
-
-import * as ts from "typescript";
-
-import * as path from "path"
-
-export class Host {
-    private currentServer: http.Server | null = null;
-
-    private rootFolder: string;
-
-    constructor(rootFolder: string) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const http = require("http");
+const fs = require("fs");
+const tu = require("./astTransportUtils");
+const ts = require("typescript");
+const path = require("path");
+class Host {
+    constructor(rootFolder) {
+        this.currentServer = null;
         this.rootFolder = rootFolder;
     }
-
-    public start(port: number) {
+    start(port) {
         if (this.currentServer) {
             throw new Error('Host already started.');
         }
-
         this.currentServer = http.createServer(this.onHttpReceive);
         this.currentServer.listen(port);
     }
-
-    public stop() {
+    stop() {
         if (this.currentServer) {
             this.currentServer.close();
             this.currentServer = null;
         }
     }
-
-    private onHttpReceive(request: http.IncomingMessage, response: http.ServerResponse) {
+    onHttpReceive(request, response) {
         let requestPayload = '';
         let body = [];
         request
             .on('data', (chunk) => {
-                body.push(chunk);
-            })
+            body.push(chunk);
+        })
             .on('end', () => {
-                requestPayload = Buffer.concat(body).toString();
-
-                let command: Command | null = null;
-                try {
-                    command = this.readCommand(requestPayload);
-
-                    if (command.CommandType == CommandType.Shutdown) {
-                        response.writeHead(200);
-                        response.end();
-
-                        this.stop();
-                    }
-
-                    let responseObject = this.processCommand(command);
-                    let responsePayload = JSON.stringify(responseObject);
-
+            requestPayload = Buffer.concat(body).toString();
+            let command = null;
+            try {
+                command = this.readCommand(requestPayload);
+                if (command.CommandType == CommandType.Shutdown) {
                     response.writeHead(200);
-                    response.write(responsePayload);
                     response.end();
+                    this.stop();
                 }
-                catch (e) {
-                    this.writeError(response, `Error occurred while executing command: ${e}`);
-                }
-            })
+                let responseObject = this.processCommand(command);
+                let responsePayload = JSON.stringify(responseObject);
+                response.writeHead(200);
+                response.write(responsePayload);
+                response.end();
+            }
+            catch (e) {
+                this.writeError(response, `Error occurred while executing command: ${e}`);
+            }
+        })
             .on('error', (err) => {
-                this.writeError(response, `Error occurred on receive: ${err}`);
-            });
+            this.writeError(response, `Error occurred on receive: ${err}`);
+        });
     }
-
-    private writeError(response: http.ServerResponse, errorMessage: string) {
+    writeError(response, errorMessage) {
         response.writeHead(400);
         response.write(errorMessage);
         response.end();
     }
-
-    private readCommand(requestPayload: string): Command {
-        var rawCommand = JSON.parse(requestPayload) as Command;
-
+    readCommand(requestPayload) {
+        var rawCommand = JSON.parse(requestPayload);
         if (rawCommand.CommandType === CommandType.Shutdown) {
             return rawCommand;
         }
-
         if (rawCommand.CommandType === CommandType.Ping) {
             return rawCommand;
         }
-
         if (rawCommand.CommandType === CommandType.ReadFile) {
             return rawCommand;
         }
-
         throw new Error(`Unrecognized command type=${rawCommand.CommandType}`);
     }
-
-    private processCommand(command: Command): any {
+    processCommand(command) {
         if (command.CommandType === CommandType.Ping) {
             return {};
         }
-
         if (command.CommandType === CommandType.Shutdown) {
             //// Finalization code here.
             return {};
         }
-
         if (command.CommandType === CommandType.ReadFile) {
-            let readFileCommand = command as ReadFileCommand;
-
+            let readFileCommand = command;
             if (fs.existsSync(readFileCommand.FilePath)) {
                 let fileName = path.basename(readFileCommand.FilePath);
-
                 let readResult = fs.readFileSync(readFileCommand.FilePath);
                 let payload = readResult.toString('utf8');
                 let sourceFile = ts.createSourceFile(fileName, payload, ts.ScriptTarget.Latest, false);
                 let converter = new tu.TransportConverter();
                 let resultPayload = converter.StatementsToString(sourceFile.statements);
-
                 let result = new ReadFileCommandResult();
                 result.FileName = fileName;
                 result.AstPayload = resultPayload;
                 return result;
-            } else {
+            }
+            else {
                 throw new Error('File not found.');
             }
         }
     }
 }
-
-export enum CommandType {
-    Shutdown,
-    Ping,
-    ReadFile
+exports.Host = Host;
+var CommandType;
+(function (CommandType) {
+    CommandType[CommandType["Shutdown"] = 0] = "Shutdown";
+    CommandType[CommandType["Ping"] = 1] = "Ping";
+    CommandType[CommandType["ReadFile"] = 2] = "ReadFile";
+})(CommandType = exports.CommandType || (exports.CommandType = {}));
+class Command {
 }
-
-export abstract class Command {
-    CommandType: CommandType;
-}
-
-export class ShutdownCommand extends Command {
+exports.Command = Command;
+class ShutdownCommand extends Command {
     constructor() {
         super();
         this.CommandType = CommandType.Shutdown;
     }
 }
-
-export class PingCommand extends Command {
+exports.ShutdownCommand = ShutdownCommand;
+class PingCommand extends Command {
     constructor() {
         super();
         this.CommandType = CommandType.Ping;
     }
 }
-
-export class ReadFileCommand extends Command {
+exports.PingCommand = PingCommand;
+class ReadFileCommand extends Command {
     constructor() {
         super();
         this.CommandType = CommandType.ReadFile;
     }
-
-    public FilePath: string;
 }
-
-export class ReadFileCommandResult {
-    public AstPayload: string;
-
-    public FileName: string;
+exports.ReadFileCommand = ReadFileCommand;
+class ReadFileCommandResult {
 }
+exports.ReadFileCommandResult = ReadFileCommandResult;
+//# sourceMappingURL=foTsHost.js.map
