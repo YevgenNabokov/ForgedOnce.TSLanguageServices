@@ -81,7 +81,8 @@ namespace ForgedOnce.TsLanguageServices.Host
         public void Start()
         {
             var port = this.GetFreePort();
-            this.hostProcess = Process.Start(this.NodeExecutablePath, this.PrepareArgumentString(port));
+            var arguments = this.PrepareArgumentString(port);
+            this.hostProcess = Process.Start(this.NodeExecutablePath, arguments);
 
             this.hostClient = new HttpClient();
             this.hostClient.BaseAddress = new Uri($"http://localhost:{port}/");

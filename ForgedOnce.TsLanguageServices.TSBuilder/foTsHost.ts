@@ -22,7 +22,8 @@ export class Host {
             throw new Error('Host already started.');
         }
 
-        this.currentServer = http.createServer(this.onHttpReceive);
+        let self = this;
+        this.currentServer = http.createServer((req, res) => self.onHttpReceive(req, res));
         this.currentServer.listen(port);
     }
 
@@ -36,6 +37,7 @@ export class Host {
     private onHttpReceive(request: http.IncomingMessage, response: http.ServerResponse) {
         let requestPayload = '';
         let body = [];
+        let self = this;
         request
             .on('data', (chunk) => {
                 body.push(chunk);
@@ -45,16 +47,17 @@ export class Host {
 
                 let command: Command | null = null;
                 try {
-                    command = this.readCommand(requestPayload);
+                    command = self.readCommand(requestPayload);
 
                     if (command.CommandType == CommandType.Shutdown) {
                         response.writeHead(200);
                         response.end();
 
-                        this.stop();
+                        self.stop();
+                        return;
                     }
 
-                    let responseObject = this.processCommand(command);
+                    let responseObject = self.processCommand(command);
                     let responsePayload = JSON.stringify(responseObject);
 
                     response.writeHead(200);
@@ -62,11 +65,11 @@ export class Host {
                     response.end();
                 }
                 catch (e) {
-                    this.writeError(response, `Error occurred while executing command: ${e}`);
+                    self.writeError(response, `Error occurred while executing command: ${e}`);
                 }
             })
             .on('error', (err) => {
-                this.writeError(response, `Error occurred on receive: ${err}`);
+                self.writeError(response, `Error occurred on receive: ${err}`);
             });
     }
 
