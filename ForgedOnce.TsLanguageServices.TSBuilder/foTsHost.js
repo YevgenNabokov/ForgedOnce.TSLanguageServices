@@ -5,6 +5,7 @@ const fs = require("fs");
 const tu = require("./astTransportUtils");
 const ts = require("typescript");
 const path = require("path");
+const tc = require("./FullAstGenerated/TransportToAstConverter");
 class Host {
     constructor(rootFolder) {
         this.currentServer = null;
@@ -73,6 +74,9 @@ class Host {
         if (rawCommand.CommandType === CommandType.ReadFile) {
             return rawCommand;
         }
+        if (rawCommand.CommandType === CommandType.WriteFile) {
+            return rawCommand;
+        }
         throw new Error(`Unrecognized command type=${rawCommand.CommandType}`);
     }
     processCommand(command) {
@@ -101,6 +105,18 @@ class Host {
                 throw new Error('File not found.');
             }
         }
+        if (command.CommandType === CommandType.WriteFile) {
+            let writeFileCommand = command;
+            var data = JSON.parse(writeFileCommand.AstPayload);
+            var converter = new tc.Converter();
+            var statements = converter.ConvertNodes(data);
+            var tsSourceFile = ts.createSourceFile(writeFileCommand.FileName, '', ts.ScriptTarget.Latest);
+            tsSourceFile.statements = ts.createNodeArray(statements);
+            var printer = ts.createPrinter({ newLine: ts.NewLineKind.CarriageReturnLineFeed });
+            var outputPayload = printer.printFile(tsSourceFile);
+            fs.writeFileSync(writeFileCommand.Path, outputPayload);
+            return {};
+        }
     }
 }
 exports.Host = Host;
@@ -109,6 +125,7 @@ var CommandType;
     CommandType[CommandType["Shutdown"] = 0] = "Shutdown";
     CommandType[CommandType["Ping"] = 1] = "Ping";
     CommandType[CommandType["ReadFile"] = 2] = "ReadFile";
+    CommandType[CommandType["WriteFile"] = 3] = "WriteFile";
 })(CommandType = exports.CommandType || (exports.CommandType = {}));
 class Command {
 }
@@ -137,4 +154,11 @@ exports.ReadFileCommand = ReadFileCommand;
 class ReadFileCommandResult {
 }
 exports.ReadFileCommandResult = ReadFileCommandResult;
+class WriteFileCommand extends Command {
+    constructor() {
+        super();
+        this.CommandType = CommandType.WriteFile;
+    }
+}
+exports.WriteFileCommand = WriteFileCommand;
 //# sourceMappingURL=foTsHost.js.map

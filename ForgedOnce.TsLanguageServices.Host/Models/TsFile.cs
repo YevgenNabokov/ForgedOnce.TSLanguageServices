@@ -9,6 +9,8 @@ namespace ForgedOnce.TsLanguageServices.Host.Models
     {
         public string FileName { get; set; }
 
+        public string Path { get; set; }
+
         public IEnumerable<IStatement> Statements { get; set; }
     }
 }

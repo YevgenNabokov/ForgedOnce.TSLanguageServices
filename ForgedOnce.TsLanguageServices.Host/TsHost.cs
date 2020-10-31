@@ -131,8 +131,23 @@ namespace ForgedOnce.TsLanguageServices.Host
             return new TsFile()
             {
                 FileName = result.FileName,
-                Statements = ast
+                Statements = ast,
+                Path = filePath
             };
+        }
+
+        public void WriteFile(TsFile file)
+        {
+            var astPayload = JsonConvert.SerializeObject(file.Statements.ToArray());
+
+            var command = new WriteFileCommand()
+            {
+                AstPayload = astPayload,
+                FileName = file.FileName,
+                Path = file.Path
+            };
+
+            this.ExecuteCommand(command);
         }
 
         public void Ping()
@@ -194,7 +209,7 @@ namespace ForgedOnce.TsLanguageServices.Host
 
         private string PrepareArgumentString(int port)
         {
-            return $"{TaskJsFilePath} {port} {this.basePath} > app_log.log 2> app_err.log";
+            return $"\"{TaskJsFilePath}\" {port} \"{this.basePath}\" > app_log.log 2> app_err.log";
         }
 
         private int GetFreePort()

@@ -8,6 +8,7 @@ namespace ForgedOnce.TsLanguageServices.Host.Commands
     {
         Shutdown,
         Ping,
-        ReadFile
+        ReadFile,
+        WriteFile
     }
 }

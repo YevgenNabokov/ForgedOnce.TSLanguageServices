@@ -8,6 +8,8 @@ import * as ts from "typescript";
 
 import * as path from "path"
 
+import * as tc from "./FullAstGenerated/TransportToAstConverter";
+
 export class Host {
     private currentServer: http.Server | null = null;
 
@@ -94,6 +96,10 @@ export class Host {
             return rawCommand;
         }
 
+        if (rawCommand.CommandType === CommandType.WriteFile) {
+            return rawCommand;
+        }
+
         throw new Error(`Unrecognized command type=${rawCommand.CommandType}`);
     }
 
@@ -127,13 +133,30 @@ export class Host {
                 throw new Error('File not found.');
             }
         }
+
+        if (command.CommandType === CommandType.WriteFile) {
+            let writeFileCommand = command as WriteFileCommand;
+
+            var data = JSON.parse(writeFileCommand.AstPayload) as any[];
+            var converter = new tc.Converter();
+            var statements = converter.ConvertNodes(data) as ts.Statement[];
+
+            var tsSourceFile = ts.createSourceFile(writeFileCommand.FileName, '', ts.ScriptTarget.Latest);
+            tsSourceFile.statements = ts.createNodeArray(statements);
+            var printer = ts.createPrinter({ newLine: ts.NewLineKind.CarriageReturnLineFeed });
+            var outputPayload = printer.printFile(tsSourceFile);
+
+            fs.writeFileSync(writeFileCommand.Path, outputPayload);
+            return {};
+        }
     }
 }
 
 export enum CommandType {
     Shutdown,
     Ping,
-    ReadFile
+    ReadFile,
+    WriteFile
 }
 
 export abstract class Command {
@@ -167,4 +190,17 @@ export class ReadFileCommandResult {
     public AstPayload: string;
 
     public FileName: string;
+}
+
+export class WriteFileCommand extends Command {
+    constructor() {
+        super();
+        this.CommandType = CommandType.WriteFile;
+    }
+
+    public AstPayload: string;
+
+    public FileName: string;
+
+    public Path: string;
 }
