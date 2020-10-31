@@ -1,5 +1,6 @@
 ﻿using ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel;
 using ForgedOnce.TsLanguageServices.Host.Commands;
+using ForgedOnce.TsLanguageServices.Host.Interfaces;
 using ForgedOnce.TsLanguageServices.Host.Models;
 using Newtonsoft.Json;
 using System;
@@ -16,7 +17,7 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.Host
 {
-    public class TsHost : IDisposable
+    public class TsHost : ITsHost, IDisposable
     {
         protected readonly Dictionary<OSPlatform, string> NodeExecutableNames = new Dictionary<OSPlatform, string>()
         {
@@ -136,6 +137,28 @@ namespace ForgedOnce.TsLanguageServices.Host
             };
         }
 
+        public IStatement[] Parse(string payload, ScriptKind scriptKind)
+        {
+            var command = new ParseCommand()
+            {
+                Payload = payload,
+                ScriptKind = scriptKind
+            };
+
+            var response = this.ExecuteCommand(command);
+
+            var result = JsonConvert.DeserializeObject<ParseCommandResult>(response);
+
+            List<IStatement> ast = JsonConvert.DeserializeObject<List<IStatement>>(result.AstPayload, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                NullValueHandling = NullValueHandling.Ignore,
+                MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead
+            });
+
+            return ast.ToArray();
+        }
+
         public void WriteFile(TsFile file)
         {
             var astPayload = JsonConvert.SerializeObject(file.Statements.ToArray());
@@ -150,10 +173,40 @@ namespace ForgedOnce.TsLanguageServices.Host
             this.ExecuteCommand(command);
         }
 
+        public string Print(IStatement[] statements, ScriptKind scriptKind)
+        {
+            var astPayload = JsonConvert.SerializeObject(statements);
+
+            var command = new PrintCommand()
+            {
+                AstPayload = astPayload,
+                ScriptKind = scriptKind
+            };
+
+            var response = this.ExecuteCommand(command);
+
+            var result = JsonConvert.DeserializeObject<PrintCommandResult>(response);
+
+            return result.Payload;
+        }
+
         public void Ping()
         {
             var command = new PingCommand();
             this.ExecuteCommand(command);
+        }
+
+        public bool IsAlive()
+        {
+            try
+            {
+                this.Ping();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void Shutdown()

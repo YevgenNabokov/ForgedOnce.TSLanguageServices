@@ -4,13 +4,8 @@ using System.Text;
 
 namespace ForgedOnce.TsLanguageServices.Host.Commands
 {
-    public enum CommandType
+    public class PrintCommandResult
     {
-        Shutdown,
-        Ping,
-        ReadFile,
-        WriteFile,
-        Parse,
-        Print
+        public string Payload { get; set; }
     }
 }

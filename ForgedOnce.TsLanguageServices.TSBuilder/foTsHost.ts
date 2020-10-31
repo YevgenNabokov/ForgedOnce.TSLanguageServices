@@ -100,6 +100,14 @@ export class Host {
             return rawCommand;
         }
 
+        if (rawCommand.CommandType === CommandType.Parse) {
+            return rawCommand;
+        }
+
+        if (rawCommand.CommandType === CommandType.Print) {
+            return rawCommand;
+        }
+
         throw new Error(`Unrecognized command type=${rawCommand.CommandType}`);
     }
 
@@ -149,6 +157,35 @@ export class Host {
             fs.writeFileSync(writeFileCommand.Path, outputPayload);
             return {};
         }
+
+        if (command.CommandType === CommandType.Parse) {
+            let parseCommand = command as ParseCommand;
+
+            let sourceFile = ts.createSourceFile('DummyFileName.ts', parseCommand.Payload, ts.ScriptTarget.Latest, false, parseCommand.ScriptKind);
+            let converter = new tu.TransportConverter();
+            let resultPayload = converter.StatementsToString(sourceFile.statements);
+
+            let result = new ParseCommandResult();
+            result.AstPayload = resultPayload;
+            return result;
+        }
+
+        if (command.CommandType === CommandType.Print) {
+            let printCommand = command as PrintCommand;
+
+            var data = JSON.parse(printCommand.AstPayload) as any[];
+            var converter = new tc.Converter();
+            var statements = converter.ConvertNodes(data) as ts.Statement[];
+
+            var tsSourceFile = ts.createSourceFile('DummyFileName.ts', '', ts.ScriptTarget.Latest, undefined, printCommand.ScriptKind);
+            tsSourceFile.statements = ts.createNodeArray(statements);
+            var printer = ts.createPrinter({ newLine: ts.NewLineKind.CarriageReturnLineFeed });
+            var outputPayload = printer.printFile(tsSourceFile);
+
+            let result = new PrintCommandResult();
+            result.Payload = outputPayload;
+            return result;
+        }
     }
 }
 
@@ -156,7 +193,9 @@ export enum CommandType {
     Shutdown,
     Ping,
     ReadFile,
-    WriteFile
+    WriteFile,
+    Parse,
+    Print
 }
 
 export abstract class Command {
@@ -203,4 +242,34 @@ export class WriteFileCommand extends Command {
     public FileName: string;
 
     public Path: string;
+}
+
+export class ParseCommand extends Command {
+    constructor() {
+        super();
+        this.CommandType = CommandType.Parse;
+    }
+
+    public Payload: string;
+
+    public ScriptKind: ts.ScriptKind;
+}
+
+export class ParseCommandResult {
+    public AstPayload: string;
+}
+
+export class PrintCommand extends Command {
+    constructor() {
+        super();
+        this.CommandType = CommandType.Print;
+    }
+
+    public AstPayload: string;
+
+    public ScriptKind: ts.ScriptKind;
+}
+
+export class PrintCommandResult {
+    public Payload: string;
 }

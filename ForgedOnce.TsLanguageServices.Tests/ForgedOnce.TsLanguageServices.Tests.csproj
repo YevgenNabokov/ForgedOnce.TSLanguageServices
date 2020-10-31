@@ -5,10 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="TestData\Test.json" />
+    <None Remove="TestData\Test.tsx" />
     <None Remove="TestData\WriteFileExpectedOutput.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="TestData\Test.json" />
+    <EmbeddedResource Include="TestData\Test.tsx" />
     <EmbeddedResource Include="TestData\WriteFileExpectedOutput.ts" />
   </ItemGroup>
 

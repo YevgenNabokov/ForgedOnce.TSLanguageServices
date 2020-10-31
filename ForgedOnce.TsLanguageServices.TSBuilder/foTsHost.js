@@ -77,6 +77,12 @@ class Host {
         if (rawCommand.CommandType === CommandType.WriteFile) {
             return rawCommand;
         }
+        if (rawCommand.CommandType === CommandType.Parse) {
+            return rawCommand;
+        }
+        if (rawCommand.CommandType === CommandType.Print) {
+            return rawCommand;
+        }
         throw new Error(`Unrecognized command type=${rawCommand.CommandType}`);
     }
     processCommand(command) {
@@ -117,6 +123,28 @@ class Host {
             fs.writeFileSync(writeFileCommand.Path, outputPayload);
             return {};
         }
+        if (command.CommandType === CommandType.Parse) {
+            let parseCommand = command;
+            let sourceFile = ts.createSourceFile('DummyFileName.ts', parseCommand.Payload, ts.ScriptTarget.Latest, false, parseCommand.ScriptKind);
+            let converter = new tu.TransportConverter();
+            let resultPayload = converter.StatementsToString(sourceFile.statements);
+            let result = new ParseCommandResult();
+            result.AstPayload = resultPayload;
+            return result;
+        }
+        if (command.CommandType === CommandType.Print) {
+            let printCommand = command;
+            var data = JSON.parse(printCommand.AstPayload);
+            var converter = new tc.Converter();
+            var statements = converter.ConvertNodes(data);
+            var tsSourceFile = ts.createSourceFile('DummyFileName.ts', '', ts.ScriptTarget.Latest, undefined, printCommand.ScriptKind);
+            tsSourceFile.statements = ts.createNodeArray(statements);
+            var printer = ts.createPrinter({ newLine: ts.NewLineKind.CarriageReturnLineFeed });
+            var outputPayload = printer.printFile(tsSourceFile);
+            let result = new PrintCommandResult();
+            result.Payload = outputPayload;
+            return result;
+        }
     }
 }
 exports.Host = Host;
@@ -126,6 +154,8 @@ var CommandType;
     CommandType[CommandType["Ping"] = 1] = "Ping";
     CommandType[CommandType["ReadFile"] = 2] = "ReadFile";
     CommandType[CommandType["WriteFile"] = 3] = "WriteFile";
+    CommandType[CommandType["Parse"] = 4] = "Parse";
+    CommandType[CommandType["Print"] = 5] = "Print";
 })(CommandType = exports.CommandType || (exports.CommandType = {}));
 class Command {
 }
@@ -161,4 +191,24 @@ class WriteFileCommand extends Command {
     }
 }
 exports.WriteFileCommand = WriteFileCommand;
+class ParseCommand extends Command {
+    constructor() {
+        super();
+        this.CommandType = CommandType.Parse;
+    }
+}
+exports.ParseCommand = ParseCommand;
+class ParseCommandResult {
+}
+exports.ParseCommandResult = ParseCommandResult;
+class PrintCommand extends Command {
+    constructor() {
+        super();
+        this.CommandType = CommandType.Print;
+    }
+}
+exports.PrintCommand = PrintCommand;
+class PrintCommandResult {
+}
+exports.PrintCommandResult = PrintCommandResult;
 //# sourceMappingURL=foTsHost.js.map

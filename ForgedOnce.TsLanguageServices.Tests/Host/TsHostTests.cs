@@ -89,6 +89,65 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
             content.Should().Be(expectedContent);
         }
 
+        [Test]
+        public void CanParseTypescript()
+        {
+            var fileName = Path.Combine(this.BasePath, "TestData\\Test.ts");
+
+            var payload = File.ReadAllText(fileName);
+
+            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            {
+                var result = subject.Parse(payload, ScriptKind.TS);
+
+                result.Should().NotBeNull();
+                result.Count().Should().Be(1);
+            }
+        }
+
+        [Test]
+        public void CanParseTsx()
+        {
+            var payload = this.ReadTestTsxFile();
+
+            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            {
+                var result = subject.Parse(payload, ScriptKind.TSX);
+
+                result.Should().NotBeNull();
+                result.Count().Should().Be(2);
+            }
+        }
+
+        [Test]
+        public void CanParseJson()
+        {
+            var payload = this.ReadTestJsonFile();
+
+            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            {
+                var result = subject.Parse(payload, ScriptKind.JSON);
+
+                result.Should().NotBeNull();
+                result.Count().Should().Be(1);
+            }
+        }
+
+        [Test]
+        public void CanPrintTypescript()
+        {
+            var ast = this.GetTestAst();
+
+            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            {
+                var result = subject.Print(ast.ToArray(), ScriptKind.TS);
+
+                var expectedContent = this.ReadExpectedWriteFileOutput();
+
+                result.Should().Be(expectedContent);
+            }
+        }
+
         private IEnumerable<IStatement> GetTestAst()
         {
             List<IStatement> result = new List<IStatement>();
@@ -130,6 +189,23 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
         private string ReadExpectedWriteFileOutput()
         {
             var resourceName = "ForgedOnce.TsLanguageServices.Tests.TestData.WriteFileExpectedOutput.ts";
+            return this.ReadEmbeddedResource(resourceName);
+        }
+
+        private string ReadTestTsxFile()
+        {
+            var resourceName = "ForgedOnce.TsLanguageServices.Tests.TestData.Test.tsx";
+            return this.ReadEmbeddedResource(resourceName);
+        }
+
+        private string ReadTestJsonFile()
+        {
+            var resourceName = "ForgedOnce.TsLanguageServices.Tests.TestData.Test.json";
+            return this.ReadEmbeddedResource(resourceName);
+        }
+
+        private string ReadEmbeddedResource(string resourceName)
+        {
             var assembly = Assembly.GetExecutingAssembly();
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
