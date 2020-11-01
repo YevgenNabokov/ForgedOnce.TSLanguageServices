@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.right = right;
         }
 
+        public StBinaryExpression()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.BinaryExpression;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _left;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStBinaryOperatorToken _operatorToken;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _right;

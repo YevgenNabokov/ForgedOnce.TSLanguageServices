@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.escapedText = escapedText;
         }
 
+        public StPrivateIdentifier()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.PrivateIdentifier;
+        }
+
         System.String _escapedText;
         public System.String escapedText
         {

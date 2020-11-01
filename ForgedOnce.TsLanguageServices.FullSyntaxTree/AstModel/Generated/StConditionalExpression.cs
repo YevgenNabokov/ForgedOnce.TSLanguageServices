@@ -14,6 +14,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.whenFalse = whenFalse;
         }
 
+        public StConditionalExpression()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ConditionalExpression;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _condition;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _whenTrue;

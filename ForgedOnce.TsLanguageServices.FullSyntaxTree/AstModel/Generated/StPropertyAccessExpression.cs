@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.questionDotToken = questionDotToken;
         }
 
+        public StPropertyAccessExpression()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.PropertyAccessExpression;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression _expression;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionDotTokenToken _questionDotToken;

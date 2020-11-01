@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.expression = expression;
         }
 
+        public StForOfStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ForOfStatement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAwaitKeywordToken _awaitModifier;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStForInitializer _initializer;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;

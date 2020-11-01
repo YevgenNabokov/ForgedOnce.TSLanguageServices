@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.tagName = tagName;
         }
 
+        public StJsxClosingElement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JsxClosingElement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJsxTagNameExpression _tagName;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJsxTagNameExpression tagName
         {

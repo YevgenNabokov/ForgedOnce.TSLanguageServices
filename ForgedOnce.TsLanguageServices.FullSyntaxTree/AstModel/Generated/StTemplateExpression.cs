@@ -12,6 +12,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.templateSpans.AddRange(templateSpans);
         }
 
+        public StTemplateExpression()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.TemplateExpression;
+            this.templateSpans = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateSpan>(this);
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateHead _head;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateHead head
         {

@@ -9,6 +9,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.NullKeyword;
         }
 
+        public StKeywordTypeNodeNullKeyword()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.NullKeyword;
+        }
+
         public override System.Object GetTransportModelNode()
         {
             return new ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.KeywordTypeNodeNullKeyword()

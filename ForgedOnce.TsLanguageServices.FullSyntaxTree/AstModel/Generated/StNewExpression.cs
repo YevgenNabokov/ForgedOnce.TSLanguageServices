@@ -14,6 +14,13 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.arguments.AddRange(arguments);
         }
 
+        public StNewExpression()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.NewExpression;
+            this.typeArguments = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode>(this);
+            this.arguments = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression>(this);
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression _expression;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression expression
         {

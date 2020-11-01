@@ -9,6 +9,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.RegularExpressionLiteral;
         }
 
+        public StRegularExpressionLiteral()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.RegularExpressionLiteral;
+        }
+
         public override System.Object GetTransportModelNode()
         {
             return new ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.RegularExpressionLiteral()

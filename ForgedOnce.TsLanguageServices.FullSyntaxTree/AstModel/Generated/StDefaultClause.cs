@@ -11,6 +11,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.statements.AddRange(statements);
         }
 
+        public StDefaultClause()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.DefaultClause;
+            this.statements = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement>(this);
+        }
+
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement> statements
         {
             get;

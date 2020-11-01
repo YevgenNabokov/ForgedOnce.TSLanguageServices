@@ -9,6 +9,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.AsteriskAsteriskEqualsToken;
         }
 
+        public StAsteriskAsteriskEqualsTokenToken()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.AsteriskAsteriskEqualsToken;
+        }
+
         public override System.Object GetTransportModelNode()
         {
             return new ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.AsteriskAsteriskEqualsTokenToken()

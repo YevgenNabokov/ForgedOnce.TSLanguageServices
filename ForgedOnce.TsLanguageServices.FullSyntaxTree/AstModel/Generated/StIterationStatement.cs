@@ -9,6 +9,10 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.statement = statement;
         }
 
+        public StIterationStatement()
+        {
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement _statement;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement statement
         {

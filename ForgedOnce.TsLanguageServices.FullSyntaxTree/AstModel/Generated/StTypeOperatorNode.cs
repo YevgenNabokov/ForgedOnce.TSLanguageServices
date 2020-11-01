@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.type = type;
         }
 
+        public StTypeOperatorNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.TypeOperator;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _operator;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _type;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind @operator

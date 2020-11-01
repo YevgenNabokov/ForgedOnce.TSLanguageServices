@@ -6,9 +6,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StJSDocAuthorTagExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocAuthorTag WithTagName(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocAuthorTag subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier tagName)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocAuthorTag WithTagName(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocAuthorTag subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier> tagNameBuilder)
         {
-            subject.tagName = tagName;
+            subject.tagName = tagNameBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier());
             return subject;
         }
 
@@ -24,9 +24,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocAuthorTag WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocAuthorTag subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocAuthorTag WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocAuthorTag subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

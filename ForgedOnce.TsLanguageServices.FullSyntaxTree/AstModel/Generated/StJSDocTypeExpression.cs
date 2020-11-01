@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.type = type;
         }
 
+        public StJSDocTypeExpression()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JSDocTypeExpression;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _type;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode type
         {

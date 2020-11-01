@@ -14,6 +14,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.initializer = initializer;
         }
 
+        public StParameterDeclaration()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.Parameter;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDotDotDotTokenToken _dotDotDotToken;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;

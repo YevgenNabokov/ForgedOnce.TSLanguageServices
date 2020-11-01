@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.propertyName = propertyName;
         }
 
+        public StImportSpecifier()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ImportSpecifier;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _propertyName;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name

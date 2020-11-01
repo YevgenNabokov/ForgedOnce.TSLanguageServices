@@ -12,9 +12,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier WithPropertyName(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier propertyName)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier WithPropertyName(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier> propertyNameBuilder)
         {
-            subject.propertyName = propertyName;
+            subject.propertyName = propertyNameBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier());
             return subject;
         }
 
@@ -24,9 +24,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

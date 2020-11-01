@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.expression = expression;
         }
 
+        public StJsxSpreadAttribute()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JsxSpreadAttribute;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         System.Object __objectLiteralBrand;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;

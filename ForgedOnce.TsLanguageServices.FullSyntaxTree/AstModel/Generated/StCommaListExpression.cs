@@ -11,6 +11,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.elements.AddRange(elements);
         }
 
+        public StCommaListExpression()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.CommaListExpression;
+            this.elements = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression>(this);
+        }
+
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression> elements
         {
             get;

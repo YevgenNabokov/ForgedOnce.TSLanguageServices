@@ -13,6 +13,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.initializer = initializer;
         }
 
+        public StVariableDeclaration()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.VariableDeclaration;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken _exclamationToken;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _type;

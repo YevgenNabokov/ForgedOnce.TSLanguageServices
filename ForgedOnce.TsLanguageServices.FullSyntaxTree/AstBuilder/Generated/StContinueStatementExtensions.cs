@@ -6,9 +6,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StContinueStatementExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StContinueStatement WithLabel(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StContinueStatement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier label)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StContinueStatement WithLabel(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StContinueStatement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier> labelBuilder)
         {
-            subject.label = label;
+            subject.label = labelBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier());
             return subject;
         }
 
@@ -18,9 +18,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StContinueStatement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StContinueStatement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StContinueStatement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StContinueStatement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

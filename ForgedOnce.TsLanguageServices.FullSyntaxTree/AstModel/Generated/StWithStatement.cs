@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.statement = statement;
         }
 
+        public StWithStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.WithStatement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement _statement;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression expression

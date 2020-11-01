@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.literal = literal;
         }
 
+        public StLiteralTypeNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.LiteralType;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode _literal;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode literal
         {

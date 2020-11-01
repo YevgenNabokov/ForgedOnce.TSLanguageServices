@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.@operator = @operator;
         }
 
+        public StPostfixUnaryExpression()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.PostfixUnaryExpression;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression _operand;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _operator;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression operand

@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.moduleSpecifier = moduleSpecifier;
         }
 
+        public StImportDeclaration()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ImportDeclaration;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportClause _importClause;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _moduleSpecifier;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportClause importClause

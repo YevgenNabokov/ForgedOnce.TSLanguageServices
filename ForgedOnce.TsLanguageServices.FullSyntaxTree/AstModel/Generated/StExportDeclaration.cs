@@ -13,6 +13,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.moduleSpecifier = moduleSpecifier;
         }
 
+        public StExportDeclaration()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ExportDeclaration;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         System.Boolean _isTypeOnly;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNamedExportBindings _exportClause;

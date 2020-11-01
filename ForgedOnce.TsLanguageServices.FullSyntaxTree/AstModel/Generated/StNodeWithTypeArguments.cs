@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.typeArguments.AddRange(typeArguments);
         }
 
+        public StNodeWithTypeArguments()
+        {
+            this.typeArguments = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode>(this);
+        }
+
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode> typeArguments
         {
             get;

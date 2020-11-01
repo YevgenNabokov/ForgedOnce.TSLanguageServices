@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.label = label;
         }
 
+        public StContinueStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ContinueStatement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _label;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier label
         {

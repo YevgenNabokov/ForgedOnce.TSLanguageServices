@@ -18,21 +18,21 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment WithQuestionToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken questionToken)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment WithQuestionToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken> questionTokenBuilder)
         {
-            subject.questionToken = questionToken;
+            subject.questionToken = questionTokenBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken());
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment WithExclamationToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken exclamationToken)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment WithExclamationToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken> exclamationTokenBuilder)
         {
-            subject.exclamationToken = exclamationToken;
+            subject.exclamationToken = exclamationTokenBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken());
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment WithEqualsToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEqualsTokenToken equalsToken)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment WithEqualsToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEqualsTokenToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEqualsTokenToken> equalsTokenBuilder)
         {
-            subject.equalsToken = equalsToken;
+            subject.equalsToken = equalsTokenBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEqualsTokenToken());
             return subject;
         }
 
@@ -48,9 +48,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StShorthandPropertyAssignment subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

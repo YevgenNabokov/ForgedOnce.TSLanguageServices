@@ -12,9 +12,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumDeclaration WithMember(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumDeclaration subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumMember member)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumDeclaration WithMember(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumDeclaration subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumMember, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumMember> memberBuilder)
         {
-            subject.members.Add(member);
+            subject.members.Add(memberBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumMember()));
             return subject;
         }
 
@@ -24,9 +24,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumDeclaration WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumDeclaration subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumDeclaration WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEnumDeclaration subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

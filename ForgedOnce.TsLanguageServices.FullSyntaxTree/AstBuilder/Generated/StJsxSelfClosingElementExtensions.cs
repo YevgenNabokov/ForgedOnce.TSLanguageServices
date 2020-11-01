@@ -18,9 +18,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxSelfClosingElement WithAttributes(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxSelfClosingElement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxAttributes attributes)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxSelfClosingElement WithAttributes(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxSelfClosingElement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxAttributes, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxAttributes> attributesBuilder)
         {
-            subject.attributes = attributes;
+            subject.attributes = attributesBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxAttributes());
             return subject;
         }
 
@@ -30,9 +30,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxSelfClosingElement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxSelfClosingElement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxSelfClosingElement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxSelfClosingElement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

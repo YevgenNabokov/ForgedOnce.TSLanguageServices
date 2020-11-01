@@ -11,6 +11,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.elements.AddRange(elements);
         }
 
+        public StNamedImports()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.NamedImports;
+            this.elements = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier>(this);
+        }
+
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier> elements
         {
             get;

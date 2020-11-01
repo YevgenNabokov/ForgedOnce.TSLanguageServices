@@ -11,6 +11,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.elements.AddRange(elements);
         }
 
+        public StArrayBindingPattern()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ArrayBindingPattern;
+            this.elements = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStArrayBindingElement>(this);
+        }
+
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStArrayBindingElement> elements
         {
             get;

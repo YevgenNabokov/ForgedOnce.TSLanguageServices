@@ -18,9 +18,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBindingElement WithDotDotDotToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBindingElement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDotDotDotTokenToken dotDotDotToken)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBindingElement WithDotDotDotToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBindingElement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDotDotDotTokenToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDotDotDotTokenToken> dotDotDotTokenBuilder)
         {
-            subject.dotDotDotToken = dotDotDotToken;
+            subject.dotDotDotToken = dotDotDotTokenBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDotDotDotTokenToken());
             return subject;
         }
 
@@ -36,9 +36,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBindingElement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBindingElement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBindingElement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBindingElement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.finallyBlock = finallyBlock;
         }
 
+        public StTryStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.TryStatement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock _tryBlock;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause _catchClause;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock _finallyBlock;

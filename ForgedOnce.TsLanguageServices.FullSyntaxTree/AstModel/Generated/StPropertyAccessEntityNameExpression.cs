@@ -9,6 +9,10 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this._propertyAccessExpressionLikeQualifiedNameBrand = new System.Object();
         }
 
+        public StPropertyAccessEntityNameExpression()
+        {
+        }
+
         System.Object __propertyAccessExpressionLikeQualifiedNameBrand;
         public System.Object _propertyAccessExpressionLikeQualifiedNameBrand
         {

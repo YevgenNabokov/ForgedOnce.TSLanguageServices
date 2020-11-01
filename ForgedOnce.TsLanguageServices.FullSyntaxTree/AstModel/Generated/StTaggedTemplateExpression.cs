@@ -13,6 +13,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.template = template;
         }
 
+        public StTaggedTemplateExpression()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.TaggedTemplateExpression;
+            this.typeArguments = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode>(this);
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression _tag;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTemplateLiteral _template;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStLeftHandSideExpression tag

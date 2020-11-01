@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.elseStatement = elseStatement;
         }
 
+        public StIfStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.IfStatement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement _thenStatement;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement _elseStatement;

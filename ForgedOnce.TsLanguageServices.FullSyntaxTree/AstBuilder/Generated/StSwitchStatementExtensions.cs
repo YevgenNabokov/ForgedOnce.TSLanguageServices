@@ -12,9 +12,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StSwitchStatement WithCaseBlock(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StSwitchStatement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCaseBlock caseBlock)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StSwitchStatement WithCaseBlock(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StSwitchStatement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCaseBlock, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCaseBlock> caseBlockBuilder)
         {
-            subject.caseBlock = caseBlock;
+            subject.caseBlock = caseBlockBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCaseBlock());
             return subject;
         }
 
@@ -30,9 +30,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StSwitchStatement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StSwitchStatement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StSwitchStatement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StSwitchStatement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

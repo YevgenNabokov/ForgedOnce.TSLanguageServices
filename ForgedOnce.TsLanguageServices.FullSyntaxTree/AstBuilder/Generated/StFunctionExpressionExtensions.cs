@@ -6,9 +6,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StFunctionExpressionExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithBody(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock body)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithBody(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock> bodyBuilder)
         {
-            subject.body = body;
+            subject.body = bodyBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock());
             return subject;
         }
 
@@ -18,21 +18,21 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithAsteriskToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAsteriskTokenToken asteriskToken)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithAsteriskToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAsteriskTokenToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAsteriskTokenToken> asteriskTokenBuilder)
         {
-            subject.asteriskToken = asteriskToken;
+            subject.asteriskToken = asteriskTokenBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAsteriskTokenToken());
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithQuestionToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken questionToken)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithQuestionToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken> questionTokenBuilder)
         {
-            subject.questionToken = questionToken;
+            subject.questionToken = questionTokenBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken());
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithExclamationToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken exclamationToken)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithExclamationToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken> exclamationTokenBuilder)
         {
-            subject.exclamationToken = exclamationToken;
+            subject.exclamationToken = exclamationTokenBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExclamationTokenToken());
             return subject;
         }
 
@@ -42,15 +42,15 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithTypeParameter(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration typeParameter)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithTypeParameter(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration> typeParameterBuilder)
         {
-            subject.typeParameters.Add(typeParameter);
+            subject.typeParameters.Add(typeParameterBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration()));
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithParameter(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StParameterDeclaration parameter)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithParameter(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StParameterDeclaration, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StParameterDeclaration> parameterBuilder)
         {
-            subject.parameters.Add(parameter);
+            subject.parameters.Add(parameterBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StParameterDeclaration()));
             return subject;
         }
 
@@ -66,9 +66,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StFunctionExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

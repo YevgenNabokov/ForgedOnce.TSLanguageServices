@@ -12,15 +12,15 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration WithTypeParameter(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration typeParameter)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration WithTypeParameter(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration> typeParameterBuilder)
         {
-            subject.typeParameters.Add(typeParameter);
+            subject.typeParameters.Add(typeParameterBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration()));
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration WithHeritageClaus(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StHeritageClause heritageClaus)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration WithHeritageClaus(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StHeritageClause, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StHeritageClause> heritageClausBuilder)
         {
-            subject.heritageClauses.Add(heritageClaus);
+            subject.heritageClauses.Add(heritageClausBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StHeritageClause()));
             return subject;
         }
 
@@ -36,9 +36,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StClassDeclaration subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

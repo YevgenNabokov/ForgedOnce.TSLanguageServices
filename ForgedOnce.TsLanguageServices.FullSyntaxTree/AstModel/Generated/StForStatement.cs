@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.incrementor = incrementor;
         }
 
+        public StForStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ForStatement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStForInitializer _initializer;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _condition;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _incrementor;

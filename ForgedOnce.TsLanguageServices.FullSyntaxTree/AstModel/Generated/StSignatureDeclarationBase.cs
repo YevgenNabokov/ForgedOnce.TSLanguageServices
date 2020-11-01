@@ -14,6 +14,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.type = type;
         }
 
+        public StSignatureDeclarationBase()
+        {
+            this.typeParameters = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration>(this);
+            this.parameters = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StParameterDeclaration>(this);
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _type;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name

@@ -12,6 +12,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.isArrayType = isArrayType;
         }
 
+        public StJSDocTypeLiteral()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JSDocTypeLiteral;
+            this.jsDocPropertyTags = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocPropertyLikeTag>(this);
+        }
+
         System.Nullable<System.Boolean> _isArrayType;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocPropertyLikeTag> jsDocPropertyTags
         {

@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.type = type;
         }
 
+        public StParenthesizedTypeNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ParenthesizedType;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _type;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode type
         {

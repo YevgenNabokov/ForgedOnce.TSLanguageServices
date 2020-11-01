@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.statement = statement;
         }
 
+        public StLabeledStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.LabeledStatement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _label;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement _statement;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier label

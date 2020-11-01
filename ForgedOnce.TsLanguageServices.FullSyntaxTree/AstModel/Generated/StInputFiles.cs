@@ -17,6 +17,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.declarationMapText = declarationMapText;
         }
 
+        public StInputFiles()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.InputFiles;
+        }
+
         System.String _javascriptPath;
         System.String _javascriptText;
         System.String _javascriptMapPath;

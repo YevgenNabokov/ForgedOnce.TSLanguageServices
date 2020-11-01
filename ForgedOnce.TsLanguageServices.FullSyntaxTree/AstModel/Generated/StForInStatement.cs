@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.expression = expression;
         }
 
+        public StForInStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ForInStatement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStForInitializer _initializer;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStForInitializer initializer

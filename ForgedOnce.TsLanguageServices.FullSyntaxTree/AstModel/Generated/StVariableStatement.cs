@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.declarationList = declarationList;
         }
 
+        public StVariableStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.VariableStatement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList _declarationList;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList declarationList
         {

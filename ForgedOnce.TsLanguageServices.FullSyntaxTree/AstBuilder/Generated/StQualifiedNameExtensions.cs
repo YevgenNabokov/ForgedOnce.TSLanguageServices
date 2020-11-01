@@ -12,9 +12,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQualifiedName WithRight(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQualifiedName subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier right)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQualifiedName WithRight(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQualifiedName subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier> rightBuilder)
         {
-            subject.right = right;
+            subject.right = rightBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier());
             return subject;
         }
 
@@ -24,9 +24,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQualifiedName WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQualifiedName subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQualifiedName WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQualifiedName subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

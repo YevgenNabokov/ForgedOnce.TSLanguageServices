@@ -15,6 +15,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.initializer = initializer;
         }
 
+        public StPropertyDeclaration()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.PropertyDeclaration;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         System.Object __classElementBrand;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;

@@ -12,6 +12,10 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this._literalExpressionBrand = new System.Object();
         }
 
+        public StLiteralExpression()
+        {
+        }
+
         System.String _text;
         System.Nullable<System.Boolean> _isUnterminated;
         System.Nullable<System.Boolean> _hasExtendedUnicodeEscape;

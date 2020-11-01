@@ -6,9 +6,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StTypePredicateNodeExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypePredicateNode WithAssertsModifier(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypePredicateNode subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAssertsKeywordToken assertsModifier)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypePredicateNode WithAssertsModifier(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypePredicateNode subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAssertsKeywordToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAssertsKeywordToken> assertsModifierBuilder)
         {
-            subject.assertsModifier = assertsModifier;
+            subject.assertsModifier = assertsModifierBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAssertsKeywordToken());
             return subject;
         }
 
@@ -30,9 +30,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypePredicateNode WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypePredicateNode subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypePredicateNode WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypePredicateNode subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

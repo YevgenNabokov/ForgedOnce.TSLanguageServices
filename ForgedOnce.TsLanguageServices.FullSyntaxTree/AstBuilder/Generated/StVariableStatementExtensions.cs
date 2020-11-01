@@ -6,9 +6,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StVariableStatementExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableStatement WithDeclarationList(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableStatement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList declarationList)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableStatement WithDeclarationList(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableStatement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList> declarationListBuilder)
         {
-            subject.declarationList = declarationList;
+            subject.declarationList = declarationListBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList());
             return subject;
         }
 
@@ -18,9 +18,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableStatement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableStatement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableStatement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableStatement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

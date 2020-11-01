@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.body = body;
         }
 
+        public StSetAccessorDeclaration()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.SetAccessor;
+        }
+
         System.Object __classElementBrand;
         System.Object __objectLiteralBrand;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock _body;

@@ -6,15 +6,15 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StCatchClauseExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause WithVariableDeclaration(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclaration variableDeclaration)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause WithVariableDeclaration(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclaration, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclaration> variableDeclarationBuilder)
         {
-            subject.variableDeclaration = variableDeclaration;
+            subject.variableDeclaration = variableDeclarationBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclaration());
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause WithBlock(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock block)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause WithBlock(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock> blockBuilder)
         {
-            subject.block = block;
+            subject.block = blockBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock());
             return subject;
         }
 
@@ -24,9 +24,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCatchClause subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

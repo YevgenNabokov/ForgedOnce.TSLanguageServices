@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.moduleReference = moduleReference;
         }
 
+        public StImportEqualsDeclaration()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ImportEqualsDeclaration;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStModuleReference _moduleReference;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName name

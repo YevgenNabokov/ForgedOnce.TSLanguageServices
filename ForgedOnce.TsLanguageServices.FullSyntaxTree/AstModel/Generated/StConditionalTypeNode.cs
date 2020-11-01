@@ -13,6 +13,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.falseType = falseType;
         }
 
+        public StConditionalTypeNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ConditionalType;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _checkType;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _extendsType;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _trueType;

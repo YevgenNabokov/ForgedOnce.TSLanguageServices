@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.body = body;
         }
 
+        public StArrowFunction()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ArrowFunction;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEqualsGreaterThanTokenToken _equalsGreaterThanToken;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStConciseBody _body;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StEqualsGreaterThanTokenToken equalsGreaterThanToken

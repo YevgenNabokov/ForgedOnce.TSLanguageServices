@@ -15,6 +15,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.objectAssignmentInitializer = objectAssignmentInitializer;
         }
 
+        public StShorthandPropertyAssignment()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ShorthandPropertyAssignment;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         System.Object __objectLiteralBrand;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;

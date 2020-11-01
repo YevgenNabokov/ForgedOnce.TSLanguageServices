@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.namedBindings = namedBindings;
         }
 
+        public StImportClause()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ImportClause;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         System.Boolean _isTypeOnly;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNamedImportBindings _namedBindings;

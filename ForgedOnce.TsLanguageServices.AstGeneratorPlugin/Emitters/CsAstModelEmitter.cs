@@ -141,40 +141,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
             var constructorBody = Block();
 
-            if (entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantSyntaxKind kindDiscriminant)
-            {
-                constructorBody = constructorBody.AddStatements(
-                        ExpressionStatement(
-                        AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                ThisExpression(),
-                                IdentifierName("kind")),
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                IdentifierName($"{this.settings.CsTransportModelNamespace}.SyntaxKind"),
-                                IdentifierName(kindDiscriminant.SyntaxKindValueName)))));
-            }
-
-            foreach (var property in entityModel.Members)
-            {
-                if (CsEmitterHelper.IsNodeCollection(property.Value.Type))
-                {
-                    constructorBody = constructorBody.AddStatements(
-                        ExpressionStatement(
-                            AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    ThisExpression(),
-                                    IdentifierName(NameHelper.GetSafeVariableName(property.Key))),
-                                ObjectCreationExpression(
-                                    ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(property.Value, this.settings)),
-                                    ArgumentList(SeparatedList<ArgumentSyntax>(new[] { Argument(ThisExpression()) })),
-                                    null))));
-                }
-            }
+            constructorBody = this.PopulateRequiredConstructorBodyInitializers(constructorBody, entityModel);
 
             if (propertyInitializers != null && propertyInitializers.Count > 0)
             {
@@ -183,6 +150,17 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
             constructorDeclaration = constructorDeclaration.WithBody(constructorBody);
             entityClass = entityClass.AddMembers(constructorDeclaration);
+
+            if (constructorDeclaration.ParameterList.Parameters.Count > 0)
+            {
+                var parameterlessConstructorDeclaration =
+                ConstructorDeclaration(CsEmitterHelper.GetCSharpModelShortName(entityModel, ModelType.Ast))
+                .AddModifiers(Token(SyntaxKind.PublicKeyword));
+                var parameterlessConstructorBody = Block();
+                parameterlessConstructorBody = this.PopulateRequiredConstructorBodyInitializers(parameterlessConstructorBody, entityModel);
+                parameterlessConstructorDeclaration = parameterlessConstructorDeclaration.WithBody(parameterlessConstructorBody);
+                entityClass = entityClass.AddMembers(parameterlessConstructorDeclaration);
+            }
 
             if (entityModel.GenericParameters.Count > 0)
             {
@@ -236,6 +214,46 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             nsContainer = nsContainer.AddMembers(entityClass);
             unit = unit.AddMembers(nsContainer);
             outputFile.SyntaxTree = unit.SyntaxTree;
+        }
+
+        private BlockSyntax PopulateRequiredConstructorBodyInitializers(BlockSyntax body, TransportModelEntity entityModel)
+        {
+            if (entityModel.TsDiscriminant is TransportModelEntityTsDiscriminantSyntaxKind kindDiscriminant)
+            {
+                body = body.AddStatements(
+                        ExpressionStatement(
+                        AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                ThisExpression(),
+                                IdentifierName("kind")),
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                IdentifierName($"{this.settings.CsTransportModelNamespace}.SyntaxKind"),
+                                IdentifierName(kindDiscriminant.SyntaxKindValueName)))));
+            }
+
+            foreach (var property in entityModel.Members)
+            {
+                if (CsEmitterHelper.IsNodeCollection(property.Value.Type))
+                {
+                    body = body.AddStatements(
+                        ExpressionStatement(
+                            AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    ThisExpression(),
+                                    IdentifierName(NameHelper.GetSafeVariableName(property.Key))),
+                                ObjectCreationExpression(
+                                    ParseTypeName(CsEmitterHelper.GetAstModelPropertyTypeName(property.Value, this.settings)),
+                                    ArgumentList(SeparatedList<ArgumentSyntax>(new[] { Argument(ThisExpression()) })),
+                                    null))));
+                }
+            }
+
+            return body;
         }
 
         private MemberDeclarationSyntax CreatePropertyDeclaration(TransportModelEntityMember member)

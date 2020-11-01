@@ -13,6 +13,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.initializer = initializer;
         }
 
+        public StBindingElement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.BindingElement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStDeclarationName _name;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStPropertyName _propertyName;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDotDotDotTokenToken _dotDotDotToken;

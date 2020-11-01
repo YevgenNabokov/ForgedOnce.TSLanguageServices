@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.exprName = exprName;
         }
 
+        public StTypeQueryNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.TypeQuery;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName _exprName;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName exprName
         {

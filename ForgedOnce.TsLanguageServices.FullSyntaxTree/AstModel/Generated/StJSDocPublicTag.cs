@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.comment = comment;
         }
 
+        public StJSDocPublicTag()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JSDocPublicTag;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _tagName;
         System.String _comment;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier tagName

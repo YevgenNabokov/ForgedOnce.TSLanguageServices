@@ -6,9 +6,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StVariableDeclarationListExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList WithDeclaration(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclaration declaration)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList WithDeclaration(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclaration, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclaration> declarationBuilder)
         {
-            subject.declarations.Add(declaration);
+            subject.declarations.Add(declarationBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclaration()));
             return subject;
         }
 
@@ -18,9 +18,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclarationList subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

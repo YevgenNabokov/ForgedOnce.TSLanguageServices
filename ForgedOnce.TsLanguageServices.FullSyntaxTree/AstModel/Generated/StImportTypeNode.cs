@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.qualifier = qualifier;
         }
 
+        public StImportTypeNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ImportType;
+        }
+
         System.Nullable<System.Boolean> _isTypeOf;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _argument;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName _qualifier;

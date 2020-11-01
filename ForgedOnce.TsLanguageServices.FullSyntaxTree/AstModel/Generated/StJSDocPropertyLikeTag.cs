@@ -14,6 +14,10 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.isBracketed = isBracketed;
         }
 
+        public StJSDocPropertyLikeTag()
+        {
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _tagName;
         System.String _comment;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName _name;

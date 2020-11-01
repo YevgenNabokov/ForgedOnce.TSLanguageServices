@@ -13,6 +13,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.closingFragment = closingFragment;
         }
 
+        public StJsxFragment()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JsxFragment;
+            this.children = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJsxChild>(this);
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxOpeningFragment _openingFragment;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxClosingFragment _closingFragment;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxOpeningFragment openingFragment

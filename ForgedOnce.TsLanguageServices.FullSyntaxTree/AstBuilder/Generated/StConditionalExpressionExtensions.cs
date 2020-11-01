@@ -12,9 +12,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression WithQuestionToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken questionToken)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression WithQuestionToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken> questionTokenBuilder)
         {
-            subject.questionToken = questionToken;
+            subject.questionToken = questionTokenBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken());
             return subject;
         }
 
@@ -24,9 +24,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression WithColonToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StColonTokenToken colonToken)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression WithColonToken(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StColonTokenToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StColonTokenToken> colonTokenBuilder)
         {
-            subject.colonToken = colonToken;
+            subject.colonToken = colonTokenBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StColonTokenToken());
             return subject;
         }
 
@@ -42,9 +42,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StConditionalExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

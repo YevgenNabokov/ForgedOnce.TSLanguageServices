@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.name = name;
         }
 
+        public StMetaProperty()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.MetaProperty;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _keywordToken;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _name;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind keywordToken

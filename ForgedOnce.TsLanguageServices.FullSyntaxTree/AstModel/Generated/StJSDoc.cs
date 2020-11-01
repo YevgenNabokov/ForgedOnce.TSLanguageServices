@@ -12,6 +12,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.comment = comment;
         }
 
+        public StJSDoc()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JSDocComment;
+            this.tags = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJSDocTag>(this);
+        }
+
         System.String _comment;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStJSDocTag> tags
         {

@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.expression = expression;
         }
 
+        public StJsxExpression()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JsxExpression;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDotDotDotTokenToken _dotDotDotToken;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDotDotDotTokenToken dotDotDotToken

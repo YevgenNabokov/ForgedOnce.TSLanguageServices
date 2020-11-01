@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.possiblyExhaustive = possiblyExhaustive;
         }
 
+        public StSwitchStatement()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.SwitchStatement;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStExpression _expression;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StCaseBlock _caseBlock;
         System.Nullable<System.Boolean> _possiblyExhaustive;

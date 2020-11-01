@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.typeExpression = typeExpression;
         }
 
+        public StJSDocReturnTag()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JSDocReturnTag;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _tagName;
         System.String _comment;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocTypeExpression _typeExpression;

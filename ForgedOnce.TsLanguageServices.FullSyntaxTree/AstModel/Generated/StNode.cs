@@ -13,6 +13,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.modifiers.AddRange(modifiers);
         }
 
+        public StNode()
+        {
+            this.decorators = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator>(this);
+            this.modifiers = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStModifier>(this);
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _kind;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.NodeFlags _flags;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind kind

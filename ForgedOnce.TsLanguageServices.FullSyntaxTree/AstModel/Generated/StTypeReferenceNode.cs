@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.typeName = typeName;
         }
 
+        public StTypeReferenceNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.TypeReference;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName _typeName;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName typeName
         {

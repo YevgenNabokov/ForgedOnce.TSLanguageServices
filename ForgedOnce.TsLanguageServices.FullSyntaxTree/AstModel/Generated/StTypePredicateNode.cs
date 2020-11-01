@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.type = type;
         }
 
+        public StTypePredicateNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.TypePredicate;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAssertsKeywordToken _assertsModifier;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode _parameterName;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _type;

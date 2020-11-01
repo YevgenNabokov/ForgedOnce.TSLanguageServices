@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.properties.AddRange(properties);
         }
 
+        public StObjectLiteralExpressionBase()
+        {
+            this.properties = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<T>(this);
+        }
+
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<T> properties
         {
             get;

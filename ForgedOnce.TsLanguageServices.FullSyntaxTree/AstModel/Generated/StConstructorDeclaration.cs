@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.body = body;
         }
 
+        public StConstructorDeclaration()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.Constructor;
+        }
+
         System.Object __classElementBrand;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock _body;
         public System.Object _classElementBrand

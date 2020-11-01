@@ -6,9 +6,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StJsxFragmentExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment WithOpeningFragment(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxOpeningFragment openingFragment)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment WithOpeningFragment(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxOpeningFragment, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxOpeningFragment> openingFragmentBuilder)
         {
-            subject.openingFragment = openingFragment;
+            subject.openingFragment = openingFragmentBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxOpeningFragment());
             return subject;
         }
 
@@ -18,9 +18,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment WithClosingFragment(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxClosingFragment closingFragment)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment WithClosingFragment(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxClosingFragment, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxClosingFragment> closingFragmentBuilder)
         {
-            subject.closingFragment = closingFragment;
+            subject.closingFragment = closingFragmentBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxClosingFragment());
             return subject;
         }
 
@@ -30,9 +30,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJsxFragment subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

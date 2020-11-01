@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.elementType = elementType;
         }
 
+        public StArrayTypeNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.ArrayType;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _elementType;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode elementType
         {

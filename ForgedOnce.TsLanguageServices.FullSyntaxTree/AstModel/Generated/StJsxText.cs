@@ -13,6 +13,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.containsOnlyTriviaWhiteSpaces = containsOnlyTriviaWhiteSpaces;
         }
 
+        public StJsxText()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JsxText;
+        }
+
         System.String _text;
         System.Nullable<System.Boolean> _isUnterminated;
         System.Nullable<System.Boolean> _hasExtendedUnicodeEscape;

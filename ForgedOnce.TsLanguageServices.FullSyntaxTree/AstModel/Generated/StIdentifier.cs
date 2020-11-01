@@ -12,6 +12,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.isInJSDocNamespace = isInJSDocNamespace;
         }
 
+        public StIdentifier()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.Identifier;
+        }
+
         System.String _escapedText;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _originalKeywordKind;
         System.Nullable<System.Boolean> _isInJSDocNamespace;

@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.rawText = rawText;
         }
 
+        public StNoSubstitutionTemplateLiteral()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.NoSubstitutionTemplateLiteral;
+        }
+
         System.String _rawText;
         public System.String rawText
         {

@@ -10,6 +10,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.typeParameter = typeParameter;
         }
 
+        public StInferTypeNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.InferType;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration _typeParameter;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration typeParameter
         {

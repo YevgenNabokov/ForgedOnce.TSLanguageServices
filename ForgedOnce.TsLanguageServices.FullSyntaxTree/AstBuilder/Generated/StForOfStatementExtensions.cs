@@ -6,9 +6,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StForOfStatementExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StForOfStatement WithAwaitModifier(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StForOfStatement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAwaitKeywordToken awaitModifier)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StForOfStatement WithAwaitModifier(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StForOfStatement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAwaitKeywordToken, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAwaitKeywordToken> awaitModifierBuilder)
         {
-            subject.awaitModifier = awaitModifier;
+            subject.awaitModifier = awaitModifierBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAwaitKeywordToken());
             return subject;
         }
 
@@ -36,9 +36,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StForOfStatement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StForOfStatement subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StForOfStatement WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StForOfStatement subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

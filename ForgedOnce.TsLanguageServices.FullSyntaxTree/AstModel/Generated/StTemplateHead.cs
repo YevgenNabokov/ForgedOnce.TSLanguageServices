@@ -13,6 +13,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.rawText = rawText;
         }
 
+        public StTemplateHead()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.TemplateHead;
+        }
+
         System.String _text;
         System.Nullable<System.Boolean> _isUnterminated;
         System.Nullable<System.Boolean> _hasExtendedUnicodeEscape;

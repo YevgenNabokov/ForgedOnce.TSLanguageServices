@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.indexType = indexType;
         }
 
+        public StIndexedAccessTypeNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.IndexedAccessType;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _objectType;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode _indexType;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStTypeNode objectType

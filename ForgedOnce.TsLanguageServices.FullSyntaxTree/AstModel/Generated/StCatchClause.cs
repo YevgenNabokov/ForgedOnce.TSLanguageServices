@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.block = block;
         }
 
+        public StCatchClause()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.CatchClause;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclaration _variableDeclaration;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StBlock _block;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StVariableDeclaration variableDeclaration

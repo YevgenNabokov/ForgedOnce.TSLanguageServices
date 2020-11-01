@@ -6,15 +6,15 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StTemplateExpressionExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression WithHead(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateHead head)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression WithHead(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateHead, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateHead> headBuilder)
         {
-            subject.head = head;
+            subject.head = headBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateHead());
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression WithTemplateSpan(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateSpan templateSpan)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression WithTemplateSpan(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateSpan, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateSpan> templateSpanBuilder)
         {
-            subject.templateSpans.Add(templateSpan);
+            subject.templateSpans.Add(templateSpanBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateSpan()));
             return subject;
         }
 
@@ -24,9 +24,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTemplateExpression subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

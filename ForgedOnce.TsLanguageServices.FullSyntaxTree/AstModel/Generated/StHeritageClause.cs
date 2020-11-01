@@ -12,6 +12,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.types.AddRange(types);
         }
 
+        public StHeritageClause()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.HeritageClause;
+            this.types = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StExpressionWithTypeArguments>(this);
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind _token;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind token
         {

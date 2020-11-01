@@ -12,6 +12,10 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this._functionLikeDeclarationBrand = new System.Object();
         }
 
+        public StFunctionLikeDeclarationBase()
+        {
+        }
+
         System.Object __functionLikeDeclarationBrand;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StAsteriskTokenToken _asteriskToken;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StQuestionTokenToken _questionToken;

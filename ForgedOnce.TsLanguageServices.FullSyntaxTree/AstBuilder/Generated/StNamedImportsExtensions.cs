@@ -6,9 +6,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
 {
     public static partial class StNamedImportsExtensions
     {
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNamedImports WithElement(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNamedImports subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier element)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNamedImports WithElement(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNamedImports subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier> elementBuilder)
         {
-            subject.elements.Add(element);
+            subject.elements.Add(elementBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StImportSpecifier()));
             return subject;
         }
 
@@ -18,9 +18,9 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNamedImports WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNamedImports subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator decorator)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNamedImports WithDecorator(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNamedImports subject, Func<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator, ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator> decoratorBuilder)
         {
-            subject.decorators.Add(decorator);
+            subject.decorators.Add(decoratorBuilder(new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator()));
             return subject;
         }
 

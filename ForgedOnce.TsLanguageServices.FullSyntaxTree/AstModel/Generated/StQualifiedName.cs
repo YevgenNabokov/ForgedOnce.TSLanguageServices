@@ -11,6 +11,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.right = right;
         }
 
+        public StQualifiedName()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.QualifiedName;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName _left;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _right;
         public ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStEntityName left

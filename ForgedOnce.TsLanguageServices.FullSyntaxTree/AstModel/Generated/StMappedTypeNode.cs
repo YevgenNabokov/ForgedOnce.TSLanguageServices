@@ -13,6 +13,11 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.type = type;
         }
 
+        public StMappedTypeNode()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.MappedType;
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode _readonlyToken;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration _typeParameter;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStNode _questionToken;

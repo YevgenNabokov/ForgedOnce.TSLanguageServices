@@ -14,6 +14,12 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             this.typeParameters.AddRange(typeParameters);
         }
 
+        public StJSDocTemplateTag()
+        {
+            this.kind = ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.JSDocTemplateTag;
+            this.typeParameters = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StTypeParameterDeclaration>(this);
+        }
+
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier _tagName;
         System.String _comment;
         ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StJSDocTypeExpression _constraint;
