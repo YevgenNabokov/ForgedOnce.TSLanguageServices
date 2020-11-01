@@ -13,10 +13,7 @@ import * as tc from "./FullAstGenerated/TransportToAstConverter";
 export class Host {
     private currentServer: http.Server | null = null;
 
-    private rootFolder: string;
-
-    constructor(rootFolder: string) {
-        this.rootFolder = rootFolder;
+    constructor() {
     }
 
     public start(port: number) {

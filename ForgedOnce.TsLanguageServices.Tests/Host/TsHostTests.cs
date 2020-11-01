@@ -28,7 +28,7 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
         [Test]
         public void CanStartHost()
         {
-            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            using (var subject = new TsHost(30050, 30100, 3000))
             {
                 Action action = () => subject.Start();
 
@@ -41,7 +41,7 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
         {
             var fileName = Path.Combine(this.BasePath, "TestData\\Test.ts");
 
-            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            using (var subject = new TsHost(30050, 30100, 3000))
             {
                 var result = subject.ReadFile(fileName);
 
@@ -69,7 +69,7 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
 
             var ast = this.GetTestAst();
 
-            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            using (var subject = new TsHost(30050, 30100, 3000))
             {
                 var fileInput = new TsFile()
                 {
@@ -97,7 +97,7 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
 
             var payload = File.ReadAllText(fileName);
 
-            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            using (var subject = new TsHost(30050, 30100, 3000))
             {
                 var result = subject.Parse(payload, ScriptKind.TS);
 
@@ -111,7 +111,7 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
         {
             var payload = this.ReadTestTsxFile();
 
-            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            using (var subject = new TsHost(30050, 30100, 3000))
             {
                 var result = subject.Parse(payload, ScriptKind.TSX);
 
@@ -125,7 +125,7 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
         {
             var payload = this.ReadTestJsonFile();
 
-            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            using (var subject = new TsHost(30050, 30100, 3000))
             {
                 var result = subject.Parse(payload, ScriptKind.JSON);
 
@@ -139,7 +139,7 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
         {
             var ast = this.GetTestAst();
 
-            using (var subject = new TsHost(this.BasePath, 30050, 30100, 3000))
+            using (var subject = new TsHost(30050, 30100, 3000))
             {
                 var result = subject.Print(ast.ToArray(), ScriptKind.TS);
 

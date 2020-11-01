@@ -40,6 +40,14 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             }
         }
 
+        public IEnumerable<StNodeBase> ChildNodes
+        {
+            get
+            {
+                return this.childNodes;
+            }
+        }
+
         public void SetAnnotation(string key, string value)
         {
             if (this.annotations == null)

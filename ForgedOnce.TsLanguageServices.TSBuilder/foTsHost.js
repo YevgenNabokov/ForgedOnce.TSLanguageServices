@@ -7,9 +7,8 @@ const ts = require("typescript");
 const path = require("path");
 const tc = require("./FullAstGenerated/TransportToAstConverter");
 class Host {
-    constructor(rootFolder) {
+    constructor() {
         this.currentServer = null;
-        this.rootFolder = rootFolder;
     }
     start(port) {
         if (this.currentServer) {

@@ -29,7 +29,6 @@ namespace ForgedOnce.TsLanguageServices.Host
         private readonly string TaskJsFileName = "foTsHostLauncher.js";
 
         private readonly string CodeGeneratorJsAppFolder = "CodeGeneratorJs";
-        private readonly string basePath;
         private readonly int minPortNumber;
         private readonly int maxPortNumber;
         private readonly int hostStartTimeoutMs;
@@ -37,9 +36,8 @@ namespace ForgedOnce.TsLanguageServices.Host
         private Process hostProcess;
         private HttpClient hostClient;
 
-        public TsHost(string basePath, int minPortNumber, int maxPortNumber, int hostStartTimeoutMs)
+        public TsHost(int minPortNumber, int maxPortNumber, int hostStartTimeoutMs)
         {
-            this.basePath = basePath;
             this.minPortNumber = minPortNumber;
             this.maxPortNumber = maxPortNumber;
             this.hostStartTimeoutMs = hostStartTimeoutMs;
@@ -262,7 +260,7 @@ namespace ForgedOnce.TsLanguageServices.Host
 
         private string PrepareArgumentString(int port)
         {
-            return $"\"{TaskJsFilePath}\" {port} \"{this.basePath}\" > app_log.log 2> app_err.log";
+            return $"\"{TaskJsFilePath}\" {port} > app_log.log 2> app_err.log";
         }
 
         private int GetFreePort()
