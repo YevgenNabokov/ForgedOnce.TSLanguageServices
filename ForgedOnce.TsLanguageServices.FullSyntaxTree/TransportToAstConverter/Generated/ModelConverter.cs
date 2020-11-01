@@ -1744,6 +1744,13 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
                 return result;
             }
 
+            if (node.kind == ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.Unknown)
+            {
+                var concreteNode = (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Root)node;
+                var result = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StRoot((ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.NodeFlags)concreteNode.flags, this.ConvertFromNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator>(concreteNode.decorators), this.ConvertFromNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStModifier>(concreteNode.modifiers), this.ConvertFromNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStStatement>(concreteNode.statements));
+                return result;
+            }
+
             throw new System.InvalidOperationException("Unable to convert node.");
         }
 

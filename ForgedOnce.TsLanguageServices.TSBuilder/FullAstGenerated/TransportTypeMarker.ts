@@ -993,6 +993,10 @@ export class TypeMarker {
             node.$type = "ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.AwaitKeywordToken, ForgedOnce.TsLanguageServices.FullSyntaxTree";
             return true;
         }
+        if (node.kind == T.SyntaxKind.Unknown) {
+            node.$type = "ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Root, ForgedOnce.TsLanguageServices.FullSyntaxTree";
+            return true;
+        }
         return false;
     }
 }

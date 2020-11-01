@@ -1,5 +1,6 @@
 ﻿using ForgedOnce.TsLanguageServices.AstDescription.Model;
 using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
@@ -49,9 +50,43 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PreprocessorParts.Par
 
             result.TransportModel = transportModelParametersBuilder.Create(astDescription);
 
+            this.AddSurrogateRootNode(result);
+
             this.Validate(result);
 
             return result;
+        }
+
+        protected void AddSurrogateRootNode(Parameters parameters)
+        {
+            var statementsPropertyName = "statements";
+
+            TransportModelEntity root = new TransportModelEntity()
+            {
+                BaseEntity = new TransportModelTypeReferenceTransportModelItem<TransportModelEntity>()
+                {
+                    TransportModelItem = parameters.TransportModel.TransportModelEntities["Node"]
+                },
+                Name = "Root",
+                Members = new Dictionary<string, TransportModelEntityMember>()
+                {
+                    {
+                        statementsPropertyName,
+                        new TransportModelEntityMember()
+                        {
+                            Name = statementsPropertyName,
+                            Type = new TransportModelTypeReferenceTransportModelItem<TransportModelInterface>()
+                            {
+                                IsCollection = true,
+                                TransportModelItem = parameters.TransportModel.TransportModelInterfaces["Statement"]
+                            }
+                        }
+                    }
+                },
+                TsDiscriminant = new TransportModelEntityTsDiscriminantSyntaxKind() { SyntaxKindValueName = "Unknown" }
+            };
+
+            parameters.TransportModel.TransportModelEntities.Add("Root", root);
         }
 
         protected void Validate(Parameters transportModel)
