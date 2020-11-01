@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder;
 using ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel;
 using ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel;
 using ForgedOnce.TsLanguageServices.Host;
@@ -153,33 +154,20 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
             List<IStatement> result = new List<IStatement>();
 
             StClassDeclaration classDeclaration =
-                new StClassDeclaration(
-                    NodeFlags.None,
-                    null,
-                    new List<IStModifier>()
-                    {
-                        new StExportKeywordToken(NodeFlags.None, null, null)
-                    },
-                    new StIdentifier(NodeFlags.None, null, null, "TestClass", SyntaxKind.Identifier, null),
-                    null,
-                    null,
-                    new List<IStClassElement>()
-                    {
-                        new StPropertyDeclaration(
-                            NodeFlags.None,
-                            null,
-                            new List<IStModifier>()
-                            {
-                                new StPublicKeywordToken(NodeFlags.None, null, null)
-                            },
-                            new StIdentifier(NodeFlags.None, null, null, "p", SyntaxKind.Identifier, null),
-                            new object(),
-                            null,
-                            null,
-                            new StKeywordTypeNodeNumberKeyword(NodeFlags.None, null, null),
-                            null
-                            )
-                    });
+                new StClassDeclaration()
+                .WithModifier(new StExportKeywordToken())
+                .WithName(
+                    new StIdentifier()
+                    .WithEscapedText("TestClass")
+                    .WithOriginalKeywordKind(SyntaxKind.Identifier))
+                .WithMember(
+                    new StPropertyDeclaration()
+                    .WithModifier(new StPublicKeywordToken())
+                    .WithName(
+                        new StIdentifier()
+                        .WithEscapedText("p")
+                        .WithOriginalKeywordKind(SyntaxKind.Identifier))
+                    .WithType(new StKeywordTypeNodeNumberKeyword()));
 
             result.Add((IStatement)classDeclaration.GetTransportModelNode());
 
