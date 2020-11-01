@@ -15,7 +15,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel
             set;
         }
 
-        public ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind originalKeywordKind
+        public System.Nullable<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind> originalKeywordKind
         {
             get;
             set;

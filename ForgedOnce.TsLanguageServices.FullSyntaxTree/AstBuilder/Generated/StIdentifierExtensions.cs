@@ -12,7 +12,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder
             return subject;
         }
 
-        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier WithOriginalKeywordKind(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind originalKeywordKind)
+        public static ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier WithOriginalKeywordKind(this ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier subject, ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind? originalKeywordKind)
         {
             subject.originalKeywordKind = originalKeywordKind;
             return subject;

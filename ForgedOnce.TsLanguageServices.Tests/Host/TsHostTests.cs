@@ -158,15 +158,13 @@ namespace ForgedOnce.TsLanguageServices.Tests.Host
                 .WithModifier(new StExportKeywordToken())
                 .WithName(
                     new StIdentifier()
-                    .WithEscapedText("TestClass")
-                    .WithOriginalKeywordKind(SyntaxKind.Identifier))
+                    .WithEscapedText("TestClass"))
                 .WithMember(
                     new StPropertyDeclaration()
                     .WithModifier(new StPublicKeywordToken())
                     .WithName(
                         new StIdentifier()
-                        .WithEscapedText("p")
-                        .WithOriginalKeywordKind(SyntaxKind.Identifier))
+                        .WithEscapedText("p"))
                     .WithType(new StKeywordTypeNodeNumberKeyword()));
 
             result.Add((IStatement)classDeclaration.GetTransportModelNode());

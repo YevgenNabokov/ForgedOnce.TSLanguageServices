@@ -18,7 +18,7 @@ namespace ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel
             if (node.kind == ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind.Identifier)
             {
                 var concreteNode = (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.Identifier)node;
-                var result = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier((ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.NodeFlags)concreteNode.flags, this.ConvertFromNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator>(concreteNode.decorators), this.ConvertFromNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStModifier>(concreteNode.modifiers), (System.String)concreteNode.escapedText, (ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind)concreteNode.originalKeywordKind, (System.Nullable<System.Boolean>)concreteNode.isInJSDocNamespace);
+                var result = new ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StIdentifier((ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.NodeFlags)concreteNode.flags, this.ConvertFromNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StDecorator>(concreteNode.decorators), this.ConvertFromNodeCollection<ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.IStModifier>(concreteNode.modifiers), (System.String)concreteNode.escapedText, (System.Nullable<ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel.SyntaxKind>)concreteNode.originalKeywordKind, (System.Nullable<System.Boolean>)concreteNode.isInJSDocNamespace);
                 return result;
             }
 

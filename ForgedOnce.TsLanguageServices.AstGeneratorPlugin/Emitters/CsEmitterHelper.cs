@@ -145,10 +145,25 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
             {
                 var name = CreateModelPrimitiveTypeName(primitiveReference, settings, modelType);
 
-                return $"System.Nullable<{name}>";
+                return WrapTypeNameWithNullable(name);
             }
 
-            return GetCSharpModelReferenceName(member.Type, settings, modelType, useSimpleCollections);
+            var result = GetCSharpModelReferenceName(member.Type, settings, modelType, useSimpleCollections);
+
+            if (member.Type is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference
+                && itemReference.TransportModelItem is TransportModelEnum
+                && member.IsNullable
+                && !member.Type.IsCollection)
+            {
+                result = WrapTypeNameWithNullable(result);
+            }
+
+            return result;
+        }
+
+        public static string WrapTypeNameWithNullable(string name)
+        {
+            return $"System.Nullable<{name}>";
         }
 
         public static Dictionary<string, TransportModelEntityMember> GetMembers(TransportModelEntity entityModel, List<TransportModelTypeReference> genericArgumentsInScope = null, bool allMembers = false)
@@ -211,7 +226,14 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
         {
             if (member.Type is ITransportModelTypeReferenceTransportModelItem<TransportModelItem> itemReference && itemReference.TransportModelItem is TransportModelEnum)
             {
-                return CreateModelTypeName(itemReference, settings, ModelType.Transport, useSimpleCollections);
+                var result = CreateModelTypeName(itemReference, settings, ModelType.Transport, useSimpleCollections);
+                if (member.IsNullable
+                && !member.Type.IsCollection)
+                {
+                    result = WrapTypeNameWithNullable(result);
+                }
+
+                return result;
             }
             else
             {
