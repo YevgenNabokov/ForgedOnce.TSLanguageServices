@@ -1,14 +1,12 @@
 ﻿using ForgedOnce.Core.Interfaces;
 using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel;
-using ForgedOnce.TsLanguageServices.Model.TypeData;
-using ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree;
-using ForgedOnce.TsLanguageServices.ModelBuilder.ExtensionMethods;
+using ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder;
+using ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel;
 using ForgedOnce.TypeScript;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BaseModel = ForgedOnce.TsLanguageServices.Model.DefinitionTree;
 
 namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 {
@@ -23,71 +21,79 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
         public void Emit(Parameters parameters, ICodeStream output)
         {
-            var singleOutputFile = (CodeFileTsModel)output.CreateCodeFile($"TransportTypeMarker.ts");
+            var singleOutputFile = (CodeFileTs)output.CreateCodeFile($"TransportTypeMarker.ts");
 
             this.EmitTypeMarkerFunction(parameters, singleOutputFile);
         }
 
-        private void EmitTypeMarkerFunction(Parameters parameters, CodeFileTsModel output)
+        private void EmitTypeMarkerFunction(Parameters parameters, CodeFileTs output)
         {
             var name = "TypeMarker";
             var nodeParameterName = "node";
             var typescriptModuleName = "typescript";
+            var typescriptAliasName = "T";
             var typePropertyName = "$type";
 
-            var classDefinition = new ClassDefinition()
-                .WithModifiers(BaseModel.Modifier.Export)
-                .WithName(name)
-                .WithTypeKey(output.TypeRepository.RegisterTypeDefinition(name, string.Empty, output.Name, Array.Empty<TypeParameter>()));
+            var importStatement = new StImportDeclaration()
+                .WithModuleSpecifier(new StStringLiteral().WithText(typescriptModuleName))
+                .WithImportClause(c =>
+                    c
+                    .WithNamedBindings(new StNamespaceImport().WithName(new StIdentifier().WithEscapedText(typescriptAliasName)))
+                    );
 
-            var markerFunction = new MethodDeclaration()
-                .WithName("Mark")
-                .WithModifiers(BaseModel.Modifier.Public)
-                .WithReturnType(output.TypeRepository.RegisterTypeReferenceBuiltin("boolean"))
+            var classDefinition = new StClassDeclaration()
+                .WithModifier(new StExportKeywordToken())
+                .WithName(new StIdentifier().WithEscapedText(name));
+
+            var markerFunction = new StMethodDeclaration()
+                .WithName(new StIdentifier().WithEscapedText("Mark"))
+                .WithModifier(new StPublicKeywordToken())
+                .WithType(new StKeywordTypeNodeBooleanKeyword())
                 .WithBody(b => b)
                 .WithParameter(p =>
                     p
-                    .WithName(nodeParameterName)
-                    .WithTypeReference(output.TypeRepository.RegisterTypeReferenceBuiltin("any")));
-
-            var syntaxKindReferenceId = output.TypeRepository.RegisterTypeReferenceExternal("SyntaxKind", string.Empty, typescriptModuleName);
+                    .WithName(new StIdentifier().WithEscapedText(nodeParameterName))
+                    .WithType(new StKeywordTypeNodeAnyKeyword()));
 
             foreach (var entity in parameters.TransportModel.TransportModelEntities.Where(e => e.Value.TsDiscriminant is TransportModelEntityTsDiscriminantSyntaxKind))
             {
-                markerFunction.Body.WithStatement(
-                    new StatementIf()
+                markerFunction.body.WithStatement(
+                    new StIfStatement()
                     .WithExpression(
-                        new ExpressionBinary()
-                        .WithLeft(new ExpressionMemberAccess()
-                            .WithExpression(new ExpressionIdentifierReference().WithName(nodeParameterName))
-                            .WithName("kind"))
-                        .WithOperator("==")
-                        .WithRight(new ExpressionMemberAccess()
-                            .WithExpression(new ExpressionTypeReference()
-                                .WithTypeId(syntaxKindReferenceId))
-                            .WithName(((TransportModelEntityTsDiscriminantSyntaxKind)entity.Value.TsDiscriminant).SyntaxKindValueName)))
-                    .WithThen(new StatementBlock()
-                        .WithStatements(
-                        new StatementExpression()
+                        new StBinaryExpression()
+                        .WithLeft(new StPropertyAccessExpression()
+                            .WithExpression(new StIdentifier().WithEscapedText(nodeParameterName))
+                            .WithName(new StIdentifier().WithEscapedText("kind")))
+                        .WithOperatorToken(new StEqualsEqualsTokenToken())
+                        .WithRight(new StPropertyAccessExpression()
+                            .WithExpression(new StPropertyAccessExpression().WithExpression(new StIdentifier().WithEscapedText(typescriptAliasName)).WithName(new StIdentifier().WithEscapedText("SyntaxKind")))
+                            .WithName(new StIdentifier().WithEscapedText(((TransportModelEntityTsDiscriminantSyntaxKind)entity.Value.TsDiscriminant).SyntaxKindValueName))))
+                    .WithThenStatement(new StBlock()
+                        .WithStatement(
+                        new StExpressionStatement()
                             .WithExpression(
-                                new ExpressionAssignment()
+                                new StBinaryExpression()
                                 .WithLeft(
-                                    new ExpressionMemberAccess()
-                                    .WithExpression(new ExpressionIdentifierReference().WithName(nodeParameterName))
-                                    .WithName(typePropertyName))
-                                .WithRight(new ExpressionLiteral()
-                                    .WithText($"{CsEmitterHelper.GetCSharpModelFullyQualifiedName(entity.Value, this.settings, ModelType.Transport)}, {this.settings.CsTransportModelAssemblyName}"))),
-                        new StatementReturn()
-                        .WithExpression(new ExpressionLiteral().WithText("true").WithIsNumeric(true))
-                            )));
+                                    new StPropertyAccessExpression()
+                                    .WithExpression(new StIdentifier().WithEscapedText(nodeParameterName))
+                                    .WithName(new StIdentifier().WithEscapedText(typePropertyName)))
+                                .WithOperatorToken(new StEqualsTokenToken())
+                                .WithRight(new StStringLiteral()
+                                    .WithText($"{CsEmitterHelper.GetCSharpModelFullyQualifiedName(entity.Value, this.settings, ModelType.Transport)}, {this.settings.CsTransportModelAssemblyName}"))))
+                        .WithStatement(
+                        new StReturnStatement()
+                        .WithExpression(new StBooleanLiteralTrueKeyword()))));
             }
 
-            markerFunction.Body
-                .WithStatement(new StatementReturn()
-                        .WithExpression(new ExpressionLiteral().WithText("false").WithIsNumeric(true)));
+            markerFunction.body
+                .WithStatement(new StReturnStatement()
+                        .WithExpression(new StBooleanLiteralFalseKeyword()));
 
-            classDefinition.Methods.Add(markerFunction);
-            output.Model.Items.Add(classDefinition);
+            classDefinition.members.Add(markerFunction);
+
+            output.Model = new StRoot()
+                .WithStatement(importStatement)
+                .WithStatement(classDefinition);
         }
     }
 }

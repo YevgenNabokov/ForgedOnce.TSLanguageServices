@@ -1,14 +1,13 @@
 ﻿using ForgedOnce.Core.Interfaces;
 using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.ParametersModel;
-using ForgedOnce.TsLanguageServices.Model.TypeData;
-using ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree;
-using ForgedOnce.TsLanguageServices.ModelBuilder.ExtensionMethods;
+using ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder;
+using ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel;
+using ForgedOnce.TsLanguageServices.FullSyntaxTree.TransportModel;
 using ForgedOnce.TypeScript;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BaseModel = ForgedOnce.TsLanguageServices.Model.DefinitionTree;
 
 namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 {
@@ -19,6 +18,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
         private readonly string convertNodesMethodName = "ConvertNodes";
         private readonly string convertNodeMethodName = "ConvertNode";
 
+        private readonly string typescriptModuleName = "typescript";
+        private readonly string typescriptAliasName = "T";
+
         public TsTransportToAstTranslatorEmitter(Settings settings)
         {
             this.settings = settings;
@@ -26,47 +28,51 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
 
         public void Emit(Parameters parameters, ICodeStream output)
         {
-            var singleOutputFile = (CodeFileTsModel)output.CreateCodeFile($"TransportToAstConverter.ts");
+            var singleOutputFile = (CodeFileTs)output.CreateCodeFile($"TransportToAstConverter.ts");
 
             var name = "Converter";
 
-            var classDefinition = new ClassDefinition()
-                .WithModifiers(BaseModel.Modifier.Export)
-                .WithName(name)
-                .WithTypeKey(singleOutputFile.TypeRepository.RegisterTypeDefinition(name, string.Empty, output.Name, Array.Empty<TypeParameter>()));
+            var classDefinition = new StClassDeclaration()
+                .WithModifier(new StExportKeywordToken())
+                .WithName(new StIdentifier().WithEscapedText(name));
 
-            classDefinition.Methods.Add(this.EmitNodeConversionFunction(parameters, singleOutputFile));
-            classDefinition.Methods.Add(this.EmitNodeCollectionConversionFunction(singleOutputFile));
+            classDefinition.members.Add(this.EmitNodeConversionFunction(parameters, singleOutputFile));
+            classDefinition.members.Add(this.EmitNodeCollectionConversionFunction(singleOutputFile));
 
-            singleOutputFile.Model.Items.Add(classDefinition);
+            var importStatement = new StImportDeclaration()
+                .WithModuleSpecifier(new StStringLiteral().WithText(typescriptModuleName))
+                .WithImportClause(c =>
+                    c
+                    .WithNamedBindings(new StNamespaceImport().WithName(new StIdentifier().WithEscapedText(typescriptAliasName)))
+                    );
+
+            singleOutputFile.Model = new StRoot()
+                .WithStatement(importStatement)
+                .WithStatement(classDefinition);
         }
 
-        private MethodDeclaration EmitNodeConversionFunction(Parameters parameters, CodeFileTsModel output)
+        private StMethodDeclaration EmitNodeConversionFunction(Parameters parameters, CodeFileTs output)
         {
-            var typescriptModuleName = "typescript";
             var nodeParameterName = "node";
 
-            var syntaxKindReferenceId = output.TypeRepository.RegisterTypeReferenceExternal("SyntaxKind", string.Empty, typescriptModuleName);
-            var anyType = output.TypeRepository.RegisterTypeReferenceBuiltin("any");
-
-            var convertFunction = new MethodDeclaration()
-                .WithName(this.convertNodeMethodName)
-                .WithModifiers(BaseModel.Modifier.Public)
-                .WithReturnType(anyType)
+            var convertFunction = new StMethodDeclaration()
+                .WithName(new StIdentifier().WithEscapedText(this.convertNodeMethodName))
+                .WithModifier(new StPublicKeywordToken())
+                .WithType(new StKeywordTypeNodeAnyKeyword())
                 .WithBody(b => b)
                 .WithParameter(p =>
                     p
-                    .WithName(nodeParameterName)
-                    .WithTypeReference(anyType));
+                    .WithName(new StIdentifier().WithEscapedText(nodeParameterName))
+                    .WithType(new StKeywordTypeNodeAnyKeyword()));
 
-            convertFunction.Body.WithStatement(
-                new StatementIf()
+            convertFunction.body.WithStatement(
+                new StIfStatement()
                     .WithExpression(
-                        new ExpressionBinary()
-                        .WithLeft(new ExpressionIdentifierReference().WithName(nodeParameterName))
-                        .WithOperator("==")
-                        .WithRight(new ExpressionIdentifierReference().WithName("null")))
-                    .WithThen(new StatementBlock().WithStatement(new StatementReturn().WithExpression(new ExpressionIdentifierReference().WithName("undefined")))));
+                        new StBinaryExpression()
+                        .WithLeft(new StIdentifier().WithEscapedText(nodeParameterName))
+                        .WithOperatorToken(new StEqualsEqualsTokenToken())
+                        .WithRight(new StIdentifier().WithEscapedText("null")))
+                    .WithThenStatement(new StBlock().WithStatement(new StReturnStatement().WithExpression(new StIdentifier().WithEscapedText("undefined")))));
 
             foreach (var entity in parameters.TransportModel.TransportModelEntities.Where(e => e.Value.TsCreationFunctionBinding != null && !(e.Value.TsCreationFunctionBinding is TransportModelFunctionBindingSkipped)))
             {
@@ -75,9 +81,9 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                     throw new InvalidOperationException($"Entity {entity.Key} whould have {nameof(entity.Value.TsDiscriminant)} in order to have conversion from transport to AST.");
                 }
 
-                var block = new StatementBlock();
+                var block = new StBlock();
 
-                List<ExpressionNode> arguments = new List<ExpressionNode>();
+                List<IStExpression> arguments = new List<IStExpression>();
 
                 int index = -1;
                 foreach (var param in entity.Value.TsCreationFunctionBinding.Parameters)
@@ -94,107 +100,122 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters
                     {
                         var varName = $"paramVar{index}";
 
-                        block.Statements.Add(
-                            new StatementLocalDeclaration()
-                            .WithName(varName)
-                            .WithTypeReference(anyType)
+                        block.statements.Add(
+                            new StVariableStatement()
+                            .WithDeclarationList(l =>
+                            l.WithDeclaration(d => 
+                            d.WithName(new StIdentifier().WithEscapedText(varName))
+                            .WithType(new StKeywordTypeNodeAnyKeyword())
                             .WithInitializer(
-                                new ExpressionInvocation()
+                                new StCallExpression()
                                 .WithExpression(
-                                    new ExpressionMemberAccess()
-                                    .WithExpression(new ExpressionThis())
-                                    .WithName(member.Type.IsCollection ? this.convertNodesMethodName : convertNodeMethodName))
+                                    new StPropertyAccessExpression()
+                                    .WithExpression(new StThisExpression())
+                                    .WithName(new StIdentifier().WithEscapedText(member.Type.IsCollection ? this.convertNodesMethodName : convertNodeMethodName)))
                                 .WithArgument(
-                                    new ExpressionMemberAccess()
-                                    .WithExpression(new ExpressionIdentifierReference().WithName(nodeParameterName))
-                                    .WithName(member.Name))
-                                ));
+                                    new StPropertyAccessExpression()
+                                    .WithExpression(new StIdentifier().WithEscapedText(nodeParameterName))
+                                    .WithName(new StIdentifier().WithEscapedText(member.Name)))))));
 
-                        arguments.Add(new ExpressionIdentifierReference().WithName(varName));
+                        arguments.Add(new StIdentifier().WithEscapedText(varName));
                         continue;
                     }
 
-                    arguments.Add(new ExpressionMemberAccess()
-                                    .WithExpression(new ExpressionIdentifierReference().WithName(nodeParameterName))
-                                    .WithName(member.Name));
+                    arguments.Add(new StPropertyAccessExpression()
+                                    .WithExpression(new StIdentifier().WithEscapedText(nodeParameterName))
+                                    .WithName(new StIdentifier().WithEscapedText(member.Name)));
                 }
 
-                block.Statements.Add(
-                    new StatementReturn()
-                    .WithExpression(
-                        new ExpressionInvocation()
-                        .WithExpression(new ExpressionTypeReference().WithTypeId(output.TypeRepository.RegisterTypeReferenceExternal(entity.Value.TsCreationFunctionBinding.Name, string.Empty, typescriptModuleName)))
-                        .WithArguments(arguments.ToArray())
-                    ));
+                var call = new StCallExpression()
+                        .WithExpression(new StPropertyAccessExpression().WithExpression(new StIdentifier().WithEscapedText(typescriptAliasName)).WithName(new StIdentifier().WithEscapedText(entity.Value.TsCreationFunctionBinding.Name)));
 
-                convertFunction.Body.WithStatement(
-                    new StatementIf()
+                arguments.ForEach(a => call.arguments.Add(a));
+
+                block.statements.Add(
+                    new StReturnStatement()
+                    .WithExpression(call));
+
+                convertFunction.body.WithStatement(
+                    new StIfStatement()
                     .WithExpression(
-                        new ExpressionBinary()
-                        .WithLeft(new ExpressionMemberAccess()
-                            .WithExpression(new ExpressionIdentifierReference().WithName(nodeParameterName))
-                            .WithName("kind"))
-                        .WithOperator("==")
-                        .WithRight(new ExpressionMemberAccess()
-                            .WithExpression(new ExpressionTypeReference()
-                                .WithTypeId(syntaxKindReferenceId))
-                            .WithName(((TransportModelEntityTsDiscriminantSyntaxKind)entity.Value.TsDiscriminant).SyntaxKindValueName)))
-                    .WithThen(block));
+                        new StBinaryExpression()
+                        .WithLeft(new StPropertyAccessExpression()
+                            .WithExpression(new StIdentifier().WithEscapedText(nodeParameterName))
+                            .WithName(new StIdentifier().WithEscapedText("kind")))
+                        .WithOperatorToken(new StEqualsEqualsTokenToken())
+                        .WithRight(new StPropertyAccessExpression()
+                            .WithExpression(new StPropertyAccessExpression().WithExpression(new StIdentifier().WithEscapedText(typescriptAliasName)).WithName(new StIdentifier().WithEscapedText("SyntaxKind")))
+                            .WithName(new StIdentifier().WithEscapedText(((TransportModelEntityTsDiscriminantSyntaxKind)entity.Value.TsDiscriminant).SyntaxKindValueName))))
+                    .WithThenStatement(block));
             }
 
             return convertFunction;
         }
 
-        public MethodDeclaration EmitNodeCollectionConversionFunction(CodeFileTsModel output)
+        public StMethodDeclaration EmitNodeCollectionConversionFunction(CodeFileTs output)
         {
             var resultName = "result";
-            var anyType = output.TypeRepository.RegisterTypeReferenceBuiltin("any");
             var nodesParameterName = "nodes";
+            Func<StExpressionWithTypeArguments> arrayOfAnyType = () => { return new StExpressionWithTypeArguments().WithExpression(new StIdentifier().WithEscapedText("Array")).WithTypeArgument(new StKeywordTypeNodeAnyKeyword()); };
 
-            var arrayOfAny = output.TypeRepository.RegisterTypeReferenceBuiltin("Array", new[] { anyType });
-
-            var convertFunction = new MethodDeclaration()
-                .WithName(convertNodesMethodName)
-                .WithModifiers(BaseModel.Modifier.Public)
-                .WithReturnType(arrayOfAny)
+            var convertFunction = new StMethodDeclaration()
+                .WithName(new StIdentifier().WithEscapedText(convertNodesMethodName))
+                .WithModifier(new StPublicKeywordToken())
+                .WithType(arrayOfAnyType())
                 .WithParameter(p =>
                     p
-                    .WithName(nodesParameterName)
-                    .WithTypeReference(arrayOfAny))
+                    .WithName(new StIdentifier().WithEscapedText(nodesParameterName))
+                    .WithType(arrayOfAnyType()))
                 .WithBody(b =>
-                b.WithStatements(
-                    new StatementIf()
+                b.WithStatement(
+                    new StIfStatement()
                     .WithExpression(
-                        new ExpressionBinary()
-                        .WithLeft(new ExpressionIdentifierReference().WithName(nodesParameterName))
-                        .WithOperator("==")
-                        .WithRight(new ExpressionIdentifierReference().WithName("null")))
-                        .WithThen(new StatementBlock().WithStatement(new StatementReturn().WithExpression(new ExpressionIdentifierReference().WithName("undefined")))),
-                    new StatementLocalDeclaration()
-                        .WithName(resultName)
-                        .WithTypeReference(arrayOfAny)
-                        .WithInitializer(new ExpressionNew().WithSubjectType(arrayOfAny)),
-                    new StatementFor()
-                        .WithSimpleInitializer("i", new ExpressionLiteral().WithText("0").WithIsNumeric(true), output.TypeRepository.RegisterTypeReferenceBuiltin("number"))
-                        .WithSimpleCondition("i", "<", new ExpressionMemberAccess().WithExpression(new ExpressionIdentifierReference().WithName(nodesParameterName)).WithName("length"))
-                        .WithSimpleIncrement("i", "++")
+                        new StBinaryExpression()
+                        .WithLeft(new StIdentifier().WithEscapedText(nodesParameterName))
+                        .WithOperatorToken(new StEqualsEqualsTokenToken())
+                        .WithRight(new StIdentifier().WithEscapedText("null")))
+                    .WithThenStatement(new StBlock().WithStatement(new StReturnStatement().WithExpression(new StIdentifier().WithEscapedText("undefined")))))
+                .WithStatement(
+                    new StVariableStatement()
+                    .WithDeclarationList(
+                    vdl => vdl
+                        .WithDeclaration(vd =>
+                            vd
+                            .WithName(new StIdentifier().WithEscapedText(resultName))
+                            .WithType(arrayOfAnyType())
+                            .WithInitializer(new StNewExpression().WithExpression(new StIdentifier().WithEscapedText("Array")).WithTypeArgument(new StKeywordTypeNodeAnyKeyword())))))
+                .WithStatement(
+                    new StForStatement()
+                        .WithInitializer(
+                            new StVariableDeclarationList()
+                            .WithDeclaration(vd => 
+                                vd.WithName(new StIdentifier().WithEscapedText("i"))
+                                .WithType(new StKeywordTypeNodeNumberKeyword())
+                                .WithInitializer(new StNumericLiteral().WithText("0"))))
+                        .WithCondition(
+                            new StBinaryExpression()
+                            .WithLeft(new StIdentifier().WithEscapedText("i"))
+                            .WithOperatorToken(new StLessThanTokenToken())
+                            .WithRight(new StPropertyAccessExpression().WithExpression(new StIdentifier().WithEscapedText(nodesParameterName)).WithName(new StIdentifier().WithEscapedText("length"))))
+                        .WithIncrementor(new StPostfixUnaryExpression().WithOperand(new StIdentifier().WithEscapedText("i")).WithOperator(SyntaxKind.PlusPlusToken))
                         .WithStatement(
-                            new StatementExpression()
+                            new StExpressionStatement()
                             .WithExpression(
-                                new ExpressionInvocation()
-                                    .WithExpression(new ExpressionMemberAccess().WithExpression(new ExpressionIdentifierReference().WithName(resultName)).WithName("push"))
+                                new StCallExpression()
+                                    .WithExpression(new StPropertyAccessExpression().WithExpression(new StIdentifier().WithEscapedText(resultName)).WithName(new StIdentifier().WithEscapedText("push")))
                                     .WithArgument(
-                                        new ExpressionInvocation()
+                                        new StCallExpression()
                                             .WithExpression(
-                                                new ExpressionMemberAccess()
-                                                    .WithExpression(new ExpressionThis())
-                                                    .WithName(this.convertNodeMethodName))
+                                                new StPropertyAccessExpression()
+                                                    .WithExpression(new StThisExpression())
+                                                    .WithName(new StIdentifier().WithEscapedText(this.convertNodeMethodName)))
                                             .WithArgument(
-                                                new ExpressionElementAccess()
-                                                .WithExpression(new ExpressionIdentifierReference().WithName(nodesParameterName))
-                                                .WithIndex(new ExpressionIdentifierReference().WithName("i"))
-                                                )))),
-                    new StatementReturn().WithExpression(new ExpressionIdentifierReference().WithName(resultName))
+                                                new StElementAccessExpression()
+                                                .WithExpression(new StIdentifier().WithEscapedText(nodesParameterName))
+                                                .WithArgumentExpression(new StIdentifier().WithEscapedText("i"))
+                                                )))))
+                .WithStatement(
+                    new StReturnStatement().WithExpression(new StIdentifier().WithEscapedText(resultName))
                     ));
 
             return convertFunction;

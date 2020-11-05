@@ -79,7 +79,7 @@
               "config": {
                 "outputNamespace": "ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder",
                 "requiredClassBaseType": "ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNode",
-                "ignorePropertyNames": "Parent;kind",
+                "ignorePropertyNames": "Parent;kind;ChildNodes",
                 "unpluralizeVariables": "true"
               }
             }

@@ -10,8 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
-using ForgedOnce.TsLanguageServices.Model.TypeData;
-using ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree;
 using ForgedOnce.CSharp.Helpers.SemanticAnalysis;
 using ForgedOnce.TsLanguageServices.AstGeneratorPlugin.Emitters;
 
@@ -66,7 +64,7 @@ namespace ForgedOnce.TsLanguageServices.AstGeneratorPlugin
             this.csTransportToAstConverterOutputStream = codeStreamFactory.CreateCodeStream(Languages.CSharp, CsTransportToAstConverterOutputStreamName);
             result.Add(this.csTransportToAstConverterOutputStream);
 
-            this.tsModelsOutputStream = codeStreamFactory.CreateCodeStream(Languages.LimitedTypeScript, TsModelsOutStreamName);
+            this.tsModelsOutputStream = codeStreamFactory.CreateCodeStream(Languages.TypeScript, TsModelsOutStreamName);
             result.Add(this.tsModelsOutputStream);
             return result;
         }
