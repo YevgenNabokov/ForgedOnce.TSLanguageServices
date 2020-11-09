@@ -10,10 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
-using ForgedOnce.TsLanguageServices.Model.TypeData;
-using ForgedOnce.TsLanguageServices.ModelBuilder.DefinitionTree;
 using ForgedOnce.CSharp.Helpers.SemanticAnalysis;
-using ForgedOnce.TsLanguageServices.ModelBuilder.Interfaces;
+using ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel;
+using ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder;
 
 namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
 {
@@ -30,17 +29,17 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
                 { typeof(int), "number" },
                 { typeof(float), "number" },
             },
-            ComplexTypeMappings = new Dictionary<Type, Func<ILtsTypeRepository, string>>()
+            ComplexTypeMappings = new Dictionary<Type, Func<IStTypeNode>>()
             {
-                { typeof(int?), (r) => r.RegisterTypeReferenceUnion(new[] { r.RegisterTypeReferenceBuiltin("number"), r.RegisterTypeReferenceBuiltin("null") }) },
-                { typeof(float?), (r) => r.RegisterTypeReferenceUnion(new[] { r.RegisterTypeReferenceBuiltin("number"), r.RegisterTypeReferenceBuiltin("null") }) },
-                { typeof(bool?), (r) => r.RegisterTypeReferenceUnion(new[] { r.RegisterTypeReferenceBuiltin("boolean"), r.RegisterTypeReferenceBuiltin("null") }) },
+                { typeof(int?), () => new StUnionTypeNode().WithType(new StKeywordTypeNodeNumberKeyword()).WithType(new StKeywordTypeNodeNullKeyword()) },
+                { typeof(float?), () => new StUnionTypeNode().WithType(new StKeywordTypeNodeNumberKeyword()).WithType(new StKeywordTypeNodeNullKeyword()) },
+                { typeof(bool?), () => new StUnionTypeNode().WithType(new StKeywordTypeNodeBooleanKeyword()).WithType(new StKeywordTypeNodeNullKeyword()) },
             }
         };
 
         protected ICodeStream outputStream;
 
-        protected CodeFileTsModel singleOutputFile;
+        protected CodeFileTs singleOutputFile;
 
         public Plugin()
         {
@@ -72,7 +71,7 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
 
             if (this.Settings.NullableStrings)
             {
-                result.ComplexTypeMappings.Add(typeof(string), (r) => r.RegisterTypeReferenceUnion(new[] { r.RegisterTypeReferenceBuiltin("string"), r.RegisterTypeReferenceBuiltin("null") }));
+                result.ComplexTypeMappings.Add(typeof(string), () => new StUnionTypeNode().WithType(new StKeywordTypeNodeStringKeyword()).WithType(new StKeywordTypeNodeNullKeyword()));
             }
 
             return result;
@@ -81,7 +80,7 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
         protected override List<ICodeStream> CreateOutputs(ICodeStreamFactory codeStreamFactory)
         {
             List<ICodeStream> result = new List<ICodeStream>();
-            this.outputStream = codeStreamFactory.CreateCodeStream(Languages.LimitedTypeScript, OutStreamName);
+            this.outputStream = codeStreamFactory.CreateCodeStream(Languages.TypeScript, OutStreamName);
             result.Add(this.outputStream);
             return result;
         }
@@ -112,45 +111,55 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
                 .OfType<IFieldSymbol>()
                 .ToArray();
 
-            var interfaceDefinition = new InterfaceDefinition();
-            interfaceDefinition.Modifiers.Add(Model.DefinitionTree.Modifier.Export);
-            interfaceDefinition.Name = new Identifier() { Name = classSymbol.Name };
-            interfaceDefinition.TypeKey = this.OutputFile.TypeRepository.RegisterTypeDefinition(classSymbol.Name, string.Empty, this.OutputFile.Name, Array.Empty<TypeParameter>());
+            var heritage = new StHeritageClause()
+                .WithToken(FullSyntaxTree.TransportModel.SyntaxKind.ExtendsKeyword);
 
+            var interfaceDefinition = new StInterfaceDeclaration()
+                .WithModifier(new StExportKeywordToken())
+                .WithName(new StIdentifier().WithEscapedText(classSymbol.Name));
+
+            var addHeritage = false;
             if (classSymbol.BaseType != null && typeof(object).FullName != classSymbol.BaseType.GetFullMetadataName())
             {
-                var mappedKey = this.MapTypeReference(classSymbol.BaseType, typeMappings);
-                if (mappedKey != null)
+                var baseType = this.MapTypeReference(classSymbol.BaseType, typeMappings);
+                if (baseType != null && baseType is StExpressionWithTypeArguments expressionWithTypeArguments)
                 {
-                    interfaceDefinition.Implements.Add(new TypeReferenceId() { ReferenceKey = mappedKey });
+                    heritage.WithType(t => expressionWithTypeArguments);
+                    addHeritage = true;
                 }
+            }
+
+            if (addHeritage)
+            {
+                interfaceDefinition.WithHeritageClaus(b => heritage);
             }
 
             foreach (var member in members)
             {
-                interfaceDefinition.Fields.Add(new FieldDeclaration()
-                {
-                    Name = new Identifier() { Name = member.Name },
-                    TypeReference = new TypeReferenceId() { ReferenceKey = this.MapTypeReference(member.Type, typeMappings, true) }
-                });
+                interfaceDefinition.WithMember(
+                    new StPropertySignature()
+                    .WithName(new StIdentifier().WithEscapedText(member.Name))
+                    .WithType(this.MapTypeReference(member.Type, typeMappings, true)));
             }
 
-            this.OutputFile.Model.Items.Add(interfaceDefinition);
+            this.OutputFile.Model.statements.Add(interfaceDefinition);
         }
 
-        protected string MapTypeReference(ITypeSymbol typeSymbol, TypeMappings typeMappings, bool forField = false)
+        protected IStTypeNode MapTypeReference(ITypeSymbol typeSymbol, TypeMappings typeMappings, bool forField = false)
         {
             var arraySymbol = typeSymbol as IArrayTypeSymbol;
             if (arraySymbol != null)
             {
-                return this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin("Array", new string[] { this.MapTypeReference(arraySymbol.ElementType, typeMappings) });
+                return new StExpressionWithTypeArguments()
+                    .WithExpression(new StIdentifier().WithEscapedText("Array"))
+                    .WithTypeArgument(this.MapTypeReference(arraySymbol.ElementType, typeMappings));
             }
 
             foreach (var mapping in typeMappings.PrimitiveTypeMappings)
             {
                 if (this.TypeMatches(typeSymbol, mapping.Key))
                 {
-                    return this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin(mapping.Value);
+                    return new StExpressionWithTypeArguments().WithExpression(new StIdentifier().WithEscapedText(mapping.Value));
                 }
             }
 
@@ -158,7 +167,7 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
             {
                 if (this.TypeMatches(typeSymbol, mapping.Key))
                 {
-                    return mapping.Value(this.OutputFile.TypeRepository);
+                    return mapping.Value();
                 }
             }
 
@@ -169,38 +178,46 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
                 && i.TypeArguments[0].GetFullMetadataName() == typeof(string).FullName);
             if (dictionaryInterface != null)
             {
-                return this.OutputFile.TypeRepository.RegisterTypeReferenceInlineIndexer("key", this.MapTypeReference(dictionaryInterface.TypeArguments[1], typeMappings));
+                return
+                    new StTypeLiteralNode()
+                    .WithMember(
+                        new StIndexSignatureDeclaration()
+                        .WithParameter(p => p.WithName(new StIdentifier().WithEscapedText("key")).WithType(new StKeywordTypeNodeStringKeyword()))
+                        .WithType(this.MapTypeReference(dictionaryInterface.TypeArguments[1], typeMappings)));
             }
 
             var collectionInterface = typeSymbol.Interfaces.FirstOrDefault(i => i.IsGenericType && i.ConstructedFrom.GetFullMetadataName() == typeof(IEnumerable<>).FullName);
             if (collectionInterface != null)
             {
-                return this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin("Array", new string[] { this.MapTypeReference(collectionInterface.TypeArguments[0], typeMappings) });
+                return new StExpressionWithTypeArguments()
+                    .WithExpression(new StIdentifier().WithEscapedText("Array"))
+                    .WithTypeArgument(this.MapTypeReference(collectionInterface.TypeArguments[0], typeMappings));
             }
 
             if (this.HasBaseModelNamespace(typeSymbol))
             {
-                var definedId = this.OutputFile.TypeRepository.RegisterTypeDefinition(typeSymbol.Name, string.Empty, this.OutputFile.Name, Array.Empty<TypeParameter>());
-                var definedRef = this.OutputFile.TypeRepository.RegisterTypeReferenceDefined(definedId);
                 if ((this.Settings.NullableNodes || this.Settings.OptionalNodes) && forField)
                 {
-                    List<string> typeKeys = new List<string>();
-                    typeKeys.Add(definedRef);
+                    var union = new StUnionTypeNode()
+                        .WithType(new StExpressionWithTypeArguments()
+                    .WithExpression(new StIdentifier().WithEscapedText(typeSymbol.Name)));
+
                     if (this.Settings.NullableNodes)
                     {
-                        typeKeys.Add(this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin("null"));
+                        union.types.Add(new StKeywordTypeNodeNullKeyword());
                     }
 
                     if (this.Settings.OptionalNodes)
                     {
-                        typeKeys.Add(this.OutputFile.TypeRepository.RegisterTypeReferenceBuiltin("undefined"));
+                        union.types.Add(new StKeywordTypeNodeUndefinedKeyword());
                     }
 
-                    return this.OutputFile.TypeRepository.RegisterTypeReferenceUnion(typeKeys);
+                    return union;
                 }
                 else
                 {
-                    return definedRef;
+                    return new StExpressionWithTypeArguments()
+                    .WithExpression(new StIdentifier().WithEscapedText(typeSymbol.Name));
                 }
             }
 
@@ -255,9 +272,9 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
         {
             var declaredSymbol = input.SemanticModel.GetDeclaredSymbol(enumSyntax);
 
-            var enumDefinition = new EnumDefinition();
-            enumDefinition.Modifiers.Add(Model.DefinitionTree.Modifier.Export);
-            enumDefinition.Name = new Identifier() { Name = declaredSymbol.Name };
+            var enumDefinition = new StEnumDeclaration()
+                .WithModifier(new StExportKeywordToken())
+                .WithName(new StIdentifier().WithEscapedText(declaredSymbol.Name));
 
             var members = declaredSymbol.GetMembers()
                 .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.IsStatic && m.Kind == SymbolKind.Field)
@@ -267,12 +284,12 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
 
             foreach (var member in members)
             {
-                enumDefinition.Members.Add(new EnumMember() { Name = new Identifier() { Name = member.Name } });
+                enumDefinition.WithMember(m =>
+                    m
+                    .WithName(new StIdentifier().WithEscapedText(member.Name)));
             }
 
-            enumDefinition.TypeKey = this.OutputFile.TypeRepository.RegisterTypeDefinition(declaredSymbol.Name, string.Empty, this.OutputFile.Name, Array.Empty<TypeParameter>());
-
-            this.OutputFile.Model.Items.Add(enumDefinition);
+            this.OutputFile.Model.statements.Add(enumDefinition);
         }
 
         protected bool HasBaseModelNamespace(ITypeSymbol symbol)
@@ -280,14 +297,15 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
             return string.IsNullOrEmpty(this.Settings.ModelBaseNamespace) || symbol.ContainingNamespace.ToDisplayString().StartsWith(this.Settings.ModelBaseNamespace);
         }
 
-        protected CodeFileTsModel OutputFile
+        protected CodeFileTs OutputFile
         {
             get
             {
                 if (this.singleOutputFile == null)
                 {
-                    this.singleOutputFile = (CodeFileTsModel)this.outputStream.CreateCodeFile(
+                    this.singleOutputFile = (CodeFileTs)this.outputStream.CreateCodeFile(
                         string.IsNullOrEmpty(this.Settings.OutputFileName) ? $"IntermediateModelGenerated.ts" : this.Settings.OutputFileName);
+                    this.singleOutputFile.Model = new StRoot();
                 }
 
                 return this.singleOutputFile;

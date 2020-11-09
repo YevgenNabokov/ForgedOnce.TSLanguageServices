@@ -55,17 +55,7 @@
     </TypeScriptCompile>
     <TypeScriptCompile Include="FullAstGenerated\TransportToAstConverter.ts" />
     <TypeScriptCompile Include="FullAstGenerated\TransportTypeMarker.ts" />
-    <TypeScriptCompile Include="generationLauncher.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="IntermediateModel.ts" />
-    <TypeScriptCompile Include="generationManager.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
     <TypeScriptCompile Include="TestFile.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="tsCodeGenerator.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
   </ItemGroup>

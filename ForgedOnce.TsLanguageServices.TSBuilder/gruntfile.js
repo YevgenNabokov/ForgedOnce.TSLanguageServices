@@ -14,11 +14,6 @@
                     // includes files within path
                     {
                         expand: true, src: [
-                            'generationLauncher.js',
-                            'generationManager.js',
-                            'IntermediateModel.js',
-                            'tsCodeGenerator.js',
-
                             'FullAstGenerated/TransportToAstConverter.js',
                             'FullAstGenerated/TransportTypeMarker.js',
                             'astTransportUtils.js',

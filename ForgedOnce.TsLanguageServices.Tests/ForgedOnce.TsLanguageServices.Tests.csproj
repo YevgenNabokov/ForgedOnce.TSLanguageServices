@@ -29,8 +29,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ForgedOnce.TsLanguageServices.FullSyntaxTree\ForgedOnce.TsLanguageServices.FullSyntaxTree.csproj" />
     <ProjectReference Include="..\ForgedOnce.TsLanguageServices.Host\ForgedOnce.TsLanguageServices.Host.csproj" />
-    <ProjectReference Include="..\ForgedOnce.TsLanguageServices.ModelBuilder\ForgedOnce.TsLanguageServices.ModelBuilder.csproj" />
-    <ProjectReference Include="..\ForgedOnce.TsLanguageServices.Model\ForgedOnce.TsLanguageServices.Model.csproj" />
   </ItemGroup>
 
   <ItemGroup>
