@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RuntimeIdentifiers>win;osx;linux</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageOutputPath>$(SolutionDir)/NugetOutputs</PackageOutputPath>
+    <ApplicationIcon />
+    <StartupObject />
+    <Version>0.1.0</Version>
+    <PackageId>ForgedOnce.TsLanguageServices.Host</PackageId>
+    <Authors>Yevgen Nabokov</Authors>
+    <Product>ForgedOnce.TsLanguageServices</Product>
+    <Description>.NET library providing proxy to TypeScript host</Description>
+    <Copyright>Yevgen Nabokov</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/yevgennabokov/forgedonce.tslanguageservices</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="$(SolutionDir)\GeneratorAppOutput\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInPackage>true</IncludeInPackage>
+      <CopyToOutput>true</CopyToOutput>
+      <Link>CodeGeneratorJs\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Pack>true</Pack>
+      <PackagePath>lib\$(TargetFramework)\CodeGeneratorJs\</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\ThirdPartyNotice.txt" Link="ThirdPartyNotice.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ForgedOnce.TsLanguageServices.FullSyntaxTree\ForgedOnce.TsLanguageServices.FullSyntaxTree.csproj" />
+  </ItemGroup>
+  
+</Project>

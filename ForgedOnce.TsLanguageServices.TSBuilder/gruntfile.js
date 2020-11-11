@@ -14,10 +14,12 @@
                     // includes files within path
                     {
                         expand: true, src: [
-                            'generationLauncher.js',
-                            'generationManager.js',
-                            'IntermediateModel.js',
-                            'tsCodeGenerator.js'], dest: '<%= destinationFolder %>/'
+                            'FullAstGenerated/TransportToAstConverter.js',
+                            'FullAstGenerated/TransportTypeMarker.js',
+                            'astTransportUtils.js',
+                            'foTsHost.js',
+                            'foTsHostLauncher.js'
+                            ], dest: '<%= destinationFolder %>/'
                     },
 
                     {

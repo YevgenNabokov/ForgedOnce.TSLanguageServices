@@ -1,2 +1,4 @@
 ﻿dotnet tool restore
-dotnet forgedonce-cg-msbuild ..\ForgedOnce.TsLanguageServices.SyntaxTrees.sln CGPipeline.json
+dotnet forgedonce-cg-msbuild ..\ForgedOnce.TsLanguageServices.SyntaxTrees.sln CGPipeline_AstDescriptionModel.json
+
+dotnet forgedonce-cg-msbuild ..\ForgedOnce.TsLanguageServices.FullAst.sln CGPipeline_FullAst.json

@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageOutputPath>$(SolutionDir)/NugetOutputs</PackageOutputPath>
+    <ApplicationIcon />
+    <StartupObject />
+    <Version>0.1.0</Version>
+    <PackageId>ForgedOnce.TsLanguageServices.FullSyntaxTree</PackageId>
+    <Authors>Yevgen Nabokov</Authors>
+    <Product>ForgedOnce.TsLanguageServices</Product>
+    <Description>.NET library with TypeScript AST models</Description>
+    <Copyright>Yevgen Nabokov</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/yevgennabokov/forgedonce.tslanguageservices</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="AstBuilder\Generated\" />
+    <Folder Include="AstModel\Generated\" />
+    <Folder Include="TransportModel\Generated\" />
+    <Folder Include="TransportToAstConverter\Generated\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+</Project>

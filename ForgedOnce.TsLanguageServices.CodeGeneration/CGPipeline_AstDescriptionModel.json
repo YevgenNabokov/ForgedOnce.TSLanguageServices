@@ -1,0 +1,49 @@
+{
+  "codeFileHandlers": [
+    { "type": "ForgedOnce.CSharp.CSharpCodeFileHandlerFactory, ForgedOnce.CSharp" },
+    { "type": "ForgedOnce.TypeScript.TsCodeFileHandlerFactory, ForgedOnce.TypeScript" }
+  ],
+  "inputs": {
+    "AstDescriptionModel": "CSharp:Project:ForgedOnce.TsLanguageServices.AstDescription/Model/*.cs"
+  },
+  "batches": [
+    {
+      "name": "Batch01",
+      "stages": [
+        {
+          "name": "AstDescriptionInterfaces",
+          "plugin": {
+            "pluginFactory": {
+              "type": "ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin.PluginFactory, ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin",
+              "config": {
+                "modelBaseNamespace": "ForgedOnce.TsLanguageServices.AstDescription.Model",
+                "outputFileName": "AstDescriptionModel.ts",
+                "nullableStrings": true,
+                "nullableNodes": false,
+                "optionalNodes": true
+              }
+            }
+          },
+          "input": {
+            "settings": {
+              "AstDescriptionModel": "*.cs"
+            }
+          },
+          "output": {
+            "settings": {
+              "PassThrough": "*"
+            }
+          },
+          "destinationMapping": {
+            "PassThrough": {
+              "name": "fileSystem",
+              "settings": {
+                "path": "..\\ForgedOnce.TsLanguageServices.TsInputProcessing"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

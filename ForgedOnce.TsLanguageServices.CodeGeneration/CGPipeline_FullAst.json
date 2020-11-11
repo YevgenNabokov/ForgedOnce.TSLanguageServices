@@ -1,0 +1,107 @@
+{
+  "codeFileHandlers": [
+    { "type": "ForgedOnce.CSharp.CSharpCodeFileHandlerFactory, ForgedOnce.CSharp" },
+    { "type": "ForgedOnce.TypeScript.TsCodeFileHandlerFactory, ForgedOnce.TypeScript" }
+  ],
+  "inputs": {
+    "EmptyInput": "CSharp:CreateNew:ForgedOnce.TsLanguageServices.Model/DefinitionTree/*.cs"
+  },
+  "batches": [
+    {
+      "name": "Batch01",
+      "stages": [
+        {
+          "name": "AstModels",
+          "plugin": {
+            "pluginFactory": {
+              "type": "ForgedOnce.TsLanguageServices.AstGeneratorPlugin.PluginFactory, ForgedOnce.TsLanguageServices.AstGeneratorPlugin",
+              "config": {
+                "astDescriptionJsonFilePath": "..\\TsAstDescription\\TsAstDescription.json",
+                "astNodeBaseTypeQualified": "ts.Node",
+                "csTransportModelAssemblyName": "ForgedOnce.TsLanguageServices.FullSyntaxTree"
+              }
+            }
+          },
+          "input": {
+            "settings": {
+              "EmptyInput": "*.cs"
+            }
+          },
+          "output": {
+            "settings": {
+              "CsTransportModels": "*",
+              "CsModelBuilders": "*",
+              "CsAstModels": "*",
+              "CsTransportToAstConverter": "*",
+              "TsModels": "*"
+            }
+          },
+          "destinationMapping": {
+            "TsModels": {
+              "name": "fileSystem",
+              "settings": {
+                "path": "..\\ForgedOnce.TsLanguageServices.TSBuilder\\FullAstGenerated"
+              }
+            },
+            "CsTransportModels": {
+              "settings": {
+                "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/TransportModel/Generated"
+              }
+            },
+            "CsModelBuilders": {
+              "settings": {
+                "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/AstBuilder/Generated"
+              }
+            },
+            "CsTransportToAstConverter": {
+              "settings": {
+                "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/TransportToAstConverter/Generated"
+              }
+            },
+            "CsAstModels": {
+              "settings": {
+                "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/AstModel/Generated"
+              }
+            }
+          },
+          "cleanDestinations": true
+        }
+      ]
+    },
+    {
+      "name": "Batch02",
+      "stages": [
+        {
+          "name": "BuilderExtensionMethods",
+          "plugin": {
+            "pluginFactory": {
+              "type": "ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin.PluginFactory, ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin",
+              "config": {
+                "outputNamespace": "ForgedOnce.TsLanguageServices.FullSyntaxTree.AstBuilder",
+                "requiredClassBaseType": "ForgedOnce.TsLanguageServices.FullSyntaxTree.AstModel.StNode",
+                "ignorePropertyNames": "Parent;kind;ChildNodes",
+                "unpluralizeVariables": "true"
+              }
+            }
+          },
+          "input": {
+            "settings": {
+              "CsAstModels": "*.cs"
+            }
+          },
+          "output": {
+            "settings": {
+              "PassThrough": "*"
+            }
+          },
+          "destinationMapping": {
+            "PassThrough": {
+              "settings": { "path": "ForgedOnce.TsLanguageServices.FullSyntaxTree/AstBuilder/Generated" }
+            }
+          },
+          "cleanDestinations": true
+        }
+      ]
+    }
+  ]
+}

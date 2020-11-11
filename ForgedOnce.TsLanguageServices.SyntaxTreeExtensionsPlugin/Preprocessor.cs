@@ -61,6 +61,11 @@ namespace ForgedOnce.TsLanguageServices.SyntaxTreeExtensionsPlugin
 
                 var extensionClass = new ExtensionClass();
                 var declaredSymbol = input.SemanticModel.GetDeclaredSymbol(classDeclaration);
+                if (declaredSymbol.IsAbstract)
+                {
+                    continue;
+                }
+
                 extensionClass.ExtensionClassName = $"{declaredSymbol.Name}Extensions";
                 extensionClass.RelatedClassSymbol = declaredSymbol;
                 extensionClass.RelatedClassDeclaration = classDeclaration;

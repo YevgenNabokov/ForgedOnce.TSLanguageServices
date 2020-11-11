@@ -12,10 +12,22 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
 
         public const string OutputFileNameKey = "outputFileName";
 
+        public const string NullableStringsKey = "nullableStrings";
+
+        public const string NullableNodesKey = "nullableNodes";
+
+        public const string OptionalNodesKey = "optionalNodes";
+
         public string ModelBaseNamespace;
 
         public bool SkipUnmappedTypeReferences;
 
         public string OutputFileName;
+
+        public bool NullableStrings;
+
+        public bool NullableNodes;
+
+        public bool OptionalNodes;
     }
 }

@@ -1,0 +1,19 @@
+{
+  "name": "forged-once.ts-language-services.ts-input-processing",
+  "version": "0.0.0",
+  "description": "ForgedOnce.TsLanguageServices.TsInputProcessing",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "tsc --build --clean"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.14"
+  },
+  "dependencies": {
+    "typescript": "^3.9.7"
+  }
+}

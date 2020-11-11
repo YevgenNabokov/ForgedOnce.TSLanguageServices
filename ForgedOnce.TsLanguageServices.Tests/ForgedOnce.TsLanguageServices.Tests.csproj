@@ -5,6 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="TestData\Test.json" />
+    <None Remove="TestData\Test.tsx" />
+    <None Remove="TestData\WriteFileExpectedOutput.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\Test.json" />
+    <EmbeddedResource Include="TestData\Test.tsx" />
+    <EmbeddedResource Include="TestData\WriteFileExpectedOutput.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="NUnit" Version="3.12.0" />
@@ -15,8 +27,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ForgedOnce.TsLanguageServices.ModelBuilder\ForgedOnce.TsLanguageServices.ModelBuilder.csproj" />
-    <ProjectReference Include="..\ForgedOnce.TsLanguageServices.Model\ForgedOnce.TsLanguageServices.Model.csproj" />
+    <ProjectReference Include="..\ForgedOnce.TsLanguageServices.FullSyntaxTree\ForgedOnce.TsLanguageServices.FullSyntaxTree.csproj" />
+    <ProjectReference Include="..\ForgedOnce.TsLanguageServices.Host\ForgedOnce.TsLanguageServices.Host.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestData\Test.ts">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -5,7 +5,7 @@
     <Name>ForgedOnce.TsLanguageServices.TsBuilder</Name>
     <RootNamespace>ForgedOnce.TsLanguageServices.TsBuilder</RootNamespace>
     <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
-    <ScriptArguments>SomeTestModel.json Output/TranslatedFiles Output/ResultMetadata.json</ScriptArguments>
+    <ScriptArguments>30052 $(SolutionDir)TsPayload</ScriptArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -14,7 +14,7 @@
     <ProjectGuid>11926c92-3a3e-43de-8b4d-1ea9bc09c528</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>generationLauncher.ts</StartupFile>
+    <StartupFile>foTsHostLauncher.ts</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -24,7 +24,7 @@
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
-    <TypeScriptToolsVersion>3.7</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>3.9</TypeScriptToolsVersion>
     <EnableTypeScript>true</EnableTypeScript>
     <StartWebBrowser>False</StartWebBrowser>
   </PropertyGroup>
@@ -38,14 +38,24 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="tsconfig.json" />
-    <TypeScriptCompile Include="generationLauncher.ts">
+    <TypeScriptCompile Include="astDeserializationTest.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="IntermediateModel.ts" />
-    <TypeScriptCompile Include="generationManager.ts">
+    <TypeScriptCompile Include="astSerializationTest.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="tsCodeGenerator.ts">
+    <TypeScriptCompile Include="astTransportUtils.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="foTsHost.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="foTsHostLauncher.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="FullAstGenerated\TransportToAstConverter.ts" />
+    <TypeScriptCompile Include="FullAstGenerated\TransportTypeMarker.ts" />
+    <TypeScriptCompile Include="TestFile.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
   </ItemGroup>
@@ -53,6 +63,9 @@
     <Compile Include="gruntfile.js">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FullAstGenerated\" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
