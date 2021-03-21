@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TypeMarker = void 0;
 const T = require("typescript");
 class TypeMarker {
     Mark(node) {

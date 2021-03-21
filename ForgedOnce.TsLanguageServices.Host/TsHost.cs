@@ -32,15 +32,17 @@ namespace ForgedOnce.TsLanguageServices.Host
         private readonly int minPortNumber;
         private readonly int maxPortNumber;
         private readonly int hostStartTimeoutMs;
+        private readonly ITsHostLogger logger;
         private bool disposed = false;
         private Process hostProcess;
         private HttpClient hostClient;
 
-        public TsHost(int minPortNumber, int maxPortNumber, int hostStartTimeoutMs)
+        public TsHost(int minPortNumber, int maxPortNumber, int hostStartTimeoutMs, ITsHostLogger logger = null)
         {
             this.minPortNumber = minPortNumber;
             this.maxPortNumber = maxPortNumber;
             this.hostStartTimeoutMs = hostStartTimeoutMs;
+            this.logger = logger;
         }
 
         public void Dispose() => Dispose(true);
@@ -223,6 +225,8 @@ namespace ForgedOnce.TsLanguageServices.Host
             var payload = JsonConvert.SerializeObject(command);
             var data = new StringContent(payload, Encoding.UTF8, "application/json");
 
+            this.LogCommand(payload);
+
             var response = this.hostClient.PostAsync(string.Empty, data).Result;
             string result = response.Content.ReadAsStringAsync().Result;
 
@@ -276,6 +280,18 @@ namespace ForgedOnce.TsLanguageServices.Host
             }
 
             throw new InvalidOperationException("Could not start TS language host, no free port available in configured range.");
+        }
+
+        private void LogCommand(string payload)
+        {
+            if (this.logger != null)
+            {
+                this.logger.WriteLog(
+                    LogMessageSeverity.Debug,
+$@"------------------------------------- TS Host Command Payload Begin -----------------------------------------------
+{payload}
+------------------------------------- TS Host Command Payload End -------------------------------------------------");
+            }
         }
     }
 }
