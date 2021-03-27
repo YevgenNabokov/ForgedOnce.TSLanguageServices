@@ -10,6 +10,7 @@ const tc = require("./FullAstGenerated/TransportToAstConverter");
 class Host {
     constructor() {
         this.currentServer = null;
+        this.syntheticNewLinePrefix = 'THIS IS UGLY HACK TO ADD NEW LINE WHERE NEEDED';
     }
     start(port) {
         if (this.currentServer) {
@@ -139,12 +140,88 @@ class Host {
             var statements = converter.ConvertNodes(data);
             var tsSourceFile = ts.createSourceFile('DummyFileName.ts', '', ts.ScriptTarget.Latest, undefined, printCommand.ScriptKind);
             tsSourceFile.statements = ts.createNodeArray(statements);
+            tsSourceFile = this.formatSyntaxTree(tsSourceFile);
             var printer = ts.createPrinter({ newLine: ts.NewLineKind.CarriageReturnLineFeed });
             var outputPayload = printer.printFile(tsSourceFile);
+            let formattingChanges = this.getTsFileFormattingChanges(tsSourceFile, outputPayload);
+            outputPayload = this.formatCode(outputPayload, formattingChanges);
+            var key = new RegExp(`\\s\\/\\/${this.syntheticNewLinePrefix}`, 'g');
+            outputPayload = outputPayload.replace(key, '');
             let result = new PrintCommandResult();
             result.Payload = outputPayload;
             return result;
         }
+    }
+    formatSyntaxTree(sourceFile) {
+        const transformer = (ctx) => {
+            return (src) => {
+                const visit = (node) => {
+                    if (ts.isSourceFile(node))
+                        return ts.visitEachChild(node, visit, ctx);
+                    let resultNode = node;
+                    if (ts.isExpressionStatement(node)) {
+                        resultNode = ts.getMutableClone(node);
+                        resultNode = ts.addSyntheticTrailingComment(resultNode, ts.SyntaxKind.SingleLineCommentTrivia, this.syntheticNewLinePrefix, true);
+                    }
+                    return ts.visitEachChild(resultNode, visit, ctx);
+                };
+                return visit(src);
+            };
+        };
+        const { transformed } = ts.transform(sourceFile, [transformer], ts.getDefaultCompilerOptions());
+        return transformed[0];
+    }
+    formatCode(orig, changes) {
+        var result = orig;
+        for (var i = changes.length - 1; i >= 0; i--) {
+            var change = changes[i];
+            var head = result.slice(0, change.span.start);
+            var tail = result.slice(change.span.start + change.span.length);
+            result = head + change.newText + tail;
+        }
+        return result;
+    }
+    getTsFileFormattingChanges(file, fileText) {
+        let formatOptions = {
+            BaseIndentSize: 0,
+            IndentSize: 4,
+            TabSize: 4,
+            NewLineCharacter: ts.sys.newLine,
+            ConvertTabsToSpaces: true,
+            IndentStyle: ts.IndentStyle.Smart,
+            InsertSpaceAfterCommaDelimiter: true,
+            InsertSpaceAfterSemicolonInForStatements: true,
+            InsertSpaceBeforeAndAfterBinaryOperators: true,
+            InsertSpaceAfterConstructor: true,
+            InsertSpaceAfterKeywordsInControlFlowStatements: false,
+            InsertSpaceAfterFunctionKeywordForAnonymousFunctions: true,
+            InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: false,
+            InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets: false,
+            InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
+            InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: true,
+            InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces: true,
+            InsertSpaceAfterTypeAssertion: true,
+            InsertSpaceBeforeFunctionParenthesis: false,
+            PlaceOpenBraceOnNewLineForFunctions: false,
+            PlaceOpenBraceOnNewLineForControlBlocks: true,
+            insertSpaceBeforeTypeAnnotation: false
+        };
+        let langSvc = this.inMemoryLanguageService(file, fileText);
+        return langSvc.getFormattingEditsForDocument(file.fileName, formatOptions);
+    }
+    inMemoryLanguageService(file, fileText) {
+        var host = {
+            getScriptFileNames: () => [file.fileName],
+            getScriptVersion: filename => '0',
+            getScriptSnapshot: filename => ts.ScriptSnapshot.fromString(fileText),
+            log: message => undefined,
+            trace: message => undefined,
+            error: message => undefined,
+            getCurrentDirectory: () => '',
+            getDefaultLibFileName: () => "lib.d.ts",
+            getCompilationSettings: () => { return {}; },
+        };
+        return ts.createLanguageService(host, ts.createDocumentRegistry());
     }
 }
 exports.Host = Host;
