@@ -27,13 +27,17 @@ namespace ForgedOnce.TsLanguageServices.ModelTsInterfacesPlugin
                 { typeof(string), "string" },
                 { typeof(bool), "boolean" },
                 { typeof(int), "number" },
+                { typeof(decimal), "number" },
                 { typeof(float), "number" },
+                { typeof(Guid), "string" },
+                { typeof(DateTime), "Date" },
             },
             ComplexTypeMappings = new Dictionary<Type, Func<IStTypeNode>>()
             {
                 { typeof(int?), () => new StUnionTypeNode().WithType(new StKeywordTypeNodeNumberKeyword()).WithType(new StKeywordTypeNodeNullKeyword()) },
                 { typeof(float?), () => new StUnionTypeNode().WithType(new StKeywordTypeNodeNumberKeyword()).WithType(new StKeywordTypeNodeNullKeyword()) },
                 { typeof(bool?), () => new StUnionTypeNode().WithType(new StKeywordTypeNodeBooleanKeyword()).WithType(new StKeywordTypeNodeNullKeyword()) },
+                { typeof(DateTime?), () => new StUnionTypeNode().WithType(new StExpressionWithTypeArguments().WithExpression(new StIdentifier().WithEscapedText("Date"))).WithType(new StKeywordTypeNodeNullKeyword()) },
             }
         };
 
