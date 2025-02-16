@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
@@ -11,14 +11,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ForgedOnce.Launcher.MSBuild.Default" Version="1.2.0">
+    <PackageReference Include="ForgedOnce.Launcher.MSBuild.Default" Version="1.4.4">
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <NodeRedist Include="$(PkgForgedOnce_Launcher_MSBuild_Default)\lib\netcoreapp3.1\NodeRedist\**\*.*" />
-    <CodeGeneratorJs Include="$(PkgForgedOnce_Launcher_MSBuild_Default)\lib\netcoreapp3.1\CodeGeneratorJs\**\*.*" />
+    <NodeRedist Include="$(PkgForgedOnce_Launcher_MSBuild_Default)\lib\net8.0\NodeRedist\**\*.*" />
+    <CodeGeneratorJs Include="$(PkgForgedOnce_Launcher_MSBuild_Default)\lib\net8.0\CodeGeneratorJs\**\*.*" />
   </ItemGroup>
 
   <Target Name="CopyRedist" AfterTargets="Build">

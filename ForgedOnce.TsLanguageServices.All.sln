@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ForgedOnce.TsLanguageServices.TsBuilder", "ForgedOnce.TsLanguageServices.TSBuilder\ForgedOnce.TsLanguageServices.TsBuilder.njsproj", "{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.Tests", "ForgedOnce.TsLanguageServices.Tests\ForgedOnce.TsLanguageServices.Tests.csproj", "{4B132802-4727-4BAA-BCF9-841A13203A5C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.FullSyntaxTree", "ForgedOnce.TsLanguageServices.FullSyntaxTree\ForgedOnce.TsLanguageServices.FullSyntaxTree.csproj", "{A7A522E9-AB99-4E16-A07D-29ED678A8FD4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgedOnce.TsLanguageServices.Host", "ForgedOnce.TsLanguageServices.Host\ForgedOnce.TsLanguageServices.Host.csproj", "{848CC480-53FC-489F-9FEA-0E108A454844}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ForgedOnce.TsLanguageServices.TsBuilder", "ForgedOnce.TsLanguageServices.TSBuilder\ForgedOnce.TsLanguageServices.TsBuilder.esproj", "{547E78F9-3E84-40ED-9A3E-A0A21A8CD1AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11926C92-3A3E-43DE-8B4D-1EA9BC09C528}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4B132802-4727-4BAA-BCF9-841A13203A5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B132802-4727-4BAA-BCF9-841A13203A5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B132802-4727-4BAA-BCF9-841A13203A5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,12 @@ Global
 		{848CC480-53FC-489F-9FEA-0E108A454844}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{848CC480-53FC-489F-9FEA-0E108A454844}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{848CC480-53FC-489F-9FEA-0E108A454844}.Release|Any CPU.Build.0 = Release|Any CPU
+		{547E78F9-3E84-40ED-9A3E-A0A21A8CD1AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{547E78F9-3E84-40ED-9A3E-A0A21A8CD1AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{547E78F9-3E84-40ED-9A3E-A0A21A8CD1AE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{547E78F9-3E84-40ED-9A3E-A0A21A8CD1AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{547E78F9-3E84-40ED-9A3E-A0A21A8CD1AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{547E78F9-3E84-40ED-9A3E-A0A21A8CD1AE}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
